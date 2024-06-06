@@ -1,4 +1,5 @@
-
+using Illus.Server.Domain;
+using Microsoft.EntityFrameworkCore;
 //CORS跨來源請求
 var IllusClientPolicy = "_illusClientPolicy";
 
@@ -18,6 +19,10 @@ builder.Services.AddCors(options =>
     });
 });
 
+//連接DB
+builder.Services.AddDbContext<IllusContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("IllusContext")));
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -34,6 +39,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// CORS跨原始來源請求
 app.UseCors(IllusClientPolicy);
 
 app.UseAuthorization();

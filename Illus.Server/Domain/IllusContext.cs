@@ -23,7 +23,19 @@ namespace Illus.Server.Domain
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var mapper = new CoreMapper();
-
+            modelBuilder.Entity<AdminModel>(entity => mapper.Map(entity));
+            modelBuilder.Entity<ArtworkModel>(entity => mapper.Map(entity));
+            modelBuilder.Entity<ArtworkTagModel>(entity => mapper.Map(entity));
+            modelBuilder.Entity<CountryModel>(entity => mapper.Map(entity));
+            modelBuilder.Entity<DailyThemeModel>(entity => mapper.Map(entity));
+            modelBuilder.Entity<FollowModel>(entity => mapper.Map(entity));
+            modelBuilder.Entity<HistoryModel>(entity => mapper.Map(entity));
+            modelBuilder.Entity<ImgModel>(entity => mapper.Map(entity));
+            modelBuilder.Entity<LanguageModel>(entity => mapper.Map(entity));
+            modelBuilder.Entity<LikeModel>(entity => mapper.Map(entity));
+            modelBuilder.Entity<MassageModel>(entity => mapper.Map(entity));
+            modelBuilder.Entity<TagModel>(entity => mapper.Map(entity));
+            modelBuilder.Entity<UserModel>(entity => mapper.Map(entity));
         }
     }
 }

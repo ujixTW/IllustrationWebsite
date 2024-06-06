@@ -4,7 +4,7 @@
     {
         public int ArtworkId { get; set; }
         public int TagId { get; set; }
-        public ArtworkModel? Artwork { get; set; }
-        public TagModel? Tag { get; set; }
+        public virtual ArtworkModel Artwork { get; set; } = new ArtworkModel();
+        public virtual TagModel Tag { get; set; } = new TagModel();
     }
 }

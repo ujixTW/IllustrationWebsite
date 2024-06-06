@@ -7,7 +7,7 @@
         public int AdminId { get; set; }
         public DateTime SpecifyDay { get; set; }
         public bool IsEnable { get; set; }
-        public TagModel? Tag { get; set; }
-        public AdminModel? Admin { get; set; }
+        public virtual TagModel Tag { get; set; } = new TagModel();
+        public virtual AdminModel Admin { get; set; } = new AdminModel();
     }
 }

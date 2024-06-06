@@ -11,6 +11,6 @@
         public DateTime PostTime { get; set; }
         public bool IsOpen { get; set; }
         public bool IsDelete { get; set; }
-        public virtual UserModel? Artist { get; set; }
+        public virtual UserModel Artist { get; set; } = new UserModel();
     }
 }
