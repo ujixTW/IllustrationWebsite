@@ -64,7 +64,7 @@ namespace Illus.Server.Domain
         public void Map(EntityTypeBuilder<LikeModel> entity)
         {
             entity.ToTable("Like");
-            entity.HasKey(p => new { p.ArtworkId, p.UserId });
+            entity.HasKey(p => p.Id);
             entity.HasOne(p => p.User).WithMany().OnDelete(DeleteBehavior.ClientCascade);
             entity.HasOne(p => p.Artwork).WithMany();
         }
