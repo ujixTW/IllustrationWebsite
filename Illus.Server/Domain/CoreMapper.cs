@@ -87,5 +87,17 @@ namespace Illus.Server.Domain
             entity.HasOne(p => p.Language).WithMany().OnDelete(DeleteBehavior.NoAction);
             entity.HasOne(p => p.Country).WithMany().OnDelete(DeleteBehavior.NoAction);
         }
+        public void Map(EntityTypeBuilder<LoginTokenModel> entity)
+        {
+            entity.ToTable("LoginToken");
+            entity.HasKey(p => p.Id);
+            entity.HasOne(p => p.User).WithOne();
+        }
+        public void Map(EntityTypeBuilder<GotchaModel> entity)
+        {
+            entity.ToTable("Gotcha");
+            entity.HasKey(p => p.UserId);
+            entity.HasOne(p => p.User).WithOne();
+        }
     }
 }

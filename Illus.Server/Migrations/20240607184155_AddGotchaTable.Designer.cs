@@ -4,6 +4,7 @@ using Illus.Server.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Illus.Server.Migrations
 {
     [DbContext(typeof(IllusContext))]
-    partial class IllusContextModelSnapshot : ModelSnapshot
+    [Migration("20240607184155_AddGotchaTable")]
+    partial class AddGotchaTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -288,29 +291,6 @@ namespace Illus.Server.Migrations
                     b.ToTable("Like", (string)null);
                 });
 
-            modelBuilder.Entity("Illus.Server.Models.LoginTokenModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("LoginToken")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("LoginToken", (string)null);
-                });
-
             modelBuilder.Entity("Illus.Server.Models.MassageModel", b =>
                 {
                     b.Property<int>("Id")
@@ -376,7 +356,7 @@ namespace Illus.Server.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CountryID")
+                    b.Property<int>("CountryID")
                         .HasColumnType("int");
 
                     b.Property<string>("CoverContent")
@@ -398,7 +378,7 @@ namespace Illus.Server.Migrations
                     b.Property<bool>("IsActivation")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("LanguageId")
+                    b.Property<int>("LanguageId")
                         .HasColumnType("int");
 
                     b.Property<string>("Nickname")
@@ -551,17 +531,6 @@ namespace Illus.Server.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Illus.Server.Models.LoginTokenModel", b =>
-                {
-                    b.HasOne("Illus.Server.Models.UserModel", "User")
-                        .WithOne()
-                        .HasForeignKey("Illus.Server.Models.LoginTokenModel", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Illus.Server.Models.MassageModel", b =>
                 {
                     b.HasOne("Illus.Server.Models.ArtworkModel", "Artwork")
@@ -586,12 +555,14 @@ namespace Illus.Server.Migrations
                     b.HasOne("Illus.Server.Models.CountryModel", "Country")
                         .WithMany()
                         .HasForeignKey("CountryID")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("Illus.Server.Models.LanguageModel", "Language")
                         .WithMany()
                         .HasForeignKey("LanguageId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Country");
 

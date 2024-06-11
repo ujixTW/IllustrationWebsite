@@ -19,6 +19,8 @@ namespace Illus.Server.Domain
         public DbSet<MassageModel> Massage { get; set; }
         public DbSet<TagModel> Tag { get; set; }
         public DbSet<UserModel> User { get; set; }
+        public DbSet<LoginTokenModel> LoginToken { get; set; }
+        public DbSet<GotchaModel> Gotcha { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,6 +38,8 @@ namespace Illus.Server.Domain
             modelBuilder.Entity<MassageModel>(entity => mapper.Map(entity));
             modelBuilder.Entity<TagModel>(entity => mapper.Map(entity));
             modelBuilder.Entity<UserModel>(entity => mapper.Map(entity));
+            modelBuilder.Entity<LoginTokenModel>(entity => mapper.Map(entity));
+            modelBuilder.Entity<GotchaModel>(entity => mapper.Map(entity));
         }
     }
 }
