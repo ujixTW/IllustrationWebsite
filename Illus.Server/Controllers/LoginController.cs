@@ -23,8 +23,20 @@ namespace Illus.Server.Controllers
         [HttpPost]
         public IActionResult SignUp(LoginCommand command)
         {
+            var result = new SignUpResult();
+            if (command is null || command.Password.Length < 6)
+            {
+                result.Success = false;
+                result.Error = (command is null)?
+                     "DATA ARE NOT ENOUGH" :
+                     "PASWORD LENGTH IS BELOW SIX";
+            }
+            else
+            {
+                _loginService.SignUp(command);
+            }
 
-            return Ok();
+            return Ok(result);
         }
     }
 }

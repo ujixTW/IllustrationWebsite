@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Illus.Server", "Illus.Server\Illus.Server.csproj", "{C71115EB-098E-4D9A-9635-2CD20904261F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Illus.Server", "Illus.Server\Illus.Server.csproj", "{C71115EB-098E-4D9A-9635-2CD20904261F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Illus.ServerTests", "Illus.ServerTests\Illus.ServerTests.csproj", "{C92A628E-793E-457A-8EDB-6F9F9F8414EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{C71115EB-098E-4D9A-9635-2CD20904261F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C71115EB-098E-4D9A-9635-2CD20904261F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C71115EB-098E-4D9A-9635-2CD20904261F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C92A628E-793E-457A-8EDB-6F9F9F8414EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C92A628E-793E-457A-8EDB-6F9F9F8414EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C92A628E-793E-457A-8EDB-6F9F9F8414EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C92A628E-793E-457A-8EDB-6F9F9F8414EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

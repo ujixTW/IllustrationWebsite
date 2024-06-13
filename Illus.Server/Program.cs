@@ -1,4 +1,5 @@
 using Illus.Server.Domain;
+using Illus.Server.Sservices;
 using Microsoft.EntityFrameworkCore;
 //CORS跨來源請求
 var IllusClientPolicy = "_illusClientPolicy";
@@ -22,6 +23,8 @@ builder.Services.AddCors(options =>
 //連接DB
 builder.Services.AddDbContext<IllusContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("IllusContext")));
+
+builder.Services.AddScoped<LoginService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
