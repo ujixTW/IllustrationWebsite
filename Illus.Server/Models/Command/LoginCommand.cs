@@ -1,5 +1,12 @@
 ﻿namespace Illus.Server.Models.Command
 {
+    public enum SignUpErrorEnum : int
+    {
+        DataNotEnough = 0,
+        PasseordLength = 1,
+        AccountLength = 2,
+        DuplicateEmail = 3,
+    }
     public class LoginCommand
     {
         public string Account { get; set; } = string.Empty;

@@ -13,6 +13,11 @@ namespace Illus.Server.Sservices
         {
             _illusContext = illusContext;
         }
+        public LoginTokenModel Login(LoginCommand command)
+        {
+
+            return new LoginTokenModel();
+        }
         public SignUpResult SignUp(LoginCommand command)
         {
             var hasData = _illusContext.User
@@ -37,6 +42,17 @@ namespace Illus.Server.Sservices
                     PasswordSalt = saltString,
                     Email = command.Email,
                 };
+
+                try
+                {
+                    _illusContext.User.Add(user);
+                    _illusContext.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    Logger.WriteLog("Illus.Server/Sservices/SignUp", ex);
+                }
+
                 model.Success = true;
             }
             else
