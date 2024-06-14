@@ -22,8 +22,9 @@
     public class LoginTokenModel
     {
         public int Id { get; set; }
-        public string LoginToken { get; set; } = string.Empty;
+        public Guid LoginToken { get; set; }
         public int UserId { get; set; }
+        public DateTime InvalidTime { get; set; }
         public virtual UserModel User { get; set; } = new UserModel();
     }
     public class GotchaModel
