@@ -24,12 +24,24 @@ namespace Illus.Server.Controllers
         public IActionResult SignUp(LoginCommand command)
         {
             var result = new SignUpResult();
-            if (command is null || command.Password.Length < 6)
+            if (
+                string.IsNullOrEmpty(command.Account) ||
+                string.IsNullOrEmpty(command.Password) ||
+                string.IsNullOrEmpty(command.Email)
+                )
             {
                 result.Success = false;
-                result.Error = (command is null)?
-                     "DATA ARE NOT ENOUGH" :
-                     "PASWORD LENGTH IS BELOW SIX";
+                result.Error = "DATA ARE NOT ENOUGH";
+            }
+            else if (command.Password.Length < 6 || command.Password.Length > 32)
+            {
+                result.Success = false;
+                result.Error = "PASWORD LENGTH IS NON STANDARD";
+            }
+            else if (command.Account.Length < 6 || command.Account.Length > 16)
+            {
+                result.Success = false;
+                result.Error = "ACCOUNT LENGTH IS NON STANDARD";
             }
             else
             {
