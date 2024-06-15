@@ -14,8 +14,8 @@
         public string? CoverContent { get; set; }
         public string? HeadshotContent { get; set; }
         public DateTime CreateTime { get; set; }
-        public bool EmailConfirmed { get; set; }
-        public bool IsActivation { get; set; }
+        public bool EmailConfirmed { get; set; } = false;
+        public bool IsActivation { get; set; } = false;
         public virtual LanguageModel? Language { get; set; }
         public virtual CountryModel? Country { get; set; }
     }

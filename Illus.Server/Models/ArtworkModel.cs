@@ -11,8 +11,8 @@
         public bool IsR18 { get; set; }
         public bool IsAI { get; set; }
         public DateTime PostTime { get; set; }
-        public bool IsOpen { get; set; }
-        public bool IsDelete { get; set; }
+        public bool IsOpen { get; set; } = false;
+        public bool IsDelete { get; set; } = false;
         public virtual UserModel Artist { get; set; } = new UserModel();
     }
 }
