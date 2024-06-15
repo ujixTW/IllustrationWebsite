@@ -1,6 +1,7 @@
 using Illus.Server.Domain;
 using Illus.Server.Sservices;
 using Microsoft.EntityFrameworkCore;
+
 //CORS¸ó¨Ó·½½Ð¨D
 var IllusClientPolicy = "_illusClientPolicy";
 
@@ -27,11 +28,15 @@ builder.Services.AddDbContext<IllusContext>(options =>
 builder.Services.AddScoped<LoginService>();
 
 builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

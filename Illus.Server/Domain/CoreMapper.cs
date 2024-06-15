@@ -97,7 +97,7 @@ namespace Illus.Server.Domain
         {
             entity.ToTable("Gotcha");
             entity.HasKey(p => p.UserId);
-            entity.HasOne(p => p.User).WithOne();
+            entity.HasOne(p => p.User).WithOne(p => p.Gotcha);
         }
     }
 }

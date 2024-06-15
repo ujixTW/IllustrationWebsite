@@ -3,23 +3,18 @@ using Illus.Server.Sservices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Illus.Server.Controllers
+namespace Illus.Server.Controllers.Account
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class LoginController : ControllerBase
+    public class SignUpController : ControllerBase
     {
         private readonly LoginService _loginService;
-        public LoginController(LoginService loginService)
+        public SignUpController(LoginService loginService)
         {
             _loginService = loginService;
         }
-        [HttpPost]
-        public IActionResult Login(LoginCommand command)
-        {
 
-            return Ok();
-        }
         [HttpPost]
         public IActionResult SignUp(LoginCommand command)
         {
@@ -27,7 +22,8 @@ namespace Illus.Server.Controllers
             if (
                 string.IsNullOrEmpty(command.Account) ||
                 string.IsNullOrEmpty(command.Password) ||
-                string.IsNullOrEmpty(command.Email)
+                string.IsNullOrEmpty(command.Email) ||
+                !command.Email.Contains("@")
                 )
             {
                 result.Success = false;
@@ -45,9 +41,41 @@ namespace Illus.Server.Controllers
             }
             else
             {
-                _loginService.SignUp(command);
+                result = _loginService.SignUp(command);
             }
 
+            return Ok(result);
+        }
+
+        [HttpGet("{CAPTCHA}")]
+        public IActionResult Confirm(Guid CAPTCHA)
+        {
+            var result = new SignUpResult();
+            if (CAPTCHA == Guid.Empty)
+            {
+                result.Success = false;
+                result.Error = "NO DATA";
+            }
+            else
+            {
+                result = _loginService.Comfirm(CAPTCHA);
+            }
+
+            return Ok(result);
+        }
+        [HttpGet("confirmAgain/{CAPTCHA}")]
+        public IActionResult ConfirmAgain(Guid CAPTCHA)
+        {
+            var result = new SignUpResult();
+            if (CAPTCHA == Guid.Empty)
+            {
+                result.Success = false;
+                result.Error = "CAPTCHA IS NULL";
+            }
+            else
+            {
+                result = _loginService.ConfirmAgain(CAPTCHA);
+            }
             return Ok(result);
         }
     }

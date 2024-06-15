@@ -4,6 +4,7 @@ using Illus.Server.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Illus.Server.Migrations
 {
     [DbContext(typeof(IllusContext))]
-    partial class IllusContextModelSnapshot : ModelSnapshot
+    [Migration("20240615120704_UpdateGotcha")]
+    partial class UpdateGotcha
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -183,14 +186,15 @@ namespace Illus.Server.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("CAPTCHA")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("ExpiryDate")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("CAPTCHA")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsUsed")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("MailDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("UserId");
 
@@ -302,7 +306,7 @@ namespace Illus.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("ExpiryDate")
+                    b.Property<DateTime>("InvalidTime")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("LoginToken")
@@ -504,7 +508,7 @@ namespace Illus.Server.Migrations
             modelBuilder.Entity("Illus.Server.Models.GotchaModel", b =>
                 {
                     b.HasOne("Illus.Server.Models.UserModel", "User")
-                        .WithOne("Gotcha")
+                        .WithOne()
                         .HasForeignKey("Illus.Server.Models.GotchaModel", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -604,11 +608,6 @@ namespace Illus.Server.Migrations
                     b.Navigation("Country");
 
                     b.Navigation("Language");
-                });
-
-            modelBuilder.Entity("Illus.Server.Models.UserModel", b =>
-                {
-                    b.Navigation("Gotcha");
                 });
 #pragma warning restore 612, 618
         }
