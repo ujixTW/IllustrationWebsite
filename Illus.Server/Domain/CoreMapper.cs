@@ -91,7 +91,7 @@ namespace Illus.Server.Domain
         {
             entity.ToTable("LoginToken");
             entity.HasKey(p => p.Id);
-            entity.HasOne(p => p.User).WithOne();
+            entity.HasOne(p => p.User).WithMany(p => p.LoginTokens);
         }
         public void Map(EntityTypeBuilder<GotchaModel> entity)
         {

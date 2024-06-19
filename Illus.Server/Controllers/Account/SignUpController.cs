@@ -2,6 +2,7 @@
 using Illus.Server.Sservices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace Illus.Server.Controllers.Account
 {
@@ -10,9 +11,13 @@ namespace Illus.Server.Controllers.Account
     public class SignUpController : ControllerBase
     {
         private readonly LoginService _loginService;
+        private readonly string _loginTokenKey;
+        private readonly string _userIdKey;
         public SignUpController(LoginService loginService)
         {
             _loginService = loginService;
+            _loginTokenKey = "LoginToken";
+            _userIdKey = "UserId";
         }
 
         [HttpPost]
@@ -58,7 +63,18 @@ namespace Illus.Server.Controllers.Account
             }
             else
             {
-                result = _loginService.Comfirm(CAPTCHA);
+                var confirmData = _loginService.Comfirm(CAPTCHA);
+
+                //將成功資訊直接傳回前端
+                result.Success = confirmData.Success;
+                result.Error = confirmData.Error;
+
+                if (confirmData.Success)
+                {
+                    //將使用者資訊寫入cookie
+                    HttpContext.Response.Cookies.Append(_loginTokenKey, confirmData.Token.ToString()!, new CookieOptions() { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Lax });
+                    HttpContext.Response.Cookies.Append(_userIdKey, confirmData.UserId.ToString()!, new CookieOptions() { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Lax });
+                }
             }
 
             return Ok(result);

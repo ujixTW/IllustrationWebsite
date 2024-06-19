@@ -2,7 +2,11 @@
 using Illus.Server.Helper;
 using Illus.Server.Models;
 using Illus.Server.Models.Command;
+using Illus.Server.Models.View;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.Metrics;
+using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Illus.Server.Sservices
 {
@@ -17,10 +21,100 @@ namespace Illus.Server.Sservices
         /// CAPTCHA失效時間(小時)
         /// </summary>
         private static int _captchaExpiryTime = 48;
-        public LoginTokenModel Login(LoginCommand command)
+        public LoginTokenModel? Login(LoginCommand command)
         {
+            var success = false;
             var result = new LoginTokenModel();
-            var user = _illusContext.User;
+            var user = _illusContext.User
+                .AsNoTracking()
+                .SingleOrDefault(p => p.Account == command.Account || p.Email == command.Email);
+            if (user != null)
+            {
+                var salt = Encoding.UTF8.GetBytes(user.PasswordSalt);
+                var inputPwd = PWDHelper.GetHashPassword(user.Account, command.Password, salt);
+                if (user.Password == Convert.ToBase64String(inputPwd))
+                {
+                    var tokenData = new LoginTokenModel()
+                    {
+                        LoginToken = Guid.NewGuid(),
+                        UserId = user.Id,
+                        ExpiryDate = DateTime.Now.AddYears(50)
+                    };
+                    var token = _illusContext
+                        .LoginToken
+                        .Where(p => p.UserId == user.Id)
+                        .OrderBy(p => p.ExpiryDate)
+                        .ToList();
+                    if (token.Count >= 5)
+                    {
+                        token[0].LoginToken = tokenData.LoginToken;
+                        token[0].ExpiryDate = tokenData.ExpiryDate;
+                    }
+                    else
+                    {
+                        token.Add(tokenData);
+                    }
+
+                    try
+                    {
+                        _illusContext.SaveChanges();
+                        result = tokenData;
+                        success = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.WriteLog("Login", ex);
+                    }
+
+                }
+            }
+
+            if (!success) result = null;
+
+            return result;
+        }
+        public UserViewModel? LoginCheck(LoginTokenModel input)
+        {
+            UserViewModel? result = null;
+            var today = DateTime.Now;
+            try
+            {
+                var hasData = _illusContext.LoginToken
+                    .AsNoTracking()
+                    .SingleOrDefault(p =>
+                    p.LoginToken == input.LoginToken &&
+                    p.UserId == input.UserId &&
+                    p.ExpiryDate > today
+                );
+
+                if (hasData != null)
+                {
+                    var user = _illusContext.User
+                        .AsNoTracking()
+                        .Include(p => p.Language)
+                        .Include(p => p.Country)
+                        .SingleOrDefault(p => p.Id == input.UserId);
+
+                    result = (user == null) ?
+                        null :
+                        new UserViewModel()
+                        {
+                            Id = user.Id,
+                            Account = user.Account,
+                            Email = user.Email,
+                            NickName = user.Nickname,
+                            Profile = user.Profile,
+                            Language = user.Language.Content,
+                            Country = user.Country.Content,
+                            CoverContent = user.CoverContent,
+                            HeadshotContent = user.HeadshotContent,
+                        };
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("LoginCheck", ex);
+            }
             return result;
         }
         public SignUpResult SignUp(LoginCommand command)
@@ -107,16 +201,19 @@ namespace Illus.Server.Sservices
                 gotcha.IsUsed = true;
 
                 var token = Guid.NewGuid();
-                user.LoginToken = new LoginTokenModel()
+                var tokenData = new LoginTokenModel()
                 {
                     LoginToken = token,
                     ExpiryDate = today.AddYears(50)
                 };
+                user.LoginTokens = new List<LoginTokenModel> { tokenData };
 
                 try
                 {
                     _illusContext.SaveChanges();
                     result.Success = true;
+                    result.UserId = user.Id;
+                    result.Token = token;
                 }
                 catch (Exception ex)
                 {
@@ -151,7 +248,7 @@ namespace Illus.Server.Sservices
                 try
                 {
                     _illusContext.SaveChanges();
-                    result.Success = true;
+                    result.Success = MailHelper.SendSignUpMail(user);
                 }
                 catch (Exception ex)
                 {
@@ -167,6 +264,6 @@ namespace Illus.Server.Sservices
             }
 
             return result;
-        }       
+        }
     }
 }

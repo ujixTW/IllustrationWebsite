@@ -11,6 +11,6 @@
         public bool Success { get; set; }
         public string Error { get; set; } = string.Empty;
         public int? UserId { get; set; }
-        public string? CAPTCHA { get; set; }
+        public Guid? Token { get; set; }
     }
 }

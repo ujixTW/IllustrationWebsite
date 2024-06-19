@@ -16,9 +16,9 @@
         public DateTime CreateTime { get; set; }
         public bool EmailConfirmed { get; set; } = false;
         public bool IsActivation { get; set; } = false;
-        public virtual LanguageModel? Language { get; set; }
-        public virtual CountryModel? Country { get; set; }
-        public virtual LoginTokenModel? LoginToken { get; set; }
+        public virtual LanguageModel Language { get; set; } = new LanguageModel();
+        public virtual CountryModel Country { get; set; } = new CountryModel();
+        public virtual List<LoginTokenModel>? LoginTokens { get; set; }
         public virtual GotchaModel? Gotcha { get; set; }
     }
     public class LoginTokenModel
