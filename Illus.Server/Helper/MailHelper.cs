@@ -8,8 +8,8 @@ namespace Illus.Server.Helper
     {
         public class BaseMailDataModel
         {
-            public string Sender { get; set; } = string.Empty;
-            public string SenderEmail { get; set; } = string.Empty;
+            public string Sender { get; set; } = "IllusWebSite";
+            public string SenderEmail { get; set; } = "IllusWebSite@IllusWeb.com";
             /// <summary>
             /// 收件人
             /// </summary>
@@ -78,14 +78,15 @@ namespace Illus.Server.Helper
         /// <param name="message">信件本體</param>
         private static void SendToRecipient(MimeMessage message)
         {
-            var hostUrl = "IllusWebsite.server.com";
-            var port = 001;
-            var useSsl = false;
+            var hostUrl = "smtp.gmail.com";
+            var port = 465;
+            var useSsl = true;
             try
             {
                 using (var client = new SmtpClient())
                 {
                     client.Connect(hostUrl, port, useSsl);
+                    client.Authenticate("IllusWebsite202406@gmail.com", "jjphbiauygkvlnji");
                     client.Send(message);
                     client.Disconnect(true);
                 }
@@ -95,5 +96,6 @@ namespace Illus.Server.Helper
                 Logger.WriteLog("SendToRecipient", ex);
             }
         }
+
     }
 }
