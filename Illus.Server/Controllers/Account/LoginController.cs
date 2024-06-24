@@ -1,6 +1,6 @@
 ﻿using Illus.Server.Models.Command;
 using Illus.Server.Models.View;
-using Illus.Server.Sservices;
+using Illus.Server.Sservices.Account;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,7 +47,7 @@ namespace Illus.Server.Controllers.Account
                     result.Error = "NO USER";
                 }
             }
-            return Ok(result);
+            return Ok(result.Success);
         }
         [HttpGet]
         public IActionResult LoginCheck()
