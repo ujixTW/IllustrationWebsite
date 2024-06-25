@@ -58,7 +58,7 @@ namespace Illus.Server.Controllers.Account
             UserViewModel? model = null;
 
             if (int.TryParse(userIdStr, out var userId) &&
-                Guid.TryParse(tokenStr, out var token) )
+                Guid.TryParse(tokenStr, out var token))
             {
                 model = _loginService.LoginCheck(new Models.LoginTokenModel()
                 {
@@ -66,7 +66,24 @@ namespace Illus.Server.Controllers.Account
                     LoginToken = token,
                 });
             }
-            return Ok(model);
+            return (model != null) ? Ok(model) : BadRequest();
+        }
+        [HttpGet("Logout")]
+        public IActionResult Logout()
+        {
+            var userIdStr = Request.Cookies[_userIdKey];
+            var tokenStr = Request.Cookies[_loginTokenKey];
+            var result = false;
+            if (int.TryParse(userIdStr, out int userId) && Guid.TryParse(tokenStr, out Guid token))
+            {
+                result = _loginService.Logout(userId, token);
+                if (result)
+                {
+                    Response.Cookies.Delete(_userIdKey);
+                    Response.Cookies.Delete(_loginTokenKey);
+                }
+            }
+            return (result) ? Ok() : BadRequest();
         }
     }
 }

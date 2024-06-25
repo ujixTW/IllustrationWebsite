@@ -54,6 +54,7 @@ namespace Illus.Server.Sservices.Account
                             .Where(p => p.UserId == user.Id)
                             .OrderBy(p => p.ExpiryDate)
                             .ToList();
+
                         if (token.Count >= _maxLoginCount)
                         {
                             token[0].LoginToken = tokenData.LoginToken;
@@ -90,6 +91,7 @@ namespace Illus.Server.Sservices.Account
                     .SingleOrDefault(p =>
                     p.LoginToken == input.LoginToken &&
                     p.UserId == input.UserId &&
+                    p.User.IsActivation == true &&
                     p.ExpiryDate > today
                 );
 
@@ -120,6 +122,26 @@ namespace Illus.Server.Sservices.Account
             catch (Exception ex)
             {
                 Logger.WriteLog("LoginCheck", ex);
+            }
+            return result;
+        }
+        public bool Logout(int userId, Guid token)
+        {
+            var result = false;
+            try
+            {
+                var model = _illusContext.LoginToken
+                    .SingleOrDefault(p => p.LoginToken == token && p.UserId == userId);
+                if (model != null)
+                {
+                    model.ExpiryDate = DateTime.Now;
+                    _illusContext.SaveChanges();
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("Logout", ex);
             }
             return result;
         }
@@ -248,6 +270,7 @@ namespace Illus.Server.Sservices.Account
                 .Include(p => p.Gotcha)
                 .SingleOrDefault(p =>
                     p.EmailConfirmed == false &&
+                    p.IsActivation == false &&
                     p.Gotcha != null &&
                     p.Gotcha.CAPTCHA == guid &&
                     p.Gotcha.IsUsed == false

@@ -21,6 +21,137 @@ namespace Illus.Server.Sservices.Account
             _captchaExpiryTime = 48;
             _maxLoginCount = 5;
         }
+        public bool EditAccount(string inputAccount, int userId)
+        {
+            var result = false;
+            try
+            {
+                var user = _context.User.SingleOrDefault(p => p.Id.Equals(userId));
+                if (user != null)
+                {
+                    var accUsable = _context.User
+                        .AsNoTracking()
+                        .SingleOrDefault(p => p.Account.Equals(inputAccount)) == null;
+
+                    if (accUsable)
+                    {
+                        user.Account = inputAccount;
+                        _context.SaveChanges();
+                        result = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("EditAccount", ex);
+            }
+            return result;
+        }
+        public bool EditEmail(string inputEmail, int userId)
+        {
+            var result = false;
+            try
+            {
+                var user = _context.User
+                    .Include(p => p.Gotcha)
+                    .SingleOrDefault(p => p.Id.Equals(userId));
+
+                if (user != null)
+                {
+                    var emailUsable = _context.User
+                        .AsNoTracking()
+                        .SingleOrDefault(p => p.Email.Equals(inputEmail)) == null;
+
+                    if (emailUsable)
+                    {
+                        var captcha = Guid.NewGuid();
+                        #region 修改資料庫
+
+                        user.Email = inputEmail;
+                        user.EmailConfirmed = false;
+                        user.Gotcha = new GotchaModel
+                        {
+                            CAPTCHA = captcha,
+                            ExpiryDate = DateTime.Now.AddHours(_captchaExpiryTime),
+                            UserId = userId,
+                            IsUsed = false
+                        };
+
+                        #endregion
+
+                        #region 寄信
+                        var userName = (string.IsNullOrEmpty(user.Nickname)) ?
+                            user.Account : user.Nickname;
+
+                        var emailContent =
+                    $"<p>親愛的 {userName} 您好：" +
+                    "<p>請點選下方連結，完成信箱認證：</p>" +
+                    $"<a href=\"https://localhost:5173/edit-email-comfirm?apiKey={captcha}\" style=\"background-color: rgb(238, 42, 42); color: white; text-decoration: none; font-size: 1.5rem; padding: 5px 15px; margin: 10px; border-radius: 5px;\">" +
+                    "認證信箱</a>";
+
+                        var mailData = new BaseMailDataModel()
+                        {
+                            Recipient = userName,
+                            RecipientEmail = inputEmail,
+                            Subject = "IllusWebsite 更改信箱認證信",
+                            Content = emailContent
+                        };
+
+                        SendMail(mailData);
+                        #endregion
+                        _context.SaveChanges();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("EditEmail", ex);
+            }
+            return result;
+        }
+        public bool EditEmailComfirm(Guid captcha)
+        {
+            var result = false;
+            try
+            {
+                var gotcha = _context.Gotcha
+                    .Include(p => p.User)
+                    .SingleOrDefault(p => p.CAPTCHA == captcha && p.IsUsed == false);
+
+                if (gotcha != null)
+                {
+                    var user = gotcha.User;
+                    user.EmailConfirmed = true;
+                    gotcha.IsUsed = true;
+                    _context.SaveChanges();
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("EditEmailComfirm", ex);
+            }
+            return result;
+        }
+        public bool EditPassword(EditPasswordCommand command, int userId)
+        {
+            var result = false;
+            try
+            {
+                var user = _context.User.SingleOrDefault(p => p.Id == userId);
+                if (user != null)
+                {
+                    if (string.Equals(user.Password, command.OldPWD)) user.Password = command.NewPWD;
+                    _context.SaveChanges();
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("EditPassword", ex);
+            }
+            return result;
+        }
         public bool ForgetPassword(string email)
         {
             var success = true;
@@ -28,7 +159,7 @@ namespace Illus.Server.Sservices.Account
             {
                 var user = _context.User
                     .Include(p => p.Gotcha)
-                    .Where(p => p.Email == email && p.IsActivation == true)
+                    .Where(p => p.Email == email && p.EmailConfirmed == true && p.IsActivation == true)
                     .SingleOrDefault();
                 var captcha = Guid.NewGuid();
                 var loginToken = Guid.NewGuid();
@@ -76,27 +207,30 @@ namespace Illus.Server.Sservices.Account
                 #endregion
 
                 #region 寄信
-
-                var userAccount = (user is null) ? string.Empty : user.Account;
-
-                var emailContent =
-                    $"<p>親愛的 {userAccount} 您好：" +
-                    "<p>請點選下方連結，完成變更密碼的動作：</p>" +
-                    $"<a href=\"https://localhost:5173/reset-password?apiKey={captcha}&pwrt={loginToken}\" style=\"background-color: rgb(238, 42, 42); color: white; text-decoration: none; font-size: 1.5rem; padding: 5px 15px; margin: 10px; border-radius: 5px;\">" +
-                    "重設密碼</a>" +
-                    "<p>如果您不打算重設密碼，則可以忽略此電子郵件，您的密碼將不會被更改。</p>" +
-                    "<hr>" +
-                    "<p>如果您尚未註冊IllusWebSite會員，並錯誤的收到了此封電子郵件，請忽略它。" +
-                    "我們不會為您發送任何進一步的資訊。</p>";
-                var mailData = new BaseMailDataModel()
+                if (user != null)
                 {
-                    Recipient = userAccount,
-                    RecipientEmail = email,
-                    Subject = "IllusWebsite 密碼修改驗證碼",
-                    Content = emailContent
-                };
+                    var userName = (string.IsNullOrEmpty(user.Nickname)) ?
+                            user.Account : user.Nickname;
 
-                SendMail(mailData);
+                    var emailContent =
+                        $"<p>親愛的 {userName} 您好：" +
+                        "<p>請點選下方連結，完成變更密碼的動作：</p>" +
+                        $"<a href=\"https://localhost:5173/reset-password?apiKey={captcha}&pwrt={loginToken}\" style=\"background-color: rgb(238, 42, 42); color: white; text-decoration: none; font-size: 1.5rem; padding: 5px 15px; margin: 10px; border-radius: 5px;\">" +
+                        "重設密碼</a>" +
+                        "<p>如果您不打算重設密碼，則可以忽略此電子郵件，您的密碼將不會被更改。</p>" +
+                        "<hr>" +
+                        "<p>如果您尚未註冊IllusWebSite會員，並錯誤的收到了此封電子郵件，請忽略它。" +
+                        "我們不會為您發送任何進一步的資訊。</p>";
+                    var mailData = new BaseMailDataModel()
+                    {
+                        Recipient = userName,
+                        RecipientEmail = email,
+                        Subject = "IllusWebsite 密碼修改驗證碼",
+                        Content = emailContent
+                    };
+
+                    SendMail(mailData);
+                }
 
                 #endregion
 
@@ -108,7 +242,7 @@ namespace Illus.Server.Sservices.Account
             }
             return success;
         }
-        public bool EditPWDFormEmail(EditPWDFormEmailCommand command)
+        public bool EditPWDFormEmail(EditPWDFromEmailCommand command)
         {
             var result = false;
             try
@@ -145,6 +279,13 @@ namespace Illus.Server.Sservices.Account
 
                         user.Password = newPwdHashString;
                         user.PasswordSalt = newSaltString;
+
+                        if (user.Gotcha != null)
+                        {
+                            user.Gotcha.ExpiryDate = nowTime;
+                            user.Gotcha.IsUsed = true;
+                        }
+                        userToken.ExpiryDate = nowTime;
 
                         _context.SaveChanges();
                         result = true;

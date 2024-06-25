@@ -77,7 +77,7 @@ namespace Illus.Server.Controllers.Account
                 }
             }
 
-            return Ok(result);
+            return (result.Success) ? Ok() : BadRequest();
         }
         [HttpGet("confirmAgain/{CAPTCHA}")]
         public IActionResult ConfirmAgain(Guid CAPTCHA)
@@ -94,6 +94,6 @@ namespace Illus.Server.Controllers.Account
             }
             return Ok(result);
         }
-        
+
     }
 }

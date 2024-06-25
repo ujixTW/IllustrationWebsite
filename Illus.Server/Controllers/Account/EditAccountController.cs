@@ -18,24 +18,62 @@ namespace Illus.Server.Controllers.Account
             _loginTokenKey = "LoginToken";
             _userIdKey = "UserId";
         }
-
         //變更帳號
         [HttpPost]
-        public IActionResult EditAccount()
+        public IActionResult EditAccount(string accountCommand)
         {
-            return Ok();
+            var result = false;
+            var userIdStr = Request.Cookies[_userIdKey];
+
+            if (int.TryParse(userIdStr, out int userId) &&
+                !string.IsNullOrEmpty(accountCommand) &&
+                accountCommand.Length >= 6 &&
+                accountCommand.Length <= 16)
+            {
+                result = _editService.EditAccount(accountCommand, userId);
+            }
+            return Ok(result);
         }
         //變更信箱
-        [HttpPost]
-        public IActionResult EditEmail()
+        [HttpPost("/api/EditEmail")]
+        public IActionResult EditEmail(string emailCommand)
         {
-            return Ok();
+            var result = false;
+            var userIdStr = Request.Cookies[_userIdKey];
+
+            if (int.TryParse(userIdStr, out int userId) &&
+                !string.IsNullOrEmpty(emailCommand) &&
+                emailCommand.Contains("@"))
+            {
+                result = _editService.EditEmail(emailCommand, userId);
+            }
+            return Ok(result);
+        }
+        //信箱認證
+        [HttpGet("/api/EditEmail/{CAPTCHA}")]
+        public IActionResult EditEmailComfirm(Guid CAPTCHA)
+        {
+            var result = false;
+            result = _editService.EditEmailComfirm(CAPTCHA);
+            return (result) ? Ok() : BadRequest();
         }
         //變更密碼(登入狀態)
-        [HttpPost]
-        public IActionResult EditPassword()
+        [HttpPost("/api/EditPassword")]
+        public IActionResult EditPassword(EditPasswordCommand command)
         {
-            return Ok();
+            var userIdStr = Request.Cookies[_userIdKey];
+            var result = false;
+            if (int.TryParse(userIdStr, out int userId) &&
+                !string.IsNullOrEmpty(command.OldPWD) &&
+                !string.IsNullOrEmpty(command.NewPWD) &&
+                command.NewPWD.Length >= 6 &&
+                command.NewPWD.Length <= 32 &&
+                !string.Equals(command.OldPWD, command.NewPWD) &&
+                string.Equals(command.NewPWD, command.NewPWDAgain))
+            {
+                result = _editService.EditPassword(command, userId);
+            }
+            return (result) ? Ok() : BadRequest();
         }
         /// <summary>
         /// 寄送忘記密碼信件
@@ -50,25 +88,27 @@ namespace Illus.Server.Controllers.Account
             {
                 result = _editService.ForgetPassword(Email);
             }
-            return Ok(result);
+            return (result) ? Ok() : BadRequest();
         }
         //變更密碼(信箱連結)
-        [HttpPost]
-        public IActionResult EditPWDFormEmail(EditPWDFormEmailCommand command)
+        [HttpPost("/api/forgetPassword")]
+        public IActionResult EditPWDFormEmail(EditPWDFromEmailCommand command)
         {
             var result = false;
             var pwds = command.PasswordCommand;
 
-            if (!string.IsNullOrEmpty(pwds.OldPWD) ||
-                !string.IsNullOrEmpty(pwds.NewPWD) ||
-                !string.IsNullOrEmpty(pwds.NewPWDAgain) ||
+            if (!string.IsNullOrEmpty(pwds.OldPWD) &&
+                !string.IsNullOrEmpty(pwds.NewPWD) &&
+                pwds.NewPWD.Length >= 6 &&
+                pwds.NewPWD.Length <= 32 &&
+                !string.Equals(pwds.OldPWD, pwds.NewPWD) &&
                 string.Equals(pwds.NewPWD, pwds.NewPWDAgain))
             {
-               
+
                 result = _editService.EditPWDFormEmail(command);
             }
 
-            return Ok(result);
+            return (result) ? Ok() : BadRequest();
         }
     }
 }
