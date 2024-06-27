@@ -1,5 +1,6 @@
 using Illus.Server.Domain;
 using Illus.Server.Sservices.Account;
+using Illus.Server.Sservices.Works;
 using Microsoft.EntityFrameworkCore;
 
 //CORS¸ó¨Ó·½½Ð¨D
@@ -27,6 +28,7 @@ builder.Services.AddDbContext<IllusContext>(options =>
 
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<EditAccountService>();
+builder.Services.AddScoped<WorkService>();
 
 builder.Services.AddControllers();
 builder.Services.AddControllers().AddNewtonsoftJson();

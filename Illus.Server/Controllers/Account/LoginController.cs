@@ -49,7 +49,7 @@ namespace Illus.Server.Controllers.Account
             }
             return Ok(result.Success);
         }
-        [HttpGet]
+        [HttpGet("/api/LoginCheck")]
         public IActionResult LoginCheck()
         {
             var userIdStr = Request.Cookies[_userIdKey];
@@ -68,7 +68,7 @@ namespace Illus.Server.Controllers.Account
             }
             return (model != null) ? Ok(model) : BadRequest();
         }
-        [HttpGet("Logout")]
+        [HttpGet("/api/Logout")]
         public IActionResult Logout()
         {
             var userIdStr = Request.Cookies[_userIdKey];

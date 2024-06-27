@@ -112,8 +112,8 @@ namespace Illus.Server.Sservices.Account
                             Email = user.Email,
                             NickName = user.Nickname,
                             Profile = user.Profile,
-                            Language = user.Language.Content,
-                            Country = user.Country.Content,
+                            Language = user.Language,
+                            Country = user.Country,
                             CoverContent = user.CoverContent,
                             HeadshotContent = user.HeadshotContent,
                         };

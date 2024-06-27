@@ -2,6 +2,7 @@
 using Illus.Server.Helper;
 using Illus.Server.Models;
 using Illus.Server.Models.Command;
+using Illus.Server.Models.View;
 using Microsoft.EntityFrameworkCore;
 using MimeKit;
 using Org.BouncyCastle.Asn1.Pkcs;
@@ -26,6 +27,7 @@ namespace Illus.Server.Sservices.Account
             var result = false;
             try
             {
+
                 var user = _context.User.SingleOrDefault(p => p.Id.Equals(userId));
                 if (user != null)
                 {
@@ -40,6 +42,7 @@ namespace Illus.Server.Sservices.Account
                         result = true;
                     }
                 }
+
             }
             catch (Exception ex)
             {
@@ -52,6 +55,7 @@ namespace Illus.Server.Sservices.Account
             var result = false;
             try
             {
+
                 var user = _context.User
                     .Include(p => p.Gotcha)
                     .SingleOrDefault(p => p.Id.Equals(userId));
@@ -102,6 +106,7 @@ namespace Illus.Server.Sservices.Account
                         _context.SaveChanges();
                     }
                 }
+
             }
             catch (Exception ex)
             {
@@ -145,6 +150,7 @@ namespace Illus.Server.Sservices.Account
                     _context.SaveChanges();
                     result = true;
                 }
+
             }
             catch (Exception ex)
             {
@@ -299,6 +305,54 @@ namespace Illus.Server.Sservices.Account
             }
 
             return result;
+        }
+        public bool EditUserData(UserViewModel model)
+        {
+            var result = false;
+            try
+            {
+                var userName = _context.User
+                    .AsNoTracking()
+                    .Select(p => p.Nickname)
+                    .SingleOrDefault(p => p.Equals(model.NickName.Trim()));
+
+                if (string.IsNullOrEmpty(userName))
+                {
+                    var user = _context.User.SingleOrDefault(p => p.Id.Equals(model.Id));
+                    if (user != null)
+                    {
+                        if (!string.IsNullOrEmpty(model.NickName)) user.Nickname = model.NickName.Trim();
+                        user.Profile = model.Profile;
+                        user.LanguageId = model.Language.Id;
+                        user.CountryID = model.Country.Id;
+                        user.CoverContent = model.CoverContent;
+                        user.HeadshotContent = model.HeadshotContent;
+
+                        _context.SaveChanges();
+                        result = true;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("EditUserData", ex);
+            }
+
+            return result;
+        }
+        /// <summary>
+        /// 檢查使用者身分與傳入資料身分是否一致
+        /// </summary>
+        /// <param name="token">登入token</param>
+        /// <param name="id">使用者Id</param>
+        /// <returns></returns>
+        public bool CheckUserIdentity(Guid token, int id)
+        {
+            var tokenData = _context.LoginToken
+                .AsNoTracking()
+                .SingleOrDefault(p => p.LoginToken.Equals(token));
+            return (tokenData != null && tokenData.UserId == id);
         }
     }
 }

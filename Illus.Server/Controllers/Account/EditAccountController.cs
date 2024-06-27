@@ -1,4 +1,6 @@
-﻿using Illus.Server.Models.Command;
+﻿using Illus.Server.Models;
+using Illus.Server.Models.Command;
+using Illus.Server.Models.View;
 using Illus.Server.Sservices.Account;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,38 +21,44 @@ namespace Illus.Server.Controllers.Account
             _userIdKey = "UserId";
         }
         //變更帳號
-        [HttpPost]
+        [HttpPost("Account")]
         public IActionResult EditAccount(string accountCommand)
         {
             var result = false;
             var userIdStr = Request.Cookies[_userIdKey];
+            var tokenStr = Request.Cookies[_loginTokenKey];
 
             if (int.TryParse(userIdStr, out int userId) &&
+                Guid.TryParse(tokenStr, out Guid token) &&
                 !string.IsNullOrEmpty(accountCommand) &&
                 accountCommand.Length >= 6 &&
-                accountCommand.Length <= 16)
+                accountCommand.Length <= 16 &&
+                _editService.CheckUserIdentity(token, userId))
             {
                 result = _editService.EditAccount(accountCommand, userId);
             }
             return Ok(result);
         }
         //變更信箱
-        [HttpPost("/api/EditEmail")]
+        [HttpPost("Email")]
         public IActionResult EditEmail(string emailCommand)
         {
             var result = false;
             var userIdStr = Request.Cookies[_userIdKey];
+            var tokenStr = Request.Cookies[_loginTokenKey];
 
             if (int.TryParse(userIdStr, out int userId) &&
+                Guid.TryParse(tokenStr, out Guid token) &&
                 !string.IsNullOrEmpty(emailCommand) &&
-                emailCommand.Contains("@"))
+                emailCommand.Contains("@") &&
+                _editService.CheckUserIdentity(token, userId))
             {
                 result = _editService.EditEmail(emailCommand, userId);
             }
             return Ok(result);
         }
         //信箱認證
-        [HttpGet("/api/EditEmail/{CAPTCHA}")]
+        [HttpGet("Email/{CAPTCHA}")]
         public IActionResult EditEmailComfirm(Guid CAPTCHA)
         {
             var result = false;
@@ -58,18 +66,22 @@ namespace Illus.Server.Controllers.Account
             return (result) ? Ok() : BadRequest();
         }
         //變更密碼(登入狀態)
-        [HttpPost("/api/EditPassword")]
+        [HttpPost("Password")]
         public IActionResult EditPassword(EditPasswordCommand command)
         {
             var userIdStr = Request.Cookies[_userIdKey];
+            var tokenStr = Request.Cookies[_loginTokenKey];
+
             var result = false;
             if (int.TryParse(userIdStr, out int userId) &&
+                Guid.TryParse(tokenStr, out Guid token) &&
                 !string.IsNullOrEmpty(command.OldPWD) &&
                 !string.IsNullOrEmpty(command.NewPWD) &&
                 command.NewPWD.Length >= 6 &&
                 command.NewPWD.Length <= 32 &&
                 !string.Equals(command.OldPWD, command.NewPWD) &&
-                string.Equals(command.NewPWD, command.NewPWDAgain))
+                string.Equals(command.NewPWD, command.NewPWDAgain) &&
+                _editService.CheckUserIdentity(token, userId))
             {
                 result = _editService.EditPassword(command, userId);
             }
@@ -80,7 +92,7 @@ namespace Illus.Server.Controllers.Account
         /// </summary>
         /// <param name="Email"></param>
         /// <returns></returns>
-        [HttpGet("/api/forgetPassword/{Email}")]
+        [HttpGet("ForgetPassword/{Email}")]
         public IActionResult ForgetPassword(string Email)
         {
             var result = false;
@@ -91,7 +103,7 @@ namespace Illus.Server.Controllers.Account
             return (result) ? Ok() : BadRequest();
         }
         //變更密碼(信箱連結)
-        [HttpPost("/api/forgetPassword")]
+        [HttpPost("ForgetPassword")]
         public IActionResult EditPWDFormEmail(EditPWDFromEmailCommand command)
         {
             var result = false;
@@ -108,6 +120,21 @@ namespace Illus.Server.Controllers.Account
                 result = _editService.EditPWDFormEmail(command);
             }
 
+            return (result) ? Ok() : BadRequest();
+        }
+        [HttpPost("UserData")]
+        public IActionResult EditUserData(UserViewModel model)
+        {
+            var result = false;
+            var tokenStr = Request.Cookies[_loginTokenKey];
+            var userIdStr = Request.Cookies[_userIdKey];
+            if (int.TryParse(userIdStr, out int userId) &&
+                Guid.TryParse(tokenStr, out Guid token) &&
+                userId == model.Id &&
+                _editService.CheckUserIdentity(token, model.Id))
+            {
+                result = _editService.EditUserData(model);
+            }
             return (result) ? Ok() : BadRequest();
         }
     }
