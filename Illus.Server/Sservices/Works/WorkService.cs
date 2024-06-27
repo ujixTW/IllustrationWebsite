@@ -33,7 +33,7 @@ namespace Illus.Server.Sservices.Works
                         (!command.IsAI) ? p.IsAI == false : true &&
                         (!command.IsR18) ? p.IsR18 == false : true &&
                         p.PostTime <= today &&
-                        (workList.Count > 0) ?
+                        (keywordList.Count > 0) ?
                             keywordList.All(w => p.Tags.All(t => t.Content.Equals(w))) : true)
                     .Union(
                         _context.Artwork
@@ -44,8 +44,8 @@ namespace Illus.Server.Sservices.Works
                             (!command.IsAI) ? p.IsAI == false : true &&
                             (!command.IsR18) ? p.IsR18 == false : true &&
                             p.PostTime <= today &&
-                            (workList.Count > 0) ?
-                            keywordList.All(w => p.Title.Contains(w)) : true))
+                            (keywordList.Count > 0) ?
+                                keywordList.All(w => p.Title.Contains(w)) : true))
                     .Include(p => p.Artist)
                     .Include(p => p.Images);
 
@@ -101,12 +101,15 @@ namespace Illus.Server.Sservices.Works
             var model = new ArtworkViewModel();
             try
             {
+                var today = DateTime.Now;
                 var work = _context.Artwork
                     .AsNoTracking()
                     .Include(p => p.Images)
                     .Include(p => p.Artist)
                     .Include(p => p.Tags)
-                    .SingleOrDefault(p => p.Id == id);
+                    .SingleOrDefault(
+                        p => p.Id == id && p.IsOpen == true &&
+                        p.IsDelete == false && p.PostTime <= today);
                 if (work != null)
                 {
                     model.Id = work.Id;
