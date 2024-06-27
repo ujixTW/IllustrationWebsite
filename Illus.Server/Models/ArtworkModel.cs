@@ -13,6 +13,9 @@
         public DateTime PostTime { get; set; }
         public bool IsOpen { get; set; } = false;
         public bool IsDelete { get; set; } = false;
+        public virtual List<ImgModel> Images { get; set; } = new List<ImgModel>();
         public virtual UserModel Artist { get; set; } = new UserModel();
+        public virtual List<TagModel> Tags { get; set; } = new List<TagModel>();
+        public virtual List<LikeModel> Likes { get; set; } = new List<LikeModel>();
     }
 }

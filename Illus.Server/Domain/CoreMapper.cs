@@ -15,14 +15,7 @@ namespace Illus.Server.Domain
         {
             entity.ToTable("Artwork");
             entity.HasKey(p => p.Id);
-            entity.HasOne(p => p.Artist).WithMany();
-        }
-        public void Map(EntityTypeBuilder<ArtworkTagModel> entity)
-        {
-            entity.ToTable("ArtworkTags");
-            entity.HasKey(p => new { p.ArtworkId, p.TagId });
-            entity.HasOne(p => p.Artwork).WithMany();
-            entity.HasOne(p => p.Tag).WithMany();
+            entity.HasMany(p => p.Tags).WithMany(p => p.Artworks).UsingEntity("ArtworkTag");
         }
         public void Map(EntityTypeBuilder<CountryModel> entity)
         {
@@ -54,7 +47,7 @@ namespace Illus.Server.Domain
         {
             entity.ToTable("Img");
             entity.HasKey(p => p.Id);
-            entity.HasOne(p =>p.Artwork).WithMany();
+            entity.HasOne(p => p.Artwork).WithMany(p => p.Images);
         }
         public void Map(EntityTypeBuilder<LanguageModel> entity)
         {
@@ -66,7 +59,7 @@ namespace Illus.Server.Domain
             entity.ToTable("Like");
             entity.HasKey(p => p.Id);
             entity.HasOne(p => p.User).WithMany().OnDelete(DeleteBehavior.ClientCascade);
-            entity.HasOne(p => p.Artwork).WithMany();
+            entity.HasOne(p => p.Artwork).WithMany(p => p.Likes);
         }
         public void Map(EntityTypeBuilder<MassageModel> entity)
         {

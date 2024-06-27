@@ -8,7 +8,6 @@ namespace Illus.Server.Domain
         public IllusContext(DbContextOptions<IllusContext> options) : base(options) { }
         public DbSet<AdminModel> Admin { get; set; }
         public DbSet<ArtworkModel> Artwork { get; set; }
-        public DbSet<ArtworkTagModel> ArtworkTags { get; set; }
         public DbSet<CountryModel> Country { get; set; }
         public DbSet<DailyThemeModel> DailyTheme { get; set; }
         public DbSet<FollowModel> Follow { get; set; }
@@ -27,7 +26,6 @@ namespace Illus.Server.Domain
             var mapper = new CoreMapper();
             modelBuilder.Entity<AdminModel>(entity => mapper.Map(entity));
             modelBuilder.Entity<ArtworkModel>(entity => mapper.Map(entity));
-            modelBuilder.Entity<ArtworkTagModel>(entity => mapper.Map(entity));
             modelBuilder.Entity<CountryModel>(entity => mapper.Map(entity));
             modelBuilder.Entity<DailyThemeModel>(entity => mapper.Map(entity));
             modelBuilder.Entity<FollowModel>(entity => mapper.Map(entity));
