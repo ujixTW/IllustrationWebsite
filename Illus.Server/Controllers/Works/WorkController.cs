@@ -39,5 +39,13 @@ namespace Illus.Server.Controllers.Works
 
             return Ok(model);
         }
+        [HttpGet("{workId}")]
+        public IActionResult GetWorkDetail(int workId)
+        {
+            var model = _workServices.GetWorkDetail(workId);
+
+            return Ok(model);
+        }
+
     }
 }

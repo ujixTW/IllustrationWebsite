@@ -96,5 +96,41 @@ namespace Illus.Server.Sservices.Works
 
             return workList;
         }
+        public ArtworkViewModel GetWorkDetail(int id)
+        {
+            var model = new ArtworkViewModel();
+            try
+            {
+                var work = _context.Artwork
+                    .AsNoTracking()
+                    .Include(p => p.Images)
+                    .Include(p => p.Artist)
+                    .Include(p => p.Tags)
+                    .SingleOrDefault(p => p.Id == id);
+                if (work != null)
+                {
+                    model.Id = work.Id;
+                    model.ArtistId = work.ArtistId;
+                    model.Title = work.Title;
+                    if (!string.IsNullOrEmpty(work.Description))
+                        model.Description = work.Description;
+                    model.LikeCounts = work.LikeCounts;
+                    model.ReadCounts = work.ReadCounts;
+                    model.IsR18 = work.IsR18;
+                    model.IsAI = work.IsAI;
+                    model.PostTime = work.PostTime;
+                    model.ArtistName = work.Artist.Nickname;
+                    if (!string.IsNullOrEmpty(work.Artist.HeadshotContent))
+                        model.ArtistHeadshotContent = work.Artist.HeadshotContent;
+                    if (work.Tags.Count > 0) model.Tags = work.Tags;
+                    if (work.Images.Count > 0) model.Imgs = work.Images;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("GetWorkDetail", ex);
+            }
+            return model;
+        }
     }
 }

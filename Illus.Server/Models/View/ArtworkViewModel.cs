@@ -14,7 +14,7 @@
         public DateTime PostTime { get; set; }
         public string ArtistName { get; set; } = string.Empty;
         public string ArtistHeadshotContent { get; set; } = string.Empty;
-        public List<string> Tags { get; set; } = [];
+        public List<TagModel> Tags { get; set; } = [];
         public List<ImgModel> Imgs { get; set; } = [];
     }
 }
