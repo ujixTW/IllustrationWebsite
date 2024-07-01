@@ -5,7 +5,8 @@
         public int Id { get; set; }
         public int ArtistId { get; set; }
         public string Title { get; set; } = string.Empty;
-        public string? Description { get; set; }
+        public string CoverImg { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public int LikeCounts { get; set; }
         public int ReadCounts { get; set; }
         public bool IsR18 { get; set; }

@@ -13,17 +13,20 @@ namespace Illus.Server.Controllers.Works
     public class WorkController : ControllerBase
     {
         private readonly WorkService _workServices;
+        private readonly string _userIdKey;
         public WorkController(WorkService workServices)
         {
             _workServices = workServices;
+            _userIdKey = "UserId";
         }
         //取得作品列表，以QueryString判定搜尋條件
         [HttpGet("GetWorkList")]
         public IActionResult GetWorkList(
-            [FromQuery] int page, [FromQuery] string? keywords, [FromQuery] string orderType,
-            [FromQuery] bool isR18, [FromQuery] bool isAI, [FromQuery] int workCount)
+            [FromQuery] int page, [FromQuery] string? keywords, [FromQuery] bool isDesc,
+            [FromQuery] int orderType, [FromQuery] bool isR18, [FromQuery] bool isAI,
+            [FromQuery] int workCount)
         {
-            if (page >= 0) page = 0;
+            if (page <= 0) page = 0;
             if (string.IsNullOrEmpty(keywords)) keywords = string.Empty;
 
             var model = new List<ArtworkViewModel>();
@@ -31,6 +34,7 @@ namespace Illus.Server.Controllers.Works
             {
                 Page = page,
                 Count = workCount,
+                IsDesc = isDesc,
                 IsR18 = isR18,
                 IsAI = isAI,
                 Keywords = keywords,
@@ -39,12 +43,29 @@ namespace Illus.Server.Controllers.Works
 
             return Ok(model);
         }
+        [HttpGet("GetWorkList/Daily")]
+        public IActionResult GetDailyWorkList(
+            [FromQuery] bool isR18, [FromQuery] bool isAI, [FromQuery] int workCount)
+        {
+            var list = _workServices.GetDailyWorkList(isR18, isAI, workCount);
+            return Ok(list);
+        }
         [HttpGet("{workId}")]
         public IActionResult GetWorkDetail(int workId)
         {
-            var model = _workServices.GetWorkDetail(workId);
+            var userIdStr = Request.Cookies[_userIdKey];
+            var model = new ArtworkViewModel();
 
-            return Ok(model);
+            if (int.TryParse(userIdStr, out int userId))
+            {
+                model = _workServices.GetWorkDetail(workId, userId);
+            }
+            else
+            {
+                model = _workServices.GetWorkDetail(workId, null);
+            }
+
+            return (model != null) ? Ok(model) : BadRequest();
         }
         //新增作品
         //編輯作品
