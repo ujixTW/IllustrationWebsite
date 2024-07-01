@@ -17,4 +17,9 @@
         public List<TagModel> Tags { get; set; } = [];
         public List<ImgModel> Imgs { get; set; } = [];
     }
+    public class ArtworkViewListModel
+    {
+        public List<ArtworkViewModel> ArtworkList { get; set; } = new List<ArtworkViewModel>();
+        public int MaxCount { get; set; }
+    }
 }

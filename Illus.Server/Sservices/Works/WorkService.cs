@@ -14,7 +14,7 @@ namespace Illus.Server.Sservices.Works
         {
             _context = context;
         }
-        public List<ArtworkViewModel> GetWorkList(WorkListCommand command)
+        public ArtworkViewListModel GetWorkList(WorkListCommand command)
         {
             var keywordList = new List<string>();
 
@@ -22,6 +22,7 @@ namespace Illus.Server.Sservices.Works
                 keywordList = command.Keywords.Trim().Split(' ').ToList();
 
             var workList = new List<ArtworkViewModel>();
+            var maxCount = 0;
             try
             {
                 var list = _context.Artwork
@@ -41,7 +42,8 @@ namespace Illus.Server.Sservices.Works
                             (!command.IsR18) ? p.IsR18 == false : true &&
                             (keywordList.Count > 0) ?
                                 keywordList.All(w => p.Title.Contains(w)) : true))
-                    .Include(p => p.Artist);
+                    .Include(p => p.Artist)
+                    .AsNoTracking();
 
                 switch (command.OrderType)
                 {
@@ -77,9 +79,10 @@ namespace Illus.Server.Sservices.Works
                         break;
                 }
 
+                maxCount = list.Count();
+
                 list.Skip(command.Page * command.Count)
                     .Take(command.Count)
-                    .AsNoTracking()
                     .ToList();
 
                 foreach (var item in list)
@@ -103,17 +106,18 @@ namespace Illus.Server.Sservices.Works
             {
                 Logger.WriteLog("GetWorkList", ex);
             }
+            var temp = new ArtworkViewListModel { ArtworkList = workList, MaxCount = maxCount };
 
-            return workList;
+            return temp;
         }
-        public List<ArtworkViewModel> GetDailyWorkList(bool isR18, bool isAi, int workCount)
+        public ArtworkViewListModel GetDailyWorkList(bool isR18, bool isAi, int workCount)
         {
-            var modelList = new List<ArtworkViewModel>();
+            var workList = new ArtworkViewListModel();
             var todayTheme = _context.DailyTheme.AsNoTracking()
                 .Include(p => p.Tag.Content).SingleOrDefault(p => p.IsEnable == true);
             if (todayTheme != null)
             {
-                modelList = GetWorkList(new WorkListCommand
+                workList = GetWorkList(new WorkListCommand
                 {
                     Page = 0,
                     Count = workCount,
@@ -123,7 +127,65 @@ namespace Illus.Server.Sservices.Works
                     OrderType = (int)WorkListOrder.Hot
                 });
             }
-            return modelList;
+            return workList;
+        }
+        public ArtworkViewListModel GetArtistWorkList(WorkListCommand command, int id, bool isOwn)
+        {
+            var workList = new List<ArtworkViewModel>();
+            var maxCount = 0;
+            try
+            {
+                var list = _context.Artwork
+                    .Where(p => p.ArtistId == id && (isOwn) ? p.IsDelete == false : p.IsOpen == true)
+                    .AsNoTracking();
+
+                switch (command.OrderType)
+                {
+                    case (int)WorkListOrder.PostTime:
+                        if (command.IsDesc)
+                            list.OrderBy(p => p.PostTime).ThenByDescending(p => p.Id);
+                        else
+                            list.OrderByDescending(p => p.PostTime).ThenByDescending(p => p.Id);
+                        break;
+                    case (int)WorkListOrder.Hot:
+                        if (command.IsDesc)
+                            list.OrderBy(p => p.LikeCounts).ThenByDescending(p => p.Id);
+                        else
+                            list.OrderByDescending(p => p.LikeCounts).ThenByDescending(p => p.Id);
+                        break;
+                    default:
+                        list.OrderByDescending(p => p.PostTime).ThenByDescending(p => p.Id);
+                        break;
+                }
+
+                maxCount = list.Count();
+
+                list.Skip(command.Page * command.Count)
+                    .Take(command.Count)
+                    .ToList();
+
+                foreach (var work in list)
+                {
+                    workList.Add(new ArtworkViewModel
+                    {
+                        Id = work.Id,
+                        ArtistId = work.ArtistId,
+                        Title = work.Title,
+                        CoverImg = work.CoverImg,
+                        LikeCounts = work.LikeCounts,
+                        ReadCounts = work.ReadCounts,
+                        PostTime = work.PostTime,
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("GetArtistWorkList", ex);
+            }
+
+            var temp = new ArtworkViewListModel { ArtworkList = workList, MaxCount = maxCount };
+
+            return temp;
         }
         public ArtworkViewModel? GetWorkDetail(int id, int? userId)
         {

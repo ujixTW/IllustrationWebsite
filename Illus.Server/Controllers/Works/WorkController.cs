@@ -29,8 +29,7 @@ namespace Illus.Server.Controllers.Works
             if (page <= 0) page = 0;
             if (string.IsNullOrEmpty(keywords)) keywords = string.Empty;
 
-            var model = new List<ArtworkViewModel>();
-            model = _workServices.GetWorkList(new WorkListCommand
+            var list = _workServices.GetWorkList(new WorkListCommand
             {
                 Page = page,
                 Count = workCount,
@@ -41,13 +40,31 @@ namespace Illus.Server.Controllers.Works
                 OrderType = orderType
             });
 
-            return Ok(model);
+            return Ok(list);
         }
         [HttpGet("GetWorkList/Daily")]
         public IActionResult GetDailyWorkList(
             [FromQuery] bool isR18, [FromQuery] bool isAI, [FromQuery] int workCount)
         {
             var list = _workServices.GetDailyWorkList(isR18, isAI, workCount);
+            return Ok(list);
+        }
+        [HttpGet("GetWorkList/Artist/{id}")]
+        public IActionResult GetArtistWorkList(
+            int id, [FromQuery] int page, [FromQuery] int count,
+            [FromQuery] bool isDesc, [FromQuery] int orderType)
+        {
+            var userIdStr = Request.Cookies[_userIdKey];
+            var isOwnWorks = (int.TryParse(userIdStr, out int userId) && userId == id) ? true : false;
+            var command = new WorkListCommand
+            {
+                Page = page,
+                Count = count,
+                IsDesc = isDesc,
+                OrderType = orderType
+            };
+
+            var list = _workServices.GetArtistWorkList(command, id, isOwnWorks);
             return Ok(list);
         }
         [HttpGet("{workId}")]

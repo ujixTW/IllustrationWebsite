@@ -8,7 +8,7 @@
         public bool IsAI { get; set; }
         public string Keywords { get; set; } = string.Empty;
         public bool IsDesc { get; set; }
-        public int OrderType { get; set; }        
+        public int OrderType { get; set; }
     }
     public enum WorkListOrder : int
     {
