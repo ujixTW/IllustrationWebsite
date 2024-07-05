@@ -25,4 +25,14 @@
         public Guid CAPTCHA { get; set; }
         public EditPasswordCommand PasswordCommand { get; set; } = new EditPasswordCommand();
     }
+    public class EditUserDataCommand
+    {
+        public int Id { get; set; }
+        public string NickName { get; set; } = string.Empty;
+        public string Profile { get; set; } = string.Empty;
+        public IFormFile? cover { get; set; }
+        public IFormFile? headshot { get; set; }
+        public int LanguageiD { get; set; }
+        public int CountryiD { get; set; } 
+    }
 }

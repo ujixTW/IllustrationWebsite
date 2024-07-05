@@ -123,17 +123,17 @@ namespace Illus.Server.Controllers.Account
             return (result) ? Ok() : BadRequest();
         }
         [HttpPost("UserData")]
-        public IActionResult EditUserData(UserViewModel model)
+        public async Task<IActionResult> EditUserData(EditUserDataCommand command)
         {
             var result = false;
             var tokenStr = Request.Cookies[_loginTokenKey];
             var userIdStr = Request.Cookies[_userIdKey];
             if (int.TryParse(userIdStr, out int userId) &&
                 Guid.TryParse(tokenStr, out Guid token) &&
-                userId == model.Id &&
-                _editService.CheckUserIdentity(token, model.Id))
+                userId == command.Id &&
+                _editService.CheckUserIdentity(token, command.Id))
             {
-                result = _editService.EditUserData(model);
+                result = await _editService.EditUserData(command);
             }
             return (result) ? Ok() : BadRequest();
         }

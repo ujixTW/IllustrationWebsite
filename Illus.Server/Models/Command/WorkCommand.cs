@@ -15,4 +15,17 @@
         PostTime = 0,
         Hot = 1
     }
+    public class EditWorkCommand
+    {
+        public int Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public bool IsR18 { get; set; }
+        public bool IsAI { get; set; }
+        public DateTime PostTime { get; set; }
+        public bool IsOpen { get; set; }
+        public List<IFormFile> Imgs { get; set; } = new List<IFormFile>();
+        public required IFormFile Cover { get; set; }
+        public List<TagModel> Tags { get; set; } = new List<TagModel>();
+    }
 }

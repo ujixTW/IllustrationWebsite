@@ -1,10 +1,8 @@
-﻿using Illus.Server.Models;
+﻿using Illus.Server.Helper;
 using Illus.Server.Models.Command;
 using Illus.Server.Models.View;
 using Illus.Server.Sservices.Works;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Illus.Server.Controllers.Works
 {
@@ -20,7 +18,7 @@ namespace Illus.Server.Controllers.Works
             _userIdKey = "UserId";
         }
         //取得作品列表，以QueryString判定搜尋條件
-        [HttpGet("GetWorkList")]
+        [HttpGet("GetList")]
         public IActionResult GetWorkList(
             [FromQuery] int page, [FromQuery] string? keywords, [FromQuery] bool isDesc,
             [FromQuery] int orderType, [FromQuery] bool isR18, [FromQuery] bool isAI,
@@ -42,14 +40,14 @@ namespace Illus.Server.Controllers.Works
 
             return Ok(list);
         }
-        [HttpGet("GetWorkList/Daily")]
+        [HttpGet("GetList/Daily")]
         public IActionResult GetDailyWorkList(
             [FromQuery] bool isR18, [FromQuery] bool isAI, [FromQuery] int workCount)
         {
             var list = _workServices.GetDailyWorkList(isR18, isAI, workCount);
             return Ok(list);
         }
-        [HttpGet("GetWorkList/Artist/{id}")]
+        [HttpGet("GetList/Artist/{id}")]
         public IActionResult GetArtistWorkList(
             int id, [FromQuery] int page, [FromQuery] int count,
             [FromQuery] bool isDesc, [FromQuery] int orderType)
@@ -72,19 +70,62 @@ namespace Illus.Server.Controllers.Works
         {
             var userIdStr = Request.Cookies[_userIdKey];
             var model = new ArtworkViewModel();
-
+            var success = false;
             if (int.TryParse(userIdStr, out int userId))
             {
-                model = _workServices.GetWorkDetail(workId, userId);
+                model = _workServices.GetWorkDetail(workId, userId, out success);
             }
             else
             {
-                model = _workServices.GetWorkDetail(workId, null);
+                model = _workServices.GetWorkDetail(workId, null, out success);
             }
 
-            return (model != null) ? Ok(model) : BadRequest();
+            return (success) ? Ok(model) : NotFound();
         }
         //新增作品
+        [HttpPost("Add")]
+        public async Task<IActionResult> AddWork(EditWorkCommand command)
+        {
+            var userIdStr = Request.Cookies[_userIdKey];
+            var success = false;
+
+            var tempImgs = command.Imgs;
+            tempImgs.Add(command.Cover);
+
+            if (int.TryParse(userIdStr, out int userId) && FileHelper.IsImage(tempImgs))
+            {
+                success = await _workServices.AddWork(command, userId);
+            }
+            return (success) ? Ok() : BadRequest();
+        }
+        //刪除作品
+        [HttpPost("Delete")]
+        public IActionResult DeleteWork(int workId, int workArtistId)
+        {
+            var userIdStr = Request.Cookies[_userIdKey];
+            var success = false;
+            if (int.TryParse(userIdStr, out int userId) && userId == workArtistId)
+            {
+                success = _workServices.DeleteWork(workId, workArtistId);
+            }
+            return (success) ? Ok() : BadRequest();
+        }
         //編輯作品
+        [HttpPost("Edit")]
+        public async Task<IActionResult> EditWork(EditWorkCommand command)
+        {
+            var userIdStr = Request.Cookies[_userIdKey];
+            var model = new ArtworkViewModel();
+            var success = false;
+
+            var tempImgs = command.Imgs;
+            tempImgs.Add(command.Cover);
+
+            if (int.TryParse(userIdStr, out int userId) && FileHelper.IsImage(tempImgs))
+            {
+                model = await _workServices.EditWork(command, userId);
+            }
+            return (success) ? Ok(model) : BadRequest();
+        }
     }
 }

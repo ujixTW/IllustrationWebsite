@@ -306,7 +306,7 @@ namespace Illus.Server.Sservices.Account
 
             return result;
         }
-        public bool EditUserData(UserViewModel model)
+        public async Task<bool> EditUserData(EditUserDataCommand command)
         {
             var result = false;
             try
@@ -314,19 +314,27 @@ namespace Illus.Server.Sservices.Account
                 var userName = _context.User
                     .AsNoTracking()
                     .Select(p => p.Nickname)
-                    .SingleOrDefault(p => p.Equals(model.NickName.Trim()));
+                    .SingleOrDefault(p => p.Equals(command.NickName.Trim()));
 
                 if (string.IsNullOrEmpty(userName))
                 {
-                    var user = _context.User.SingleOrDefault(p => p.Id.Equals(model.Id));
+                    var user = _context.User.SingleOrDefault(p => p.Id.Equals(command.Id));
                     if (user != null)
                     {
-                        if (!string.IsNullOrEmpty(model.NickName)) user.Nickname = model.NickName.Trim();
-                        user.Profile = model.Profile;
-                        user.LanguageId = model.Language.Id;
-                        user.CountryID = model.Country.Id;
-                        user.CoverContent = model.CoverContent;
-                        user.HeadshotContent = model.HeadshotContent;
+                        if (!string.IsNullOrEmpty(command.NickName)) user.Nickname = command.NickName.Trim();
+                        user.Profile = command.Profile;
+                        user.LanguageId = command.LanguageiD;
+                        user.CountryID = command.CountryiD;
+
+                        if (command.cover != null && FileHelper.IsImage(command.cover))
+                        {
+                            user.CoverContent = await FileHelper.SaveImageAsync(command.cover, command.Id, (int)FileHelper.imgType.userCover);
+                        }
+
+                        if (command.headshot != null && FileHelper.IsImage(command.headshot))
+                        {
+                            user.HeadshotContent = await FileHelper.SaveImageAsync(command.headshot, command.Id, (int)FileHelper.imgType.userCover);
+                        }
 
                         _context.SaveChanges();
                         result = true;

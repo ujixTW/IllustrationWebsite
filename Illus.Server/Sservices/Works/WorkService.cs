@@ -187,9 +187,10 @@ namespace Illus.Server.Sservices.Works
 
             return temp;
         }
-        public ArtworkViewModel? GetWorkDetail(int id, int? userId)
+        public ArtworkViewModel GetWorkDetail(int id, int? userId, out bool success)
         {
             var model = new ArtworkViewModel();
+            success = false;
             try
             {
                 var today = DateTime.Now;
@@ -198,8 +199,9 @@ namespace Illus.Server.Sservices.Works
                     .Include(p => p.Artist)
                     .Include(p => p.Tags)
                     .SingleOrDefault(
-                        p => p.Id == id && p.IsOpen == true &&
-                        p.IsDelete == false && p.PostTime <= today);
+                        p => p.Id == id &&
+                        (p.ArtistId == userId) ? p.IsDelete == false : p.IsOpen == true &&
+                        p.PostTime <= today);
                 var history = _context.History.Where(p => p.ArtworkId == id).ToList();
 
                 if (work != null)
@@ -255,13 +257,90 @@ namespace Illus.Server.Sservices.Works
                     };
 
                     _context.SaveChanges();
+                    success = true;
                 }
-                else { model = null; }
             }
             catch (Exception ex)
             {
                 Logger.WriteLog("GetWorkDetail", ex);
             }
+            return model;
+        }
+
+        public async Task<bool> AddWork(EditWorkCommand command, int userId)
+        {
+            var success = false;
+            try
+            {
+                var today = DateTime.Now;
+                #region 創建新作品至資料庫
+
+                var newWork = new ArtworkModel
+                {
+                    ArtistId = userId,
+                    Title = command.Title,
+                    Description = command.Description,
+                    IsR18 = command.IsR18,
+                    IsAI = command.IsAI,
+                    PostTime = (command.PostTime >= today) ? command.PostTime : today,
+                    IsOpen = command.IsOpen,
+                    Tags = command.Tags,
+                };
+
+                _context.Artwork.Add(newWork);
+                _context.SaveChanges();
+
+                #endregion
+                #region 將作品圖片存入伺服器
+                var workId = newWork.Id;
+                var workPaths = await FileHelper.SaveImageAsync(command.Imgs, workId, (int)FileHelper.imgType.Work);
+                var coverPath = await FileHelper.SaveImageAsync(command.Cover, workId, (int)FileHelper.imgType.WorkCover);
+                #endregion
+                #region 將路徑資料寫入資料庫
+
+                newWork.CoverImg = coverPath;
+                newWork.Images = new List<ImgModel>();
+                foreach (var path in workPaths)
+                {
+                    newWork.Images.Add(new ImgModel { ArtworkContent = path });
+                }
+                _context.SaveChanges();
+
+                #endregion
+
+                success = true;
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("AddWork", ex);
+            }
+            return success;
+        }
+        public bool DeleteWork(int workId, int userId)
+        {
+            var success = false;
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("DeleteWork", ex);
+            }
+            return success;
+        }
+        public async Task<ArtworkViewModel> EditWork(EditWorkCommand command, int userId)
+        {
+            var model = new ArtworkViewModel();
+            try
+            {
+
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("EditWork", ex);
+            }
+
             return model;
         }
     }
