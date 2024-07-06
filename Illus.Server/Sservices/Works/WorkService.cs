@@ -321,7 +321,15 @@ namespace Illus.Server.Sservices.Works
             var success = false;
             try
             {
-
+                var work = _context.Artwork
+                    .Where(p => p.Id == workId && p.ArtistId == userId)
+                    .SingleOrDefault();
+                if (work != null)
+                {
+                    work.IsDelete = true;
+                    _context.SaveChanges();
+                    success = true;
+                }
             }
             catch (Exception ex)
             {
@@ -329,19 +337,69 @@ namespace Illus.Server.Sservices.Works
             }
             return success;
         }
-        public async Task<ArtworkViewModel> EditWork(EditWorkCommand command, int userId)
+        public async Task<bool> EditWork(EditWorkCommand command, int userId)
         {
-            var model = new ArtworkViewModel();
+            var success = false;
             try
             {
+                var today = DateTime.Now;
+                var work = _context.Artwork
+                    .Include(p => p.Tags)
+                    .Include(p => p.Images)
+                    .SingleOrDefault(p => p.Id == command.Id && p.ArtistId == userId);
+                if (work != null)
+                {
+                    work.Title = command.Title;
+                    work.CoverImg = await FileHelper.SaveImageAsync(command.Cover, command.Id, (int)FileHelper.imgType.WorkCover);
+                    work.Description = command.Description;
+                    work.IsR18 = command.IsR18;
+                    work.IsAI = command.IsAI;
+                    if (work.PostTime != command.PostTime)
+                    {
+                        work.PostTime = (command.PostTime >= today.AddSeconds(-10)) ?
+                            command.PostTime : work.PostTime;
+                    }
+                    work.IsOpen = (work.PostTime > today) ? false : command.IsOpen;
+                    work.Tags = command.Tags;
 
+                    var oldImgs = work.Images;
+                    var newImgs = command.Imgs;
+                    var paths = await FileHelper.SaveImageAsync(newImgs, command.Id, (int)FileHelper.imgType.Work);
+                    if (oldImgs.Count > newImgs.Count)
+                    {
+                        var range = oldImgs.Count - newImgs.Count;
+                        var oldPathList = new List<string>();
+
+                        foreach (var img in oldImgs.GetRange(newImgs.Count, range))
+                        {
+                            oldPathList.Add(img.ArtworkContent);
+                        }
+
+                        FileHelper.DeleteImageAsync(oldPathList);
+                        oldImgs.RemoveRange(newImgs.Count, range);
+                    }
+                    if (oldImgs.Count < newImgs.Count)
+                    {
+                        for (var i = 0; i < newImgs.Count; ++i)
+                        {
+                            if (i >= oldImgs.Count)
+                            {
+                                oldImgs.Add(new ImgModel { ArtworkContent = paths[i] });
+                            }
+                        }
+                    }
+
+                    _context.SaveChanges();
+                    success = true;
+
+                }
             }
             catch (Exception ex)
             {
                 Logger.WriteLog("EditWork", ex);
             }
 
-            return model;
+            return success;
         }
     }
 }

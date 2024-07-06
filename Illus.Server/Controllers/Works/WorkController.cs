@@ -115,7 +115,6 @@ namespace Illus.Server.Controllers.Works
         public async Task<IActionResult> EditWork(EditWorkCommand command)
         {
             var userIdStr = Request.Cookies[_userIdKey];
-            var model = new ArtworkViewModel();
             var success = false;
 
             var tempImgs = command.Imgs;
@@ -123,9 +122,10 @@ namespace Illus.Server.Controllers.Works
 
             if (int.TryParse(userIdStr, out int userId) && FileHelper.IsImage(tempImgs))
             {
-                model = await _workServices.EditWork(command, userId);
+                success = await _workServices.EditWork(command, userId);
             }
-            return (success) ? Ok(model) : BadRequest();
+            return (success) ? Ok() : BadRequest();
         }
+
     }
 }

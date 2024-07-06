@@ -3,7 +3,7 @@ namespace Illus.Server.Helper
 {
     public class FileHelper
     {
-        private static readonly string _basePath = "\\IllusWebsiteData\\";
+        private static readonly string _basePath = "\\IllusWebsiteData";
         public enum imgType : int
         {
             Work = 0,
@@ -45,20 +45,21 @@ namespace Illus.Server.Helper
             {
                 case (int)imgType.WorkCover:
                     fileNewName = $"{id} cover{extension}";
-                    path = $"{_basePath}\\Work\\img-costdown\\{fileNewName}";
+                    path = $"{_basePath}\\Work\\img-costdown";
                     break;
                 case (int)imgType.userCover:
                     fileNewName = $"{id} user cover{extension}";
-                    path = $"{_basePath}\\UserData\\Cover\\{fileNewName}";
+                    path = $"{_basePath}\\UserData\\Cover";
                     break;
                 case (int)imgType.UserHeadshot:
                     fileNewName = $"{id} user headshot{extension}";
-                    path = $"{_basePath}\\UserData\\Headshot\\{fileNewName}";
+                    path = $"{_basePath}\\UserData\\Headshot";
                     break;
                 default:
                     return path;
             }
-
+            CheckImageFoldInfo(path);
+            path = $"{path}\\{fileNewName}";
             await SaveImageAsync(file, path);
 
             return path;
@@ -76,11 +77,14 @@ namespace Illus.Server.Helper
             switch (dataType)
             {
                 case (int)imgType.Work:
+                    var pathFold = $"{_basePath}\\Work\\img-master";
+                    CheckImageFoldInfo(pathFold);
                     for (var i = 0; i < files.Count; i++)
                     {
                         var extension = Path.GetExtension(files[i].FileName);
                         var fileNewName = $"{id} p{i}{extension}";
-                        var path = $"{_basePath}\\Work\\img-master\\{fileNewName}";
+
+                        var path = $"{pathFold}\\{fileNewName}";
 
                         await SaveImageAsync(files[i], path);
 
@@ -106,6 +110,29 @@ namespace Illus.Server.Helper
                 Logger.WriteLog("SaveImageAsync", ex);
             }
 
+        }
+
+        public static void DeleteImageAsync(List<string> paths)
+        {
+            try
+            {
+                foreach (var path in paths)
+                {
+                    if (File.Exists(path))
+                    {
+                        File.Delete(path);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("DeleteImageAsync", ex);
+            }
+        }
+        private static void CheckImageFoldInfo(string path)
+        {
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
         }
     }
 }
