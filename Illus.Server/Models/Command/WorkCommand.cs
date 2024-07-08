@@ -26,6 +26,11 @@
         public bool IsOpen { get; set; }
         public List<IFormFile> Imgs { get; set; } = new List<IFormFile>();
         public required IFormFile Cover { get; set; }
-        public List<TagModel> Tags { get; set; } = new List<TagModel>();
+        public List<EditTagCommand> Tags { get; set; } = new List<EditTagCommand>();
+    }
+    public class EditTagCommand
+    {
+        public int? Id { get; set; }
+        public string Content { get; set; } = string.Empty;
     }
 }

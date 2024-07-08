@@ -1,4 +1,5 @@
-﻿using Illus.Server.Domain;
+﻿using Azure;
+using Illus.Server.Domain;
 using Illus.Server.Helper;
 using Illus.Server.Models;
 using Illus.Server.Models.Command;
@@ -14,6 +15,7 @@ namespace Illus.Server.Sservices.Works
         {
             _context = context;
         }
+        #region 取得作品資訊
         public ArtworkViewListModel GetWorkList(WorkListCommand command)
         {
             var keywordList = new List<string>();
@@ -31,8 +33,8 @@ namespace Illus.Server.Sservices.Works
                         p.IsOpen == true &&
                         (!command.IsAI) ? p.IsAI == false : true &&
                         (!command.IsR18) ? p.IsR18 == false : true &&
-                        (keywordList.Count > 0) ?
-                            keywordList.All(w => p.Tags.All(t => t.Content.Equals(w))) : true)
+                        keywordList.Any() ?
+                            keywordList.Any(w => p.Tags.Any(t => t.Content.Equals(w))) : true)
                     .Union(
                         _context.Artwork
                         .Include(p => p.Tags)
@@ -40,8 +42,8 @@ namespace Illus.Server.Sservices.Works
                             p.IsOpen == true &&
                             (!command.IsAI) ? p.IsAI == false : true &&
                             (!command.IsR18) ? p.IsR18 == false : true &&
-                            (keywordList.Count > 0) ?
-                                keywordList.All(w => p.Title.Contains(w)) : true))
+                            keywordList.Any() ?
+                                keywordList.Any(w => p.Title.Contains(w)) : true))
                     .Include(p => p.Artist)
                     .AsNoTracking();
 
@@ -266,7 +268,8 @@ namespace Illus.Server.Sservices.Works
             }
             return model;
         }
-
+        #endregion
+        #region 編輯作品
         public async Task<bool> AddWork(EditWorkCommand command, int userId)
         {
             var success = false;
@@ -284,7 +287,7 @@ namespace Illus.Server.Sservices.Works
                     IsAI = command.IsAI,
                     PostTime = (command.PostTime >= today) ? command.PostTime : today,
                     IsOpen = command.IsOpen,
-                    Tags = command.Tags,
+                    Tags = _checkTagExisting(command.Tags),
                 };
 
                 _context.Artwork.Add(newWork);
@@ -344,7 +347,6 @@ namespace Illus.Server.Sservices.Works
             {
                 var today = DateTime.Now;
                 var work = _context.Artwork
-                    .Include(p => p.Tags)
                     .Include(p => p.Images)
                     .SingleOrDefault(p => p.Id == command.Id && p.ArtistId == userId);
                 if (work != null)
@@ -360,7 +362,6 @@ namespace Illus.Server.Sservices.Works
                             command.PostTime : work.PostTime;
                     }
                     work.IsOpen = (work.PostTime > today) ? false : command.IsOpen;
-                    work.Tags = command.Tags;
 
                     var oldImgs = work.Images;
                     var newImgs = command.Imgs;
@@ -400,6 +401,145 @@ namespace Illus.Server.Sservices.Works
             }
 
             return success;
+        }
+        #endregion
+        #region 標籤讀取與編輯
+        public List<TagModel> GetUserHistoryTag(int userId)
+        {
+            var tagList = new List<TagModel>();
+            try
+            {
+                var userTagList = _context.Tag
+                    .Include(p => p.Artworks)
+                    .Where(p => p.Artworks.Any() ? p.Artworks.Any(a => a.ArtistId == userId) : false)
+                    .OrderByDescending(p => p.Artworks.Where(a => a.ArtistId == userId).Count())
+                    .ThenByDescending(p => p.Id)
+                    .AsNoTracking()
+                    .ToList();
+                foreach (var tag in userTagList)
+                {
+                    tagList.Add(new TagModel { Id = tag.Id, Content = tag.Content });
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("GetUserHistoryTag", ex);
+            }
+            return tagList;
+        }
+        public List<TagModel> GetTagRecommand(string input)
+        {
+            var tagList = new List<TagModel>();
+            try
+            {
+                tagList = _context.Tag
+                    .Where(p => p.Content.Contains(input))
+                    .AsNoTracking()
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("GetTagRecommand", ex);
+            }
+            return tagList;
+        }
+        public void EditTag(EditTagCommand command, int workId, int userId)
+        {
+            try
+            {
+                var work = _context.Artwork.Include(p => p.Tags).FirstOrDefault(p => p.Id == workId);
+                if (work != null)
+                {
+                    command.Content = command.Content.Trim();
+                    if (work.ArtistId != userId)
+                    {
+                        if (work.Tags.All(t => t.Id != command.Id) || work.Tags.All(t => t.Content != command.Content))
+                        {
+                            var tagList = _checkTagExisting(new List<EditTagCommand> { command });
+                            work.Tags.Add(tagList[0]);
+                        }
+                    }
+                    else
+                    {
+                        if (command.Id != null &&
+                           (work.Tags.Any(t => t.Id == command.Id) || work.Tags.Any(t => t.Content == command.Content)))
+                        {
+                            work.Tags.Remove(new TagModel
+                            {
+                                Id = (int)command.Id,
+                                Content = command.Content
+                            });
+                        }
+                        else
+                        {
+                            var tagList = _checkTagExisting(new List<EditTagCommand> { command });
+                            work.Tags.Add(tagList[0]);
+                        }
+                    }
+                    _context.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("EditTag", ex);
+            }
+        }
+        #endregion
+        private List<TagModel> _checkTagExisting(List<EditTagCommand> inputTags)
+        {
+            if (inputTags.Any())
+            {
+                var dbTags = _context.Tag
+                .Where(p => inputTags.Any(t => p.Id == t.Id))
+                .Union(_context.Tag.Where(p => inputTags.Any(t => p.Content == t.Content.Trim())))
+                .ToList();
+
+                foreach (var input in inputTags)
+                {
+                    if (StringHelper.HasHtml(input.Content)) continue;
+
+                    if (dbTags.All(p => p.Id != input.Id) &&
+                        dbTags.All(P => P.Content != input.Content))
+                    {
+                        dbTags.Add(new TagModel { Content = input.Content });
+                    }
+                }
+                _context.SaveChanges();
+
+                var tagList = new List<TagModel>();
+                foreach (var input in inputTags)
+                {
+                    if (StringHelper.HasHtml(input.Content)) continue;
+
+                    var hasTag = false;
+                    foreach (var tag in tagList)
+                    {
+                        if (input.Id == tag.Id || input.Content.Trim() == tag.Content)
+                        {
+                            hasTag = true;
+                            break;
+                        }
+                    }
+
+                    if (!hasTag)
+                    {
+                        foreach (var tag in dbTags)
+                        {
+                            if (tag.Id == input.Id || tag.Content == input.Content.Trim())
+                            {
+                                tagList.Add(tag); break;
+                            }
+                        }
+                    }
+                }
+                return tagList;
+
+            }
+            else
+            {
+                return new List<TagModel>();
+            }
+
         }
     }
 }

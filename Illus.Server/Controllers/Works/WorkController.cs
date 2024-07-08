@@ -1,8 +1,10 @@
 ﻿using Illus.Server.Helper;
+using Illus.Server.Models;
 using Illus.Server.Models.Command;
 using Illus.Server.Models.View;
 using Illus.Server.Sservices.Works;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace Illus.Server.Controllers.Works
 {
@@ -111,6 +113,7 @@ namespace Illus.Server.Controllers.Works
             return (success) ? Ok() : BadRequest();
         }
         //編輯作品
+        //不會對標籤進行編輯
         [HttpPost("Edit")]
         public async Task<IActionResult> EditWork(EditWorkCommand command)
         {
@@ -125,6 +128,38 @@ namespace Illus.Server.Controllers.Works
                 success = await _workServices.EditWork(command, userId);
             }
             return (success) ? Ok() : BadRequest();
+        }
+        [HttpGet("Tag/GetUserHistory")]
+        public IActionResult GetUserHistoryTag()
+        {
+            var tagList = new List<TagModel>();
+            var userIdStr = Request.Cookies[_userIdKey];
+
+            if (int.TryParse(userIdStr, out int userId))
+            {
+                tagList = _workServices.GetUserHistoryTag(userId);
+            }
+            return Ok(tagList);
+        }
+        [HttpGet("Tag/GetRecommand")]
+        public IActionResult GetTagRecommand(string input)
+        {
+            var tagList = new List<TagModel>();
+            if (!string.IsNullOrEmpty(input))
+            {
+                tagList = _workServices.GetTagRecommand(input);
+            }
+            return Ok(tagList);
+        }
+        [HttpPost("Tag/Edit")]
+        public IActionResult EditTag(EditTagCommand command, int workId)
+        {
+            var userIdStr = Request.Cookies[_userIdKey];
+            if (int.TryParse(userIdStr, out int userId))
+            {
+                _workServices.EditTag(command, workId, userId);
+            }
+            return Ok();
         }
 
     }
