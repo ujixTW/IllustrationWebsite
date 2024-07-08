@@ -1,10 +1,10 @@
-﻿using Azure;
-using Illus.Server.Domain;
+﻿using Illus.Server.Domain;
 using Illus.Server.Helper;
 using Illus.Server.Models;
 using Illus.Server.Models.Command;
 using Illus.Server.Models.View;
 using Microsoft.EntityFrameworkCore;
+using System.Web;
 
 namespace Illus.Server.Sservices.Works
 {
@@ -281,8 +281,8 @@ namespace Illus.Server.Sservices.Works
                 var newWork = new ArtworkModel
                 {
                     ArtistId = userId,
-                    Title = command.Title,
-                    Description = command.Description,
+                    Title = HttpUtility.HtmlEncode(command.Title),
+                    Description = HttpUtility.HtmlEncode(command.Description),
                     IsR18 = command.IsR18,
                     IsAI = command.IsAI,
                     PostTime = (command.PostTime >= today) ? command.PostTime : today,
@@ -351,9 +351,9 @@ namespace Illus.Server.Sservices.Works
                     .SingleOrDefault(p => p.Id == command.Id && p.ArtistId == userId);
                 if (work != null)
                 {
-                    work.Title = command.Title;
+                    work.Title = HttpUtility.HtmlEncode(command.Title);
                     work.CoverImg = await FileHelper.SaveImageAsync(command.Cover, command.Id, (int)FileHelper.imgType.WorkCover);
-                    work.Description = command.Description;
+                    work.Description = HttpUtility.HtmlEncode(command.Description);
                     work.IsR18 = command.IsR18;
                     work.IsAI = command.IsAI;
                     if (work.PostTime != command.PostTime)
