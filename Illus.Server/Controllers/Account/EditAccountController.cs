@@ -30,7 +30,7 @@ namespace Illus.Server.Controllers.Account
 
             if (int.TryParse(userIdStr, out int userId) &&
                 Guid.TryParse(tokenStr, out Guid token) &&
-                !string.IsNullOrEmpty(accountCommand) &&
+                !string.IsNullOrWhiteSpace(accountCommand) &&
                 accountCommand.Length >= 6 &&
                 accountCommand.Length <= 16 &&
                 _editService.CheckUserIdentity(token, userId))
@@ -49,7 +49,7 @@ namespace Illus.Server.Controllers.Account
 
             if (int.TryParse(userIdStr, out int userId) &&
                 Guid.TryParse(tokenStr, out Guid token) &&
-                !string.IsNullOrEmpty(emailCommand) &&
+                !string.IsNullOrWhiteSpace(emailCommand) &&
                 emailCommand.Contains("@") &&
                 _editService.CheckUserIdentity(token, userId))
             {
@@ -75,8 +75,8 @@ namespace Illus.Server.Controllers.Account
             var result = false;
             if (int.TryParse(userIdStr, out int userId) &&
                 Guid.TryParse(tokenStr, out Guid token) &&
-                !string.IsNullOrEmpty(command.OldPWD) &&
-                !string.IsNullOrEmpty(command.NewPWD) &&
+                !string.IsNullOrWhiteSpace(command.OldPWD) &&
+                !string.IsNullOrWhiteSpace(command.NewPWD) &&
                 command.NewPWD.Length >= 6 &&
                 command.NewPWD.Length <= 32 &&
                 !string.Equals(command.OldPWD, command.NewPWD) &&
@@ -96,7 +96,7 @@ namespace Illus.Server.Controllers.Account
         public IActionResult ForgetPassword(string Email)
         {
             var result = false;
-            if (!string.IsNullOrEmpty(Email) && Email.Contains("@"))
+            if (!string.IsNullOrWhiteSpace(Email) && Email.Contains("@"))
             {
                 result = _editService.ForgetPassword(Email);
             }
@@ -109,8 +109,8 @@ namespace Illus.Server.Controllers.Account
             var result = false;
             var pwds = command.PasswordCommand;
 
-            if (!string.IsNullOrEmpty(pwds.OldPWD) &&
-                !string.IsNullOrEmpty(pwds.NewPWD) &&
+            if (!string.IsNullOrWhiteSpace(pwds.OldPWD) &&
+                !string.IsNullOrWhiteSpace(pwds.NewPWD) &&
                 pwds.NewPWD.Length >= 6 &&
                 pwds.NewPWD.Length <= 32 &&
                 !string.Equals(pwds.OldPWD, pwds.NewPWD) &&

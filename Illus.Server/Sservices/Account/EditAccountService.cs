@@ -82,7 +82,7 @@ namespace Illus.Server.Sservices.Account
                         #endregion
 
                         #region 寄信
-                        var userName = (string.IsNullOrEmpty(user.Nickname)) ?
+                        var userName = (string.IsNullOrWhiteSpace(user.Nickname)) ?
                             user.Account : user.Nickname;
 
                         var emailContent =
@@ -213,7 +213,7 @@ namespace Illus.Server.Sservices.Account
                 #region 寄信
                 if (user != null)
                 {
-                    var userName = (string.IsNullOrEmpty(user.Nickname)) ?
+                    var userName = (string.IsNullOrWhiteSpace(user.Nickname)) ?
                             user.Account : user.Nickname;
 
                     var emailContent =
@@ -321,7 +321,7 @@ namespace Illus.Server.Sservices.Account
                     var user = _context.User.SingleOrDefault(p => p.Id.Equals(command.Id));
                     if (user != null)
                     {
-                        if (!string.IsNullOrEmpty(command.NickName)) user.Nickname = command.NickName;
+                        if (!string.IsNullOrWhiteSpace(command.NickName)) user.Nickname = command.NickName;
                         user.Profile = command.Profile;
                         user.LanguageId = command.LanguageiD;
                         user.CountryID = command.CountryiD;

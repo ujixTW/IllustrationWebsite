@@ -26,7 +26,7 @@ namespace Illus.Server.Controllers.Works
             [FromQuery] int workCount)
         {
             if (page <= 0) page = 0;
-            if (string.IsNullOrEmpty(keywords)) keywords = string.Empty;
+            if (string.IsNullOrWhiteSpace(keywords)) keywords = string.Empty;
 
             var list = _workServices.GetWorkList(new WorkListCommand
             {
@@ -144,7 +144,7 @@ namespace Illus.Server.Controllers.Works
         public IActionResult GetTagRecommand(string input)
         {
             var tagList = new List<TagModel>();
-            if (!string.IsNullOrEmpty(input))
+            if (!string.IsNullOrWhiteSpace(input))
             {
                 tagList = _workServices.GetTagRecommand(input);
             }
@@ -160,6 +160,24 @@ namespace Illus.Server.Controllers.Works
             }
             return Ok();
         }
+        [HttpPost("Like")]
+        public IActionResult LikeWork(int wid)
+        {
+            var userIdStr = Request.Cookies[_userIdKey];
+            var success = false;
+            var likes = 0;
+            if (int.TryParse(userIdStr, out int userId))
+            {
+                success = _workServices.LikeWork(wid, userId, out likes);
+            }
 
+            return success ? Ok(likes) : BadRequest();
+        }
+        [HttpGet("Like/{workId}")]
+        public async Task<IActionResult> GetLikeList(int workId)
+        {
+            var userList = await _workServices.GetLikeList(workId);
+            return Ok(userList);
+        }
     }
 }

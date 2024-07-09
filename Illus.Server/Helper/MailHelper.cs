@@ -29,8 +29,8 @@ namespace Illus.Server.Helper
         public static bool SendSignUpMail(UserModel user)
         {
             if (
-                string.IsNullOrEmpty(user.Account) ||
-                string.IsNullOrEmpty(user.Email) ||
+                string.IsNullOrWhiteSpace(user.Account) ||
+                string.IsNullOrWhiteSpace(user.Email) ||
                 user.Gotcha is null
                 )
             {

@@ -25,9 +25,9 @@ namespace Illus.Server.Controllers.Account
         {
             var result = new SignUpResult();
             if (
-                string.IsNullOrEmpty(command.Account) ||
-                string.IsNullOrEmpty(command.Password) ||
-                string.IsNullOrEmpty(command.Email) ||
+                string.IsNullOrWhiteSpace(command.Account) ||
+                string.IsNullOrWhiteSpace(command.Password) ||
+                string.IsNullOrWhiteSpace(command.Email) ||
                 !command.Email.Contains("@")
                 )
             {

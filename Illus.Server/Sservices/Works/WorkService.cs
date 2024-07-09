@@ -20,7 +20,7 @@ namespace Illus.Server.Sservices.Works
         {
             var keywordList = new List<string>();
 
-            if (!string.IsNullOrEmpty(command.Keywords))
+            if (!string.IsNullOrWhiteSpace(command.Keywords))
                 keywordList = command.Keywords.Trim().Split(' ').ToList();
 
             var workList = new List<ArtworkViewModel>();
@@ -98,7 +98,7 @@ namespace Illus.Server.Sservices.Works
                         IsAI = item.IsAI,
                         ArtistName = item.Artist.Nickname,
                         ArtistHeadshotContent =
-                            (string.IsNullOrEmpty(item.Artist.HeadshotContent)) ?
+                            (string.IsNullOrWhiteSpace(item.Artist.HeadshotContent)) ?
                             string.Empty : item.Artist.HeadshotContent,
                         CoverImg = item.CoverImg
                     });
@@ -253,7 +253,7 @@ namespace Illus.Server.Sservices.Works
                         IsAI = work.IsAI,
                         PostTime = work.PostTime,
                         ArtistName = work.Artist.Nickname,
-                        ArtistHeadshotContent = (string.IsNullOrEmpty(work.Artist.HeadshotContent)) ? string.Empty : work.Artist.HeadshotContent,
+                        ArtistHeadshotContent = (string.IsNullOrWhiteSpace(work.Artist.HeadshotContent)) ? string.Empty : work.Artist.HeadshotContent,
                         Tags = work.Tags,
                         Imgs = work.Images
                     };
@@ -485,6 +485,76 @@ namespace Illus.Server.Sservices.Works
             }
         }
         #endregion
+        public bool LikeWork(int workId, int userId, out int likeCount)
+        {
+            var result = false;
+            likeCount = 0;
+            try
+            {
+                var work = _context.Artwork
+                    .Include(p => p.Likes)
+                    .Where(p => p.Id == workId && p.IsOpen == true)
+                    .SingleOrDefault();
+                if (work != null)
+                {
+                    var like = work.Likes.Find(p => p.UserId == userId);
+
+                    if (like != null)
+                    {
+                        like.Status = !like.Status;
+                        like.UpdateTime = DateTime.Now;
+                    }
+                    else
+                    {
+                        work.Likes.Add(new LikeModel
+                        {
+                            UserId = userId,
+                            Status = true,
+                            CreateTime = DateTime.Now
+                        });
+                    }
+                    work.LikeCounts = work.Likes.FindAll(p => p.Status == true).Count;
+                    likeCount = work.LikeCounts;
+                    _context.SaveChanges();
+                    result = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("LikeWork", ex);
+            }
+            return result;
+        }
+        public async Task<List<UserViewModel>> GetLikeList(int workId)
+        {
+            var userList = new List<UserViewModel>();
+            try
+            {
+                var likeList = await _context.Like
+                    .AsNoTracking()
+                    .Include(p => p.User)
+                    .Where(p => p.ArtworkId == workId && p.Status == true)
+                    .ToListAsync();
+                foreach (var like in likeList)
+                {
+                    if (like.User != null)
+                    {
+                        userList.Add(new UserViewModel
+                        {
+                            Id = like.UserId,
+                            NickName = like.User.Nickname,
+                            HeadshotContent = like.User.HeadshotContent,
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("GetLikeList", ex);
+            }
+            return userList;
+        }
+
         private List<TagModel> _checkTagExisting(List<EditTagCommand> inputTags)
         {
             if (inputTags.Any())
