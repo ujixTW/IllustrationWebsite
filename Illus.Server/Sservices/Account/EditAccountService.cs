@@ -2,11 +2,9 @@
 using Illus.Server.Helper;
 using Illus.Server.Models;
 using Illus.Server.Models.Command;
-using Illus.Server.Models.View;
 using Microsoft.EntityFrameworkCore;
-using MimeKit;
-using Org.BouncyCastle.Asn1.Pkcs;
 using System.Text;
+using System.Web;
 using static Illus.Server.Helper.MailHelper;
 
 namespace Illus.Server.Sservices.Account
@@ -309,19 +307,21 @@ namespace Illus.Server.Sservices.Account
         public async Task<bool> EditUserData(EditUserDataCommand command)
         {
             var result = false;
+            command.NickName = HttpUtility.HtmlEncode(command.NickName.Trim());
+            command.Profile = HttpUtility.HtmlEncode(command.Profile);
             try
             {
                 var userName = _context.User
                     .AsNoTracking()
-                    .Select(p => p.Nickname)
-                    .SingleOrDefault(p => p.Equals(command.NickName.Trim()));
+                    .Select(p => new { p.Nickname, p.Id })
+                    .SingleOrDefault(p => p.Nickname == command.NickName && p.Id != command.Id);
 
-                if (string.IsNullOrEmpty(userName))
+                if (userName != null)
                 {
                     var user = _context.User.SingleOrDefault(p => p.Id.Equals(command.Id));
                     if (user != null)
                     {
-                        if (!string.IsNullOrEmpty(command.NickName)) user.Nickname = command.NickName.Trim();
+                        if (!string.IsNullOrEmpty(command.NickName)) user.Nickname = command.NickName;
                         user.Profile = command.Profile;
                         user.LanguageId = command.LanguageiD;
                         user.CountryID = command.CountryiD;
