@@ -8,7 +8,7 @@
         public bool Status { get; set; } = true;
         public DateTime CreateTime { get; set; }
         public DateTime? UpdateTime { get; set; }
-        public virtual ArtworkModel? Artwork { get; set; }
-        public virtual UserModel? User { get; set; }
+        public virtual ArtworkModel Artwork { get; set; }=new ArtworkModel();
+        public virtual UserModel User { get; set; } = new UserModel();
     }
 }

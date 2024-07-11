@@ -13,14 +13,16 @@ namespace Illus.Server.Controllers.Works
     {
         private readonly WorkService _workServices;
         private readonly string _userIdKey;
+        private readonly int _onePageWorkCount;
         public WorkController(WorkService workServices)
         {
             _workServices = workServices;
             _userIdKey = "UserId";
+            _onePageWorkCount = 24;
         }
         //取得作品列表，以QueryString判定搜尋條件
         [HttpGet("GetList")]
-        public IActionResult GetWorkList(
+        public async Task<IActionResult> GetWorkList(
             [FromQuery] int page, [FromQuery] string? keywords, [FromQuery] bool isDesc,
             [FromQuery] int orderType, [FromQuery] bool isR18, [FromQuery] bool isAI,
             [FromQuery] int workCount)
@@ -30,7 +32,7 @@ namespace Illus.Server.Controllers.Works
 
             var userIdStr = Request.Cookies[_userIdKey];
 
-            var list = _workServices.GetWorkList(new WorkListCommand
+            var list = await _workServices.GetWorkList(new WorkListCommand
             {
                 Page = page,
                 Count = workCount,
@@ -44,24 +46,26 @@ namespace Illus.Server.Controllers.Works
             return Ok(list);
         }
         [HttpGet("GetList/Daily")]
-        public IActionResult GetDailyWorkList(
+        public async Task<IActionResult> GetDailyWorkList(
             [FromQuery] bool isR18, [FromQuery] bool isAI, [FromQuery] int workCount)
         {
             var userIdStr = Request.Cookies[_userIdKey];
-            var list = _workServices.GetDailyWorkList(isR18, isAI, workCount, int.TryParse(userIdStr, out int userId) ? userId : null);
+            var list = await _workServices.GetDailyWorkList(
+                isR18, isAI, workCount,
+                int.TryParse(userIdStr, out int userId) ? userId : null);
+
             return Ok(list);
         }
         [HttpGet("GetList/Artist/{id}")]
         public IActionResult GetArtistWorkList(
-            int id, [FromQuery] int page, [FromQuery] int count,
-            [FromQuery] bool isDesc, [FromQuery] int orderType)
+            int id, [FromQuery] int page, [FromQuery] bool isDesc, [FromQuery] int orderType)
         {
             var userIdStr = Request.Cookies[_userIdKey];
             var isOwnWorks = (int.TryParse(userIdStr, out int userId) && userId == id) ? true : false;
             var command = new WorkListCommand
             {
                 Page = page,
-                Count = count,
+                Count = _onePageWorkCount,
                 IsDesc = isDesc,
                 OrderType = orderType
             };
@@ -85,6 +89,41 @@ namespace Illus.Server.Controllers.Works
             }
 
             return (success) ? Ok(model) : NotFound();
+        }
+        [HttpGet("GetList/History")]
+        public IActionResult GetArtworkHistoryList([FromQuery] int page, [FromQuery] bool isDesc)
+        {
+            var userIdStr = Request.Cookies[_userIdKey];
+            var result = new ArtworkViewListModel();
+            var success = false;
+            if (int.TryParse(userIdStr, out int userId))
+            {
+                result = _workServices.GetArtworkHistoryList(new WorkListCommand
+                {
+                    Page = page,
+                    Count = _onePageWorkCount,
+                    IsDesc = isDesc
+                }, userId);
+                success = true;
+            }
+            return success ? Ok(result) : BadRequest();
+        }
+        [HttpGet("GetList/Like")]
+        public IActionResult GetLikeArtWorkList([FromQuery] int page)
+        {
+            var userIdStr = Request.Cookies[_userIdKey];
+            var result = new ArtworkViewListModel();
+            var success = false;
+            if (int.TryParse(userIdStr, out int userId))
+            {
+                result = _workServices.GetLikeArtWorkList(new WorkListCommand
+                {
+                    Page = page,
+                    Count = _onePageWorkCount,
+                }, userId);
+                success = true;
+            }
+            return success ? Ok(result) : BadRequest();
         }
         //新增作品
         [HttpPost("Add")]

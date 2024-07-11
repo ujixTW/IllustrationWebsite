@@ -16,7 +16,7 @@ namespace Illus.Server.Sservices.Works
             _context = context;
         }
         #region 取得作品資訊
-        public ArtworkViewListModel GetWorkList(WorkListCommand command, int? userId)
+        public async Task<ArtworkViewListModel> GetWorkList(WorkListCommand command, int? userId)
         {
             var keywordList = new List<string>();
 
@@ -84,9 +84,9 @@ namespace Illus.Server.Sservices.Works
 
                 maxCount = list.Count();
 
-                list.Skip(command.Page * command.Count)
+                await list.Skip(command.Page * command.Count)
                     .Take(command.Count)
-                    .ToList();
+                    .ToListAsync();
 
                 foreach (var item in list)
                 {
@@ -114,14 +114,14 @@ namespace Illus.Server.Sservices.Works
 
             return temp;
         }
-        public ArtworkViewListModel GetDailyWorkList(bool isR18, bool isAi, int workCount, int? userId)
+        public async Task<ArtworkViewListModel> GetDailyWorkList(bool isR18, bool isAi, int workCount, int? userId)
         {
             var workList = new ArtworkViewListModel();
             var todayTheme = _context.DailyTheme.AsNoTracking()
                 .Include(p => p.Tag.Content).SingleOrDefault(p => p.IsEnable == true);
             if (todayTheme != null)
             {
-                workList = GetWorkList(new WorkListCommand
+                workList = await GetWorkList(new WorkListCommand
                 {
                     Page = 0,
                     Count = workCount,
@@ -274,6 +274,92 @@ namespace Illus.Server.Sservices.Works
                 Logger.WriteLog("GetWorkDetail", ex);
             }
             return model;
+        }
+        public ArtworkViewListModel GetArtworkHistoryList(WorkListCommand command, int userId)
+        {
+            var result = new ArtworkViewListModel();
+            try
+            {
+                var hisList = _context.History
+                    .AsNoTracking()
+                    .Include(p => p.Artwork)
+                    .ThenInclude(p => p.Artist)
+                    .Where(p => p.UserId == userId && p.Artwork.IsOpen == true);
+                var count = hisList.Count();
+
+                if (command.IsDesc)
+                {
+                    hisList.OrderBy(p => p.BrowseTime);
+                }
+                else
+                {
+                    hisList.OrderByDescending(p => p.BrowseTime);
+                }
+
+                hisList.Skip(command.Count * command.Page).Take(command.Count).ToList();
+
+                foreach (var history in hisList)
+                {
+                    var work = history.Artwork;
+                    var artist = work.Artist;
+                    result.ArtworkList.Add(new ArtworkViewModel
+                    {
+                        Id = work.Id,
+                        ArtistId = artist.Id,
+                        Title = work.Title,
+                        CoverImg = work.CoverImg,
+                        PostTime = history.BrowseTime,
+                        ArtistName = artist.Nickname,
+                        ArtistHeadshotContent = string.IsNullOrEmpty(artist.HeadshotContent) ? string.Empty : artist.HeadshotContent
+                    });
+                }
+                result.MaxCount = count;
+
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("GetArtworkHistoryList", ex);
+            }
+            return result;
+        }
+        public ArtworkViewListModel GetLikeArtWorkList(WorkListCommand command, int userId)
+        {
+            var result = new ArtworkViewListModel();
+            try
+            {
+                var likeList = _context.Like
+                    .AsNoTracking()
+                    .Include(p => p.Artwork)
+                    .ThenInclude(p => p.Artist)
+                    .Where(p => p.UserId == userId && p.Status == true && p.Artwork.IsOpen == true)
+                    .OrderByDescending(p => p.UpdateTime)
+                    .Skip(command.Count * command.Page)
+                    .Take(command.Count)
+                    .ToList();
+                var count = _context.Like
+                    .AsNoTracking()
+                    .Where(p => p.UserId == userId && p.Artwork.IsOpen == true)
+                    .Count();
+
+                foreach (var like in likeList)
+                {
+                    var work = like.Artwork;
+                    result.ArtworkList.Add(new ArtworkViewModel
+                    {
+                        Id = work.Id,
+                        ArtistId = work.ArtistId,
+                        CoverImg = work.CoverImg,
+                        ArtistName = work.Artist.Nickname,
+                        ArtistHeadshotContent = string.IsNullOrEmpty(work.Artist.HeadshotContent) ? string.Empty : work.Artist.HeadshotContent,
+                    });
+                }
+                result.MaxCount = count;
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("GetLikeArtWorkList", ex);
+            }
+            return result;
         }
         #endregion
         #region 編輯作品
