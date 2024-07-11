@@ -16,7 +16,7 @@ namespace Illus.Server.Sservices.Works
             _context = context;
         }
         #region 取得作品資訊
-        public ArtworkViewListModel GetWorkList(WorkListCommand command)
+        public ArtworkViewListModel GetWorkList(WorkListCommand command, int? userId)
         {
             var keywordList = new List<string>();
 
@@ -45,6 +45,7 @@ namespace Illus.Server.Sservices.Works
                             keywordList.Any() ?
                                 keywordList.Any(w => p.Title.Contains(w)) : true))
                     .Include(p => p.Artist)
+                    .Include(p => p.Likes.Where(l => l.UserId == userId && l.Status == true).FirstOrDefault())
                     .AsNoTracking();
 
                 switch (command.OrderType)
@@ -96,6 +97,7 @@ namespace Illus.Server.Sservices.Works
                         Title = item.Title,
                         IsR18 = item.IsR18,
                         IsAI = item.IsAI,
+                        IsLike = item.Likes.Any(),
                         ArtistName = item.Artist.Nickname,
                         ArtistHeadshotContent =
                             (string.IsNullOrWhiteSpace(item.Artist.HeadshotContent)) ?
@@ -112,7 +114,7 @@ namespace Illus.Server.Sservices.Works
 
             return temp;
         }
-        public ArtworkViewListModel GetDailyWorkList(bool isR18, bool isAi, int workCount)
+        public ArtworkViewListModel GetDailyWorkList(bool isR18, bool isAi, int workCount, int? userId)
         {
             var workList = new ArtworkViewListModel();
             var todayTheme = _context.DailyTheme.AsNoTracking()
@@ -127,19 +129,21 @@ namespace Illus.Server.Sservices.Works
                     IsAI = isAi,
                     Keywords = todayTheme.Tag.Content,
                     OrderType = (int)WorkListOrder.Hot
-                });
+                }, userId);
             }
             return workList;
         }
-        public ArtworkViewListModel GetArtistWorkList(WorkListCommand command, int id, bool isOwn)
+        public ArtworkViewListModel GetArtistWorkList(WorkListCommand command, int id, bool isOwn, int? userId)
         {
             var workList = new List<ArtworkViewModel>();
             var maxCount = 0;
             try
             {
                 var list = _context.Artwork
-                    .Where(p => p.ArtistId == id && (isOwn) ? p.IsDelete == false : p.IsOpen == true)
+                    .Include(p => p.Likes.Where(l => l.UserId == userId && l.Status == true).FirstOrDefault())
+                    .Where(p => p.ArtistId == id && isOwn ? p.IsDelete == false : p.IsOpen == true)
                     .AsNoTracking();
+
 
                 switch (command.OrderType)
                 {
@@ -177,6 +181,7 @@ namespace Illus.Server.Sservices.Works
                         LikeCounts = work.LikeCounts,
                         ReadCounts = work.ReadCounts,
                         PostTime = work.PostTime,
+                        IsLike = work.Likes.Any(),
                     });
                 }
             }
@@ -200,6 +205,7 @@ namespace Illus.Server.Sservices.Works
                     .Include(p => p.Images)
                     .Include(p => p.Artist)
                     .Include(p => p.Tags)
+                    .Include(p => p.Likes.Where(l => l.UserId == userId && l.Status == true).FirstOrDefault())
                     .SingleOrDefault(
                         p => p.Id == id &&
                         (p.ArtistId == userId) ? p.IsDelete == false : p.IsOpen == true &&
@@ -251,6 +257,7 @@ namespace Illus.Server.Sservices.Works
                         ReadCounts = work.ReadCounts,
                         IsR18 = work.IsR18,
                         IsAI = work.IsAI,
+                        IsLike = work.Likes.Any(),
                         PostTime = work.PostTime,
                         ArtistName = work.Artist.Nickname,
                         ArtistHeadshotContent = (string.IsNullOrWhiteSpace(work.Artist.HeadshotContent)) ? string.Empty : work.Artist.HeadshotContent,

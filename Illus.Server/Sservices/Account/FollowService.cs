@@ -112,7 +112,7 @@ namespace Illus.Server.Sservices.Account
                         .Take(4)
                         .ToList()
                         )
-                    .ThenInclude(p => p.Likes.Where(l => l.UserId == id).ToList())
+                    .ThenInclude(p => p.Likes.Where(l => l.UserId == id && l.Status == true).FirstOrDefault())
                     .Where(p => p.FollowerId == id)
                     .OrderByDescending(p => p.FollowTime)
                     .Skip(page * _userCount)
@@ -133,7 +133,7 @@ namespace Illus.Server.Sservices.Account
                             {
                                 Id = work.Id,
                                 CoverImg = work.CoverImg,
-                                IsLike = work.Likes.Any() ? true : false,
+                                IsLike = work.Likes.Any(),
                             });
                         }
                         result.Users.Add(new UserViewModel
