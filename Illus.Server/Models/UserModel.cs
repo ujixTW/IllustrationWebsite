@@ -20,6 +20,7 @@
         public virtual CountryModel Country { get; set; } = new CountryModel();
         public virtual List<LoginTokenModel>? LoginTokens { get; set; }
         public virtual GotchaModel? Gotcha { get; set; }
+        public virtual List<ArtworkModel> Artwork { get; set; } = [];
     }
     public class LoginTokenModel
     {

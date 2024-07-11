@@ -9,6 +9,7 @@
         public string CoverImg { get; set; } = string.Empty;
         public int LikeCounts { get; set; }
         public int ReadCounts { get; set; }
+        public bool IsLike { get; set; }
         public bool IsR18 { get; set; }
         public bool IsAI { get; set; }
         public DateTime PostTime { get; set; }

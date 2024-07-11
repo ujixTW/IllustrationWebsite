@@ -34,7 +34,7 @@ namespace Illus.Server.Migrations
 
                     b.HasIndex("TagsId");
 
-                    b.ToTable("ArtworkTag");
+                    b.ToTable("ArtworkTag", (string)null);
                 });
 
             modelBuilder.Entity("Illus.Server.Models.AdminModel", b =>
