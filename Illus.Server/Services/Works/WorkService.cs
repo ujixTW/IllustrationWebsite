@@ -118,7 +118,9 @@ namespace Illus.Server.Sservices.Works
         {
             var workList = new ArtworkViewListModel();
             var todayTheme = _context.DailyTheme.AsNoTracking()
-                .Include(p => p.Tag.Content).SingleOrDefault(p => p.IsEnable == true);
+                .Include(p => p.Tag.Content)
+                .SingleOrDefault(p => p.SpecifyDay.Date == DateTime.Today.Date && p.IsEnable == true);
+
             if (todayTheme != null)
             {
                 workList = await GetWorkList(new WorkListCommand
