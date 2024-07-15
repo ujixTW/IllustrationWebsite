@@ -1,4 +1,5 @@
-﻿using Illus.Server.Models;
+﻿using Illus.Server.Helper;
+using Illus.Server.Models;
 using Illus.Server.Models.Command;
 using Illus.Server.Models.View;
 using Illus.Server.Sservices.Account;
@@ -49,8 +50,7 @@ namespace Illus.Server.Controllers.Account
 
             if (int.TryParse(userIdStr, out int userId) &&
                 Guid.TryParse(tokenStr, out Guid token) &&
-                !string.IsNullOrWhiteSpace(emailCommand) &&
-                emailCommand.Contains("@") &&
+                StringHelper.IsValidEmail(emailCommand) &&
                 _editService.CheckUserIdentity(token, userId))
             {
                 result = _editService.EditEmail(emailCommand, userId);
@@ -92,13 +92,13 @@ namespace Illus.Server.Controllers.Account
         /// </summary>
         /// <param name="Email"></param>
         /// <returns></returns>
-        [HttpGet("ForgetPassword/{Email}")]
-        public IActionResult ForgetPassword(string Email)
+        [HttpGet("ForgetPassword/{email}")]
+        public IActionResult ForgetPassword(string email)
         {
             var result = false;
-            if (!string.IsNullOrWhiteSpace(Email) && Email.Contains("@"))
+            if (StringHelper.IsValidEmail(email))
             {
-                result = _editService.ForgetPassword(Email);
+                result = _editService.ForgetPassword(email);
             }
             return (result) ? Ok() : BadRequest();
         }

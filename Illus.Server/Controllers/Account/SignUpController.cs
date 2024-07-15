@@ -1,4 +1,5 @@
-﻿using Illus.Server.Models.Command;
+﻿using Illus.Server.Helper;
+using Illus.Server.Models.Command;
 using Illus.Server.Sservices.Account;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -24,12 +25,9 @@ namespace Illus.Server.Controllers.Account
         public IActionResult SignUp(LoginCommand command)
         {
             var result = new SignUpResult();
-            if (
-                string.IsNullOrWhiteSpace(command.Account) ||
+            if (string.IsNullOrWhiteSpace(command.Account) ||
                 string.IsNullOrWhiteSpace(command.Password) ||
-                string.IsNullOrWhiteSpace(command.Email) ||
-                !command.Email.Contains("@")
-                )
+                StringHelper.IsValidEmail(command.Email))
             {
                 result.Success = false;
                 result.Error = "DATA ARE NOT ENOUGH";
