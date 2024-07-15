@@ -2,6 +2,7 @@
 using Illus.Server.Helper;
 using Illus.Server.Models;
 using Illus.Server.Models.Command;
+using Illus.Server.Models.View;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 
@@ -10,9 +11,11 @@ namespace Illus.Server.Sservices.Admin
     public class AdminAccountService
     {
         private readonly IllusContext _context;
+        private readonly int _pageCount;
         public AdminAccountService(IllusContext context)
         {
             _context = context;
+            _pageCount = 24;
         }
         public bool CreateAdmin(AdminCommand command)
         {
@@ -124,6 +127,69 @@ namespace Illus.Server.Sservices.Admin
             }
             return result;
         }
+        public async Task<AdminViewListModel> GetAdminList(int adminId, int p, string? name)
+        {
+            var result = new AdminViewListModel();
+            try
+            {
+                var admin = _context.Admin.AsNoTracking()
+                    .SingleOrDefault(p => p.Id == adminId && p.IsEnable == true);
+                if (admin != null)
+                {
+                    var adminList = await _context.Admin
+                        .AsNoTracking()
+                        .Where(p =>
+                            p.Access > admin.Access &&
+                            p.IsEnable == true &&
+                            (name != null) ? p.Account.Contains(name) : true)
+                        .Skip(p * _pageCount)
+                        .Take(_pageCount)
+                        .ToListAsync();
+
+                    foreach (var a in adminList)
+                    {
+                        result.Admins.Add(new AdminViewModel
+                        {
+                            Id = a.Id,
+                            Account = a.Account,
+                            Access = a.Access,
+                        });
+                    }
+
+                    result.Count = _context.Admin.Count();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("GetAdminList", ex);
+            }
+            return result;
+        }
+        public AdminViewModel? GetAdmin(int id)
+        {
+            AdminViewModel? result = null;
+            try
+            {
+                var admin = _context.Admin
+                    .AsNoTracking()
+                    .FirstOrDefault(p => p.Id == id && p.IsEnable == true);
+
+                if (admin != null)
+                {
+                    result = new AdminViewModel
+                    {
+                        Id = admin.Id,
+                        Account = admin.Account,
+                        Access = admin.Access,
+                    };
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("GetAdmin", ex);
+            }
+            return result;
+        }
         public bool CheckAdminRelationship(int editorId, int id)
         {
             var result = false;
@@ -138,11 +204,13 @@ namespace Illus.Server.Sservices.Admin
                 {
                     if (admin[0].Id == editorId)
                     {
-                        result = admin[0].Access > admin[1].Access;
+                        result = (admin[0].Access == (int)AdminAccess.admin) ?
+                            true : admin[0].Access > admin[1].Access;
                     }
                     else
                     {
-                        result = admin[1].Access > admin[0].Access;
+                        result = (admin[1].Access == (int)AdminAccess.admin) ?
+                            true : admin[1].Access > admin[0].Access;
                     }
                 }
             }
@@ -152,5 +220,6 @@ namespace Illus.Server.Sservices.Admin
             }
             return result;
         }
+
     }
 }

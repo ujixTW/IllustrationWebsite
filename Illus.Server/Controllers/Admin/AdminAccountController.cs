@@ -1,6 +1,7 @@
 ﻿using Illus.Server.Helper;
 using Illus.Server.Models;
 using Illus.Server.Models.Command;
+using Illus.Server.Models.View;
 using Illus.Server.Sservices.Admin;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -91,6 +92,33 @@ namespace Illus.Server.Controllers.Admin
                 success = _service.DeleteAdmin(id);
             }
             return success ? Ok() : BadRequest();
+        }
+        [HttpGet("/api/Admin/List")]
+        public async Task<IActionResult> GetAdminList([FromQuery] int p, [FromQuery] string? k)
+        {
+            var result = new AdminViewListModel();
+            var adminIdStr = Request.Cookies[_adminIdKey];
+
+            p = p < 0 ? 0 : p;
+
+            if (int.TryParse(adminIdStr, out var adminId))
+            {
+                result = await _service.GetAdminList(adminId, p, k);
+            }
+            return result.Count > 0 ? Ok(result) : BadRequest();
+        }
+        [HttpGet("/api/Admin/{id}")]
+        public IActionResult GetAdmin(int id)
+        {
+            var result = new AdminViewModel();
+            var adminIdStr = Request.Cookies[_adminIdKey];
+
+            if (int.TryParse(adminIdStr, out var adminId) && 
+                _service.CheckAdminRelationship(adminId, id))
+            {
+                result = _service.GetAdmin(id);
+            }
+            return result != null ? Ok(result) : BadRequest();
         }
     }
 }
