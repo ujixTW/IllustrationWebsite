@@ -35,6 +35,7 @@ builder.Services.AddScoped<WorkService>();
 builder.Services.AddScoped<MessageService>();
 builder.Services.AddScoped<AdminAccountService>();
 builder.Services.AddScoped<AdminLoginService>();
+builder.Services.AddScoped<AdminWorkService>();
 
 builder.Services.AddControllers();
 builder.Services.AddControllers().AddNewtonsoftJson();
