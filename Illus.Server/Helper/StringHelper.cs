@@ -15,5 +15,21 @@ namespace Illus.Server.Helper
             var text = HttpUtility.HtmlDecode(input);
             return Regex.IsMatch(text, @"<[a-zA-Z/].*?>");
         }
+        public static bool IsValidEmail(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email)) return false;
+
+            try
+            {
+                return Regex.IsMatch(email,
+                    @"^[^@\s]+@[^@\s]+\.[^@\s]+$", 
+                    RegexOptions.IgnoreCase, 
+                    TimeSpan.FromMilliseconds(250));
+            }
+            catch (RegexMatchTimeoutException e)
+            {
+                return false;
+            }
+        }
     }
 }

@@ -1,5 +1,7 @@
 using Illus.Server.Domain;
+using Illus.Server.Services.Admin;
 using Illus.Server.Sservices.Account;
+using Illus.Server.Sservices.Admin;
 using Illus.Server.Sservices.Works;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,7 +30,11 @@ builder.Services.AddDbContext<IllusContext>(options =>
 
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<EditAccountService>();
+builder.Services.AddScoped<FollowService>();
 builder.Services.AddScoped<WorkService>();
+builder.Services.AddScoped<MessageService>();
+builder.Services.AddScoped<AdminAccountService>();
+builder.Services.AddScoped<AdminLoginService>();
 
 builder.Services.AddControllers();
 builder.Services.AddControllers().AddNewtonsoftJson();

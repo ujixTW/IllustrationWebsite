@@ -1,4 +1,5 @@
-﻿using Illus.Server.Models.Command;
+﻿using Illus.Server.Helper;
+using Illus.Server.Models.Command;
 using Illus.Server.Models.View;
 using Illus.Server.Sservices.Account;
 using Microsoft.AspNetCore.Http;
@@ -22,32 +23,29 @@ namespace Illus.Server.Controllers.Account
         [HttpPost]
         public IActionResult Login(LoginCommand command)
         {
-            var result = new SignUpResult();
+            var result = false;
 
-            if ((string.IsNullOrWhiteSpace(command.Account) && string.IsNullOrWhiteSpace(command.Email)) ||
-                (!string.IsNullOrWhiteSpace(command.Email) && !command.Email.Contains("@")) ||
-                string.IsNullOrWhiteSpace(command.Password)
+            if (!string.IsNullOrWhiteSpace(command.Account) ||
+                StringHelper.IsValidEmail(command.Email) &&
+                !string.IsNullOrWhiteSpace(command.Password)
               )
-            {
-                result.Success = false;
-                result.Error = "DATA NOT ENOUGH";
-            }
-            else
             {
                 var token = _loginService.Login(command);
                 if (token != null)
                 {
-                    HttpContext.Response.Cookies.Append(_loginTokenKey, token.LoginToken.ToString(), new CookieOptions() { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Lax });
-                    HttpContext.Response.Cookies.Append(_userIdKey, token.UserId.ToString(), new CookieOptions() { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Lax });
-                    result.Success = true;
-                }
-                else
-                {
-                    result.Success = false;
-                    result.Error = "NO USER";
+                    var option = new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        SameSite = SameSiteMode.Lax,
+                        Expires = DateTime.Now.AddYears(50)
+                    };
+                    HttpContext.Response.Cookies.Append(_loginTokenKey, token.LoginToken.ToString(), option);
+                    HttpContext.Response.Cookies.Append(_userIdKey, token.UserId.ToString(), option);
+                    result = true;
                 }
             }
-            return Ok(result.Success);
+            return Ok(result);
         }
         [HttpGet("/api/LoginCheck")]
         public IActionResult LoginCheck()
