@@ -24,6 +24,7 @@ namespace Illus.Server.Services.Admin
                     .Include(p => p.Tag)
                     .Include(p => p.Admin)
                     .Where(p =>
+                        p.IsEnable == true &&
                         (command.StartTime != null) ?
                             p.SpecifyDay > command.StartTime : true &&
                         (command.EndTime != null) ?
@@ -70,7 +71,7 @@ namespace Illus.Server.Services.Admin
                     .AsNoTracking()
                     .Include(p => p.Tag)
                     .Include(p => p.Admin)
-                    .SingleOrDefault(p => p.Id == id);
+                    .SingleOrDefault(p => p.Id == id && p.IsEnable == true);
                 if (them != null)
                 {
                     result = them;
@@ -97,7 +98,7 @@ namespace Illus.Server.Services.Admin
                 if (tag != null && admin != null)
                 {
                     var themList = await _context.DailyTheme
-                            .Where(p => p.SpecifyDay == command.SpecifyDay)
+                            .Where(p => p.IsEnable == true && p.SpecifyDay == command.SpecifyDay)
                             .ToListAsync();
 
                     if (themList.Any())
@@ -128,7 +129,7 @@ namespace Illus.Server.Services.Admin
             try
             {
                 var them = _context.DailyTheme
-                    .Where(p => p.Id == command.Id)
+                    .Where(p => p.Id == command.Id && p.IsEnable == true)
                     .SingleOrDefault();
                 var tag = _context.Tag.AsNoTracking().SingleOrDefault(p => p.Id == command.TagId);
                 var admin = _context.Admin.AsNoTracking().SingleOrDefault(p => p.Id == command.AdminId && p.IsEnable == true);
@@ -140,7 +141,7 @@ namespace Illus.Server.Services.Admin
                         them.IsEnable != command.IsEnable)
                     {
                         var themList = await _context.DailyTheme
-                            .Where(p => p.SpecifyDay == command.SpecifyDay)
+                            .Where(p => p.IsEnable == true && p.SpecifyDay == command.SpecifyDay)
                             .ToListAsync();
 
                         if (command.IsEnable == true)
