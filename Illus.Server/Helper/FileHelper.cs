@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿
 namespace Illus.Server.Helper
 {
     public class FileHelper
@@ -111,8 +111,7 @@ namespace Illus.Server.Helper
             }
 
         }
-
-        public static void DeleteImageAsync(List<string> paths)
+        public static void DeleteImage(List<string> paths)
         {
             try
             {

@@ -420,10 +420,19 @@ namespace Illus.Server.Sservices.Works
             try
             {
                 var work = _context.Artwork
+                    .Include(p => p.Images)
                     .Where(p => p.Id == workId && p.ArtistId == userId)
                     .SingleOrDefault();
                 if (work != null)
                 {
+                    var imgPathList = new List<string>();
+
+                    foreach (var img in work.Images)
+                    {
+                        imgPathList.Add(img.ArtworkContent);
+                    }
+                    FileHelper.DeleteImage(imgPathList);
+
                     work.IsDelete = true;
                     _context.SaveChanges();
                     success = true;
@@ -471,7 +480,7 @@ namespace Illus.Server.Sservices.Works
                             oldPathList.Add(img.ArtworkContent);
                         }
 
-                        FileHelper.DeleteImageAsync(oldPathList);
+                        FileHelper.DeleteImage(oldPathList);
                         oldImgs.RemoveRange(newImgs.Count, range);
                     }
                     if (oldImgs.Count < newImgs.Count)
