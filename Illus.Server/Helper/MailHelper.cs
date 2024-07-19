@@ -1,4 +1,6 @@
 ﻿using Illus.Server.Models;
+using Illus.Server.Models.Env;
+using Illus.Server.Services;
 using MailKit.Net.Smtp;
 using MimeKit;
 
@@ -81,12 +83,15 @@ namespace Illus.Server.Helper
             var hostUrl = "smtp.gmail.com";
             var port = 465;
             var useSsl = true;
+            var illusEmailEnv = ConfigureService.GetWebsiteEmail();
             try
             {
+                if (illusEmailEnv == null) throw new Exception("NoEmailData");
+
                 using (var client = new SmtpClient())
                 {
                     client.Connect(hostUrl, port, useSsl);
-                    client.Authenticate("IllusWebsite202406@gmail.com", "jjphbiauygkvlnji");
+                    client.Authenticate(illusEmailEnv.UserName, illusEmailEnv.Password);
                     client.Send(message);
                     client.Disconnect(true);
                 }
