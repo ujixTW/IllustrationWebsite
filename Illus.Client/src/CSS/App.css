@@ -1,6 +1,10 @@
 #root {
   margin: 0;
 }
+a {
+  display: inline-block;
+  text-decoration: none;
+}
 .nav {
   display: flex;
   padding: 0.5rem;
@@ -14,35 +18,4 @@
 }
 .main {
   padding: 0.5rem 2rem;
-}
-
-.search-box {
-  --blue: rgb(145, 220, 255);
-  text-align: center;
-  position: relative;
-  width: 25%;
-  > .search {
-    width: 100%;
-    padding: 0.5rem 2.5rem 0.5rem 1rem;
-    border: 0;
-    border-radius: 0.5rem;
-    background-color: rgb(230, 230, 230);
-    &:focus {
-      outline: 0.3rem solid var(--blue);
-    }
-  }
-  > .submit {
-    position: absolute;
-    right: 0;
-    top: 0;
-    height: 100%;
-    width: 2rem;
-    border: 0;
-    border-radius: 0 0.5rem 0.5rem 0;
-    background-color: var(--blue);
-  }
-  .search-mark {
-    width: 1em;
-    height: 1em;
-  }
 }
