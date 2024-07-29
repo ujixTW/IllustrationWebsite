@@ -1,35 +1,26 @@
-import { useState } from "react";
-import { NavLink, Outlet } from "react-router-dom";
-import searchMark from "./assets/searchMark.svg";
-import { FormEvent } from "./utils/tsTypesHelper";
+import { Link, Outlet } from "react-router-dom";
+import SearchBox from "./components/searchBox";
 
-function RootLayout() {
-  const [isLogin, setIsLogin] = useState(false);
+function MainNav(props: { isLogin: boolean }) {
+  return (
+    <nav className="nav main-nav">
+      <div className="nav-item nav-start">
+        <Link to="/" className="nav nav-link-home">
+          Home
+        </Link>
+      </div>
+      <div className="nav-item nav-middle">
+        <SearchBox />
+      </div>
 
-  const search = (fd: FormEvent) => {
-    fd.preventDefault();
-    const data = new FormData(fd.currentTarget);
-    const inputStr = data.get("search") as string;
-    alert(inputStr);
-  };
-
+      {props.isLogin && <div className="nav-item nav-end"></div>}
+    </nav>
+  );
+}
+function RootLayout(props: { isLogin: boolean }) {
   return (
     <>
-      <nav className="nav main-nav">
-        <div className="nav-item">
-          {isLogin && <button></button>}
-          <NavLink to="/" className="nav nav-link-home">
-            Home
-          </NavLink>
-        </div>
-        <form className="nav-item search-box" onSubmit={search}>
-          <input className="search" placeholder="搜尋作品" name="search" />
-          <button className="submit" type="submit">
-            <img src={searchMark} className="search-mark" alt="search" />
-          </button>
-        </form>
-        <div></div>
-      </nav>
+      <MainNav isLogin={props.isLogin} />
       <main>
         <Outlet />
       </main>

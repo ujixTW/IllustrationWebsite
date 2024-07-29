@@ -21,7 +21,7 @@ function RecommandLink(props: {
       className="auto-complete-recommand"
       onClick={() =>
         props.target.current != null
-          ? (props.target.current.value = tempStr)
+          ? props.target.current.value = tempStr
           : console.log("No target!")
       }
     >
@@ -34,7 +34,7 @@ function AutoComplete(props: {
   inputText: string;
   target: RefObject<HTMLInputElement>;
 }) {
-  const textArr: string[] = props.inputText.split(" ");
+  const textArr: string[] = props.inputText.trim().split(" ");
   const lastInputText: string = textArr[textArr.length - 1];
   const [tagArr, setTagArr] = useState<TagType[]>([
     { id: 0, content: "aa" },
