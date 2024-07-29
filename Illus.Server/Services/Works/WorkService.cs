@@ -658,6 +658,36 @@ namespace Illus.Server.Sservices.Works
             }
             return userList;
         }
+        public async Task<List<TagModel>> GetSearchRecommand(string searchText)
+        {
+            var result = new List<TagModel>();
+            try
+            {
+                var tagList = await _context.Tag
+                    .AsNoTracking()
+                    .Where(p => p.Content
+                    .Contains(searchText))
+                    .Select(p => new { p.Id, p.Content, p.Artworks.Count })
+                    .OrderByDescending(p => p.Count)
+                    .ThenByDescending(p => p.Id)
+                    .Take(10)
+                    .ToListAsync();
+
+                foreach (var tag in tagList)
+                {
+                    result.Add(new TagModel
+                    {
+                        Id = tag.Id,
+                        Content = tag.Content,
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("GetSearchRecommand", ex);
+            }
+            return result;
+        }
 
         private List<TagModel> _checkTagExisting(List<EditTagCommand> inputTags)
         {

@@ -221,5 +221,15 @@ namespace Illus.Server.Controllers.Works
             var userList = await _workServices.GetLikeList(workId);
             return Ok(userList);
         }
+        [HttpGet("GetSearchRecommand")]
+        public async Task<IActionResult> GetSearchRecommand([FromQuery] string st)
+        {
+            var recommandList = new List<TagModel>();
+            if (!string.IsNullOrWhiteSpace(st))
+            {
+                recommandList=await _workServices.GetSearchRecommand(st);
+            }
+            return Ok(recommandList);
+        }
     }
 }

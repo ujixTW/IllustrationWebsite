@@ -28,6 +28,7 @@ namespace Illus.Server.Helper
             }
             catch (RegexMatchTimeoutException e)
             {
+                Logger.WriteLog("IsValidEmail",e);
                 return false;
             }
         }
