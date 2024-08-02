@@ -1,10 +1,8 @@
 .search-box {
-  --searchBlue: rgb(174, 229, 255);
-  --searchBkC: rgb(230, 230, 230);
-
   text-align: center;
   position: relative;
   display: flex;
+  width: 100%;
 
   .search {
     width: 100%;
@@ -13,7 +11,7 @@
     border-radius: 0.5rem;
     background-color: var(--searchBkC);
     &:focus {
-      outline: 0.2rem solid var(--searchBlue);
+      outline: 0.2rem solid var(--mainBlue);
     }
   }
   & + .auto-complete {
@@ -56,16 +54,18 @@
       }
     }
     .search-submit {
+      box-sizing: border-box;
       height: 100%;
       width: 2rem;
-      border: 0.1rem solid var(--searchBlue);
+      border: 0.1rem solid var(--searchBkC);
       border-radius: 0 0.5rem 0.5rem 0;
-      background-color: white;
+      background-color: var(--bkC);
     }
   }
 
   .search-mark {
     width: 1rem;
     height: 1rem;
+    color: var(--fontC);
   }
 }

@@ -3,7 +3,7 @@ namespace Illus.Server.Helper
 {
     public class FileHelper
     {
-        private static readonly string _basePath = "\\IllusWebsiteData";
+        private static readonly string _basePath = "..\\Illus.Client\\public";
         public enum imgType : int
         {
             Work = 0,

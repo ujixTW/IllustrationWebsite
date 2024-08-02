@@ -1,1 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45"><defs><style>.cls-1{fill:none;stroke:#333;stroke-miterlimit:10;stroke-width:3px;}.cls-2{fill:#333;}</style></defs><title>工作區域 1</title><circle class="cls-1" cx="20.81" cy="18.18" r="11.49"/><path class="cls-2" d="M26.33,28.67l8.29,10.7c1.18,1.52,3.29-.61,2.12-2.12l-8.29-10.7c-1.18-1.52-3.29.61-2.12,2.12Z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45">
+<title>工作區域 1</title>
+<circle cx="20.81" cy="18.18" r="11.49" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="4px"/>
+<path d="M26.33,28.67l8.29,10.7c1.18,1.52,3.29-.61,2.12-2.12l-8.29-10.7c-1.18-1.52-3.29.61-2.12,2.12Z" fill="currentColor" stroke="none"/>
+</svg>

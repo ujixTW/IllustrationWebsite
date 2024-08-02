@@ -1,9 +1,9 @@
-import { memo, useEffect, useRef, useState } from "react";
-import searchMark from "../assets/searchMark.svg";
-import { ChangeEvent, FormEvent } from "../utils/tsTypesHelper";
-import "../CSS/components/searchBox.css";
-import AutoComplete from "./searchbox/autoComplete";
-import { useNavigate } from "react-router-dom";
+import SearchMark from "../../assets/searchMark.svg?react";
+import { ChangeEvent, FormEvent } from "../../utils/tsTypesHelper";
+import "../../assets/CSS/components/SearchBox.css";
+import AutoComplete from "./AutoComplete";
+import { useEffect, useRef, useState } from "react";
+import { createSearchParams, useNavigate } from "react-router-dom";
 
 function SearchBox() {
   const [searchText, setSearchText] = useState<string>("");
@@ -14,15 +14,13 @@ function SearchBox() {
   const search = (fd: FormEvent) => {
     fd.preventDefault();
     const inputStr: string = searchRef.current?.value as string;
-    const qs = new URLSearchParams(location.search);
 
-    if (qs.has("keywords")) {
-      qs.set("keywords", inputStr);
-    } else {
-      qs.append("keywords", inputStr);
+    if (inputStr.trim() != "") {
+      navigate({
+        pathname: "/artworks",
+        search: `${createSearchParams({ keywords: inputStr })}`,
+      });
     }
-
-    navigate(`/artworks?${qs}`);
   };
 
   const editSearchInput = (id: ChangeEvent) => {
@@ -36,8 +34,10 @@ function SearchBox() {
         e.target != searchRef.current
       )
         setIsFocus(false);
+      else setIsFocus(true);
     });
   }, []);
+
   useEffect(() => {
     if (searchRef.current != null) searchRef.current.value = searchText;
   }, [searchText]);
@@ -66,7 +66,7 @@ function SearchBox() {
             </button>
           )}
           <button className="search-submit" type="submit">
-            <img src={searchMark} className="search-mark" alt="search" />
+            <SearchMark className="search-mark" />
           </button>
         </div>
       </form>
@@ -77,4 +77,4 @@ function SearchBox() {
   );
 }
 
-export default memo(SearchBox);
+export default SearchBox;

@@ -1,0 +1,37 @@
+.base {
+  display: flex;
+  align-items: center;
+  justify-items: center;
+}
+.check {
+  position: absolute;
+  opacity: 0;
+  &:checked + .box {
+    border-color: var(--mainBlue);
+    background-color: var(--mainBlue);
+    & > .switch {
+      background-color: var(--bkC);
+      margin-left: 1rem;
+    }
+  }
+}
+.box {
+  display: inline-block;
+  width: 2rem;
+  height: 1rem;
+  border-radius: 1rem;
+  border: 2px solid var(--searchBkC);
+  background-color: var(--searchBkC);
+  vertical-align: middle;
+  transition: all 0.3s;
+}
+.switch {
+  --r: 1rem;
+  display: inline-block;
+  width: var(--r);
+  height: var(--r);
+  border-radius: 50%;
+  background-color: var(--bkC);
+  margin-left: 0;
+  transition: all 0.3s;
+}

@@ -2,6 +2,7 @@ import { fileURLToPath, URL } from 'node:url';
 
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import svgr from 'vite-plugin-svgr';
 import fs from 'fs';
 import path from 'node:path';
 import child_process from 'child_process';
@@ -37,7 +38,7 @@ const target = env.ASPNETCORE_HTTPS_PORT ?
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(),svgr()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

@@ -1,0 +1,48 @@
+#root {
+  margin: 0;
+}
+a {
+  display: inline-block;
+  text-decoration: none;
+}
+.nav {
+  display: flex;
+  padding: 0.5rem 1rem;
+  align-items: center;
+  .nav-item {
+    display: flex;
+    align-items: center;
+    &.nav-middle {
+      width: 30%;
+    }
+    .btn.main-nav {
+      &:link,
+      &:visited {
+        color: var(--fontC);
+        padding: 0.5rem 1rem;
+        margin-right: 1rem;
+        border-radius: 1rem;
+        border: 0.15rem solid var(--searchBkC);
+      }
+      &:hover,
+      &:active {
+        color: var(--mainBlue);
+        border-color: var(--mainBlue);
+      }
+    }
+  }
+  &.main-nav {
+    justify-content: space-between;
+  }
+  .nav-link-home {
+    font-size: large;
+    &:link,
+    &:visited {
+      color: var(--mainBlue);
+      font-weight: bold;
+    }
+  }
+}
+main {
+  padding: 0.5rem 1rem;
+}
