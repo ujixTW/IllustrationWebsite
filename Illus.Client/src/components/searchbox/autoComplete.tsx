@@ -1,3 +1,4 @@
+import style from "../../assets/CSS/components/SearchBox.module.css";
 import axios from "axios";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { Link, createSearchParams } from "react-router-dom";
@@ -18,7 +19,7 @@ function RecommandLink(props: {
         pathname: "/artworks",
         search: `${createSearchParams({ keywords: tempStr })}`,
       }}
-      className="auto-complete-recommand"
+      className={style['recommand']}
       onClick={() =>
         props.target.current != null
           ? props.target.current.value = tempStr
@@ -110,7 +111,7 @@ function AutoComplete(props: {
   ));
 
   return (
-    <div className="auto-complete" ref={acRef}>
+    <div className={style['auto-complete']} ref={acRef}>
       {list}
     </div>
   );

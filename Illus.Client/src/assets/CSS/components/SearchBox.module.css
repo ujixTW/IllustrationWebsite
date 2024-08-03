@@ -1,0 +1,70 @@
+.search-box {
+  text-align: center;
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+.search {
+  width: 100%;
+  padding: 0.5rem 4rem 0.5rem 1rem;
+  border: 0;
+  border-radius: 0.5rem;
+  background-color: var(--searchBkC);
+  &:focus {
+    outline: 0.2rem solid var(--mainBlue);
+  }
+}
+.auto-complete {
+  position: absolute;
+  left: 0;
+  top: 2.2rem;
+  width: 100%;
+  padding: 0.5rem 0;
+  margin: 0;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 0.1rem;
+  .recommand {
+    display: block;
+    text-align: left;
+    padding: 0.5rem 1rem;
+    &:hover,
+    &:focus {
+      background-color: var(--searchBkC);
+    }
+  }
+}
+.box-end {
+  height: 100%;
+  position: absolute;
+  align-items: center;
+  display: flex;
+  right: 0;
+  top: 0;
+  .cancel {
+    --radius: 1.3rem;
+    width: var(--radius);
+    height: var(--radius);
+    border-radius: 50%;
+    border: 0;
+    background-color: rgba(138, 138, 138, 0.5);
+    color: white;
+    margin-right: 0.2rem;
+    &:hover {
+      background-color: rgba(138, 138, 138, 1);
+    }
+  }
+  .submit {
+    box-sizing: border-box;
+    height: 100%;
+    width: 2rem;
+    border: 0.1rem solid var(--searchBkC);
+    border-radius: 0 0.5rem 0.5rem 0;
+    background-color: var(--bkC);
+  }
+}
+
+.mark {
+  width: 1rem;
+  height: 1rem;
+  color: var(--fontC);
+}

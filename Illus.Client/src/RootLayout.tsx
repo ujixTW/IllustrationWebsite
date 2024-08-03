@@ -1,3 +1,4 @@
+import style from "./assets/CSS/RootLayout.module.css";
 import { Link, Outlet } from "react-router-dom";
 import SearchBox from "./components/searchbox/SearchBox";
 import { useContext, useEffect, useState } from "react";
@@ -14,25 +15,25 @@ import { ImagePathHelper } from "./utils/ImagePathHelper";
 function MainNav() {
   const {isLogin} = useContext(IsLoginContext);
   return (
-    <nav className="nav main-nav">
-      <div className="nav-item nav-start">
-        <Link to="/" className="nav nav-link-home">
+    <nav className={`${style['nav']} ${style['main-nav']}`}>
+      <div className={style['item']}>
+        <Link to="/" className={`${style['nav']} ${style['home']}`}>
           IllusWeb
         </Link>
       </div>
-      <div className="nav-item nav-middle">
+      <div className={style['item']}>
         <SearchBox />
       </div>
 
       {isLogin ? (
-        <div className="nav-item nav-end">
-          <Link to="/artworks/create" className="btn main-nav">
+        <div className={style['item']}>
+          <Link to="/artworks/create" className={style['btn']}>
             上傳作品
           </Link>
           <UserMenu />
         </div>
       ) : (
-        <div className="nav-item nav-end">
+        <div className={style['item']}>
           <Link to="/login" className="btn main-nav">
             登入
           </Link>

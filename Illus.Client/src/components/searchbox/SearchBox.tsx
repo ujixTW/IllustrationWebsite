@@ -1,6 +1,6 @@
+import style from "../../assets/CSS/components/SearchBox.module.css";
 import SearchMark from "../../assets/searchMark.svg?react";
 import { ChangeEvent, FormEvent } from "../../utils/tsTypesHelper";
-import "../../assets/CSS/components/SearchBox.css";
 import AutoComplete from "./AutoComplete";
 import { useEffect, useRef, useState } from "react";
 import { createSearchParams, useNavigate } from "react-router-dom";
@@ -43,11 +43,11 @@ function SearchBox() {
   }, [searchText]);
 
   return (
-    <search className="search-box">
-      <form className="search-box" onSubmit={search}>
+    <search className={style["search-box"]}>
+      <form className={style["search-box"]} onSubmit={search}>
         <input
           type="text"
-          className="search"
+          className={style["search"]}
           placeholder="搜尋作品"
           name="search"
           onChange={editSearchInput}
@@ -55,18 +55,18 @@ function SearchBox() {
           onFocus={() => setIsFocus(true)}
           autoComplete="off"
         />
-        <div className="search-box-end">
+        <div className={style['box-end']}>
           {searchText.trim() !== "" && isFocus && (
             <button
               type="button"
-              className="search-cancel"
+              className={style['cancel']}
               onClick={() => setSearchText("")}
             >
               x
             </button>
           )}
-          <button className="search-submit" type="submit">
-            <SearchMark className="search-mark" />
+          <button className={style['submit']} type="submit">
+            <SearchMark className={style['mark']} />
           </button>
         </div>
       </form>
