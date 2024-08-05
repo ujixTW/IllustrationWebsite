@@ -20,6 +20,8 @@ namespace Illus.Server.Controllers.Works
             _userIdKey = "UserId";
             _onePageWorkCount = 24;
         }
+
+        #region 取得作品資訊 
         //取得作品列表，以QueryString判定搜尋條件
         [HttpGet("GetList")]
         public async Task<IActionResult> GetWorkList(
@@ -57,7 +59,7 @@ namespace Illus.Server.Controllers.Works
             return Ok(list);
         }
         [HttpGet("GetList/Artist/{id}")]
-        public IActionResult GetArtistWorkList(
+        public async Task<IActionResult> GetArtistWorkList(
             int id, [FromQuery] int page, [FromQuery] bool isDesc, [FromQuery] int orderType)
         {
             var userIdStr = Request.Cookies[_userIdKey];
@@ -70,8 +72,15 @@ namespace Illus.Server.Controllers.Works
                 OrderType = orderType
             };
 
-            var list = _workServices.GetArtistWorkList(command, id, isOwnWorks, userId);
+            var list = await _workServices.GetArtistWorkList(command, id, isOwnWorks, userId);
             return Ok(list);
+        }
+        [HttpGet("GetList/Background")]
+        public async Task<IActionResult> GetBackgroundWorkList()
+        {
+            var result = await _workServices.GetBackgroundWorkList();
+
+            return Ok(result);
         }
         [HttpGet("{workId}")]
         public IActionResult GetWorkDetail(int workId)
@@ -125,6 +134,8 @@ namespace Illus.Server.Controllers.Works
             }
             return success ? Ok(result) : BadRequest();
         }
+        #endregion
+        #region 編輯作品 
         //新增作品
         [HttpPost("Add")]
         public async Task<IActionResult> AddWork(EditWorkCommand command)
@@ -170,6 +181,8 @@ namespace Illus.Server.Controllers.Works
             }
             return (success) ? Ok() : BadRequest();
         }
+        #endregion
+        #region 標籤讀取與編輯 
         [HttpGet("Tag/GetUserHistory")]
         public IActionResult GetUserHistoryTag()
         {
@@ -202,6 +215,7 @@ namespace Illus.Server.Controllers.Works
             }
             return Ok();
         }
+        #endregion
         [HttpPost("Like")]
         public IActionResult LikeWork(int wid)
         {

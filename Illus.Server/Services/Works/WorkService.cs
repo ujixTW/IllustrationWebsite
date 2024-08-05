@@ -4,6 +4,7 @@ using Illus.Server.Models;
 using Illus.Server.Models.Command;
 using Illus.Server.Models.View;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Web;
 
 namespace Illus.Server.Sservices.Works
@@ -59,21 +60,16 @@ namespace Illus.Server.Sservices.Works
                                 .ThenByDescending(p => p.Id);
                         break;
                     case (int)WorkListOrder.Hot:
-                        var hotConsts = _context.Artwork.Select(p => new
-                        {
-                            C = _context.Artwork.Average(p => p.ReadCounts),
-                            scoreAvg = _context.Artwork.Average(p => p.LikeCounts / p.ReadCounts)
-                        }).SingleOrDefault();
+
+                        _getWorkHotCounts(out var C, out var scoreAvg);
+                        var calHot = (int likeC, int readC) =>
+                            (C * scoreAvg + likeC / readC) / (C + readC);
 
                         if (!command.IsDesc)
-                            list.OrderByDescending(p =>
-                                (hotConsts == null) ? 0 :
-                                (hotConsts.C * hotConsts.scoreAvg + p.LikeCounts / p.ReadCounts) / (hotConsts.C + p.ReadCounts))
+                            list.OrderByDescending(p => (C != 0 && scoreAvg != 0) ? calHot(p.LikeCounts, p.ReadCounts) : 0)
                                 .ThenByDescending(p => p.Id);
                         else
-                            list.OrderBy(p =>
-                                (hotConsts == null) ? 0 :
-                                (hotConsts.C * hotConsts.scoreAvg + p.LikeCounts / p.ReadCounts) / (hotConsts.C + p.ReadCounts))
+                            list.OrderBy(p => (C != 0 && scoreAvg != 0) ? calHot(p.LikeCounts, p.ReadCounts) : 0)
                                 .ThenByDescending(p => p.Id);
                         break;
                     default:
@@ -135,7 +131,7 @@ namespace Illus.Server.Sservices.Works
             }
             return workList;
         }
-        public ArtworkViewListModel GetArtistWorkList(WorkListCommand command, int id, bool isOwn, int? userId)
+        public async Task<ArtworkViewListModel> GetArtistWorkList(WorkListCommand command, int id, bool isOwn, int? userId)
         {
             var workList = new List<ArtworkViewModel>();
             var maxCount = 0;
@@ -168,9 +164,9 @@ namespace Illus.Server.Sservices.Works
 
                 maxCount = list.Count();
 
-                list.Skip(command.Page * command.Count)
+                await list.Skip(command.Page * command.Count)
                     .Take(command.Count)
-                    .ToList();
+                    .ToListAsync();
 
                 foreach (var work in list)
                 {
@@ -195,6 +191,49 @@ namespace Illus.Server.Sservices.Works
             var temp = new ArtworkViewListModel { ArtworkList = workList, MaxCount = maxCount };
 
             return temp;
+        }
+        public async Task<List<ArtworkViewModel>> GetBackgroundWorkList()
+        {
+            var result = new List<ArtworkViewModel>();
+            try
+            {
+                _getWorkHotCounts(out var C, out var scoreAvg);
+
+                var tempList = await _context.Artwork
+                    .AsNoTracking()
+                    .Include(p => p.Artist)
+                    .Where(p =>
+                        p.IsAI == false &&
+                        p.IsR18 == false &&
+                        p.IsOpen == true)
+                    .OrderByDescending(p => (C != 0 && scoreAvg != 0) ?
+                        (C * scoreAvg + p.LikeCounts / p.ReadCounts) / (C + p.ReadCounts) : 0)
+                    .ThenByDescending(p => p.Id)
+                    .Take(10)
+                    .ToListAsync();
+
+                if (tempList.Any())
+                {
+                    foreach (var item in tempList)
+                    {
+                        var artist = item.Artist;
+                        result.Add(new ArtworkViewModel
+                        {
+                            Id = item.Id,
+                            ArtistId = item.ArtistId,
+                            Title = item.Title,
+                            ArtistName = (!string.IsNullOrEmpty(artist.Nickname)) ? artist.Nickname : artist.Account,
+                            ArtistHeadshotContent = (!string.IsNullOrEmpty(artist.HeadshotContent)) ? artist.HeadshotContent : string.Empty,
+                            Imgs = new List<ImgModel> { item.Images[0] }
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("GetBackgroundWorkList", ex);
+            }
+            return result;
         }
         public ArtworkViewModel GetWorkDetail(int id, int? userId, out bool success)
         {
@@ -744,6 +783,34 @@ namespace Illus.Server.Sservices.Works
                 return new List<TagModel>();
             }
 
+        }
+        private void _getWorkHotCounts(out double C, out double scoreAvg)
+        {
+            C = 0;
+            scoreAvg = 0;
+            try
+            {
+                var temp =
+                    _context.Artwork.Select(p => new
+                    {
+                        C = _context.Artwork
+                             .Where(p => p.IsOpen == true)
+                             .Average(p => p.ReadCounts),
+                        scoreAvg = _context.Artwork
+                             .Where(p => p.IsOpen == true)
+                             .Average(p => p.LikeCounts / p.ReadCounts)
+                    })
+                    .SingleOrDefault();
+                if (temp != null)
+                {
+                    C = temp.C;
+                    scoreAvg = temp.scoreAvg;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("_getWorkHotCounts", ex);
+            }
         }
     }
 }
