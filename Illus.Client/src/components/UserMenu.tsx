@@ -1,34 +1,19 @@
 import Arrow from "../assets/arrow.svg?react";
 import style from "../assets/CSS/components/UserMenu.module.css";
 import { useContext, useEffect, useState } from "react";
-import {
-  IsLoginContext,
-  UserDataContext,
-  defaultUserDataContextValue,
-} from "../context/LoginContext";
+import { UserDataContext } from "../context/LoginContext";
 import { Link } from "react-router-dom";
 import CapsuleSwitch from "./CapsuleSwitch";
 import { ChangeEvent } from "../utils/tsTypesHelper";
-import axios from "axios";
+import LogOut from "./Logout";
 
 function UserMenu() {
-  const { userData, setUserData } = useContext(UserDataContext);
-  const { setIsLogin } = useContext(IsLoginContext);
+  const { userData } = useContext(UserDataContext);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [logoutCheck, setLogoutCheck] = useState(false);
 
   const showName = userData.nickName ? userData.nickName : userData.account;
 
-  const logout = async () => {
-    await axios
-      .get("/api/Logout")
-      .then(() => {
-        setIsLogin(false);
-        setUserData(defaultUserDataContextValue);
-      })
-      .catch((err) => console.log(err));
-  };
   useEffect(() => {
     const style = document.documentElement.style;
     if (!isDarkMode) {
@@ -110,7 +95,7 @@ function UserMenu() {
             </div>
           </div>
           <div className={style["item-group"]}>
-            <div>
+            <div className={style["item"]}>
               <Link
                 to={`/user/${userData.id}/likes`}
                 className="user-likes user-menu-item"
@@ -119,7 +104,7 @@ function UserMenu() {
                 收藏作品
               </Link>
             </div>
-            <div>
+            <div className={style["item"]}>
               <Link
                 to={`/user/${userData.id}/histories`}
                 className="user-histories"
@@ -131,7 +116,7 @@ function UserMenu() {
           </div>
           <div className={style["item-group"]}>
             <label
-              className={style["dark-theme"]}
+              className={`${style["item"]} ${style["dark-theme"]}`}
               onChange={() => setIsDarkMode(!isDarkMode)}
             >
               <div>夜間模式</div>
@@ -139,49 +124,12 @@ function UserMenu() {
             </label>
           </div>
           <div className={style["item-group"]}>
-            <div>
+            <div className={style["item"]}>
               <Link to={`/user/${userData.id}/setting`}>設定</Link>
             </div>
           </div>
           <div className={`${style["logout"]} ${style["item-group"]}`}>
-            <div onClick={() => setLogoutCheck(true)}>登出</div>
-          </div>
-        </div>
-      )}
-      {logoutCheck && (
-        <div
-          className={style["logout-window"]}
-          onClick={() => setLogoutCheck(false)}
-        >
-          <div className={style["window"]}>
-            <div>
-              <button
-                type="button"
-                className={style["btn-x"]}
-                onClick={() => setLogoutCheck(false)}
-              >
-                x
-              </button>
-            </div>
-            <div>
-              <h2>確定要登出嗎?</h2>
-              <div>
-                <button
-                  type="button"
-                  className={style["btn-check"]}
-                  onClick={logout}
-                >
-                  登出
-                </button>
-                <button
-                  type="button"
-                  className={style["btn-check"]}
-                  onClick={() => setLogoutCheck(false)}
-                >
-                  取消
-                </button>
-              </div>
-            </div>
+            {<LogOut itemClass={style["item"]} />}
           </div>
         </div>
       )}

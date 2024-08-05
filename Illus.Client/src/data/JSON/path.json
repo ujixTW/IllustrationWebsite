@@ -1,0 +1,38 @@
+{
+  "artworks": [
+    {
+      "name": "artworkList",
+      "path": "/artworks"
+    },
+    {
+      "name": "createArtwork",
+      "path": "/artworks/create"
+    },
+    {
+      "name": "artwork",
+      "path": "/artworks/:artworkId"
+    }
+  ],
+  "user": [
+    {
+      "name": "user",
+      "path": "/user/:id"
+    },
+    {
+      "name": "following",
+      "path": "/user/:id/following"
+    },
+    {
+      "name": "follower",
+      "path": "/user/:id/follower"
+    },
+    {
+      "name": "likes",
+      "path": "/user/:id/likes"
+    },
+    {
+      "name": "histories",
+      "path": "/user/:id/histories"
+    }
+  ]
+}

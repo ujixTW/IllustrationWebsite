@@ -16,14 +16,18 @@ function App() {
     createRoutesFromElements(
       <Route path="/" element={<RootLayout />}>
         <Route index element={<Home />} />
-        <Route path="/artworks" element={<ArtworkList />} />
-        <Route path="/artworks/create" element={<CreateArtwork />} />
-        <Route path="/artworks/:artworkId" element={<Home />} />
-        <Route path="/user/:id" element={<Home />} />
-        <Route path="/user/:id/following" element={<Home />} />
-        <Route path="/user/:id/follower" element={<Home />} />
-        <Route path="/user/:id/likes" element={<Home />} />
-        <Route path="/user/:id/histories" element={<Home />} />
+        <Route path="/artworks">
+          <Route index element={<ArtworkList />} />
+          <Route path="create" element={<CreateArtwork />} />
+          <Route path=":artworkId" element={<Home />} />
+        </Route>
+        <Route path="/user/:id">
+          <Route index element={<Home />} />
+          <Route path="following" element={<Home />} />
+          <Route path="follower" element={<Home />} />
+          <Route path="likes" element={<Home />} />
+          <Route path="histories" element={<Home />} />
+        </Route>
         <Route path="*" element={<NoMatch />} />
       </Route>
     )
