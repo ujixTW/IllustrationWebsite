@@ -9,6 +9,7 @@ import {
 import { Link } from "react-router-dom";
 import CapsuleSwitch from "./CapsuleSwitch";
 import { ChangeEvent } from "../utils/tsTypesHelper";
+import axios from "axios";
 
 function UserMenu() {
   const { userData, setUserData } = useContext(UserDataContext);
@@ -19,9 +20,14 @@ function UserMenu() {
 
   const showName = userData.nickName ? userData.nickName : userData.account;
 
-  const logout = () => {
-    setIsLogin(false);
-    setUserData(defaultUserDataContextValue);
+  const logout = async () => {
+    await axios
+      .get("/api/Logout")
+      .then(() => {
+        setIsLogin(false);
+        setUserData(defaultUserDataContextValue);
+      })
+      .catch((err) => console.log(err));
   };
   useEffect(() => {
     const style = document.documentElement.style;
@@ -143,20 +149,35 @@ function UserMenu() {
         </div>
       )}
       {logoutCheck && (
-        <div className={style['logout-window']} onClick={() => setLogoutCheck(false)}>
-          <div className={style['window']}>
+        <div
+          className={style["logout-window"]}
+          onClick={() => setLogoutCheck(false)}
+        >
+          <div className={style["window"]}>
             <div>
-              <button type="button" className={style['btn-x']} onClick={() => setLogoutCheck(false)}>
+              <button
+                type="button"
+                className={style["btn-x"]}
+                onClick={() => setLogoutCheck(false)}
+              >
                 x
               </button>
             </div>
             <div>
               <h2>確定要登出嗎?</h2>
               <div>
-                <button type="button" className={style['btn-check']} onClick={logout}>
+                <button
+                  type="button"
+                  className={style["btn-check"]}
+                  onClick={logout}
+                >
                   登出
                 </button>
-                <button type="button" className={style['btn-check']} onClick={() => setLogoutCheck(false)}>
+                <button
+                  type="button"
+                  className={style["btn-check"]}
+                  onClick={() => setLogoutCheck(false)}
+                >
                   取消
                 </button>
               </div>
