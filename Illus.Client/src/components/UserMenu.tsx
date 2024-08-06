@@ -1,5 +1,6 @@
 import Arrow from "../assets/arrow.svg?react";
 import style from "../assets/CSS/components/UserMenu.module.css";
+import path from "../data/JSON/path.json";
 import { useContext, useEffect, useState } from "react";
 import { UserDataContext } from "../context/LoginContext";
 import { Link } from "react-router-dom";
@@ -12,7 +13,10 @@ function UserMenu() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  const showName = userData.nickName ? userData.nickName : userData.account;
+  const userLink: string = path.user.user + userData.id;
+  const showName: string = userData.nickName
+    ? userData.nickName
+    : userData.account;
 
   useEffect(() => {
     const style = document.documentElement.style;
@@ -69,7 +73,7 @@ function UserMenu() {
           ></div>
           <div className={style["status"]}>
             <div>
-              <Link to={`/user/${userData.id}`} title={showName}>
+              <Link to={`${userLink}`} title={showName}>
                 <img
                   width="64"
                   height="64"
@@ -84,11 +88,11 @@ function UserMenu() {
               {userData.email.slice(0, userData.email.indexOf("@"))}
             </div>
             <div className={style.follow}>
-              <Link to={`/user/${userData.id}/following`}>
+              <Link to={`${userLink + path.user.following}`}>
                 <div>{userData.followingCount}</div>
                 <div>關注中</div>
               </Link>
-              <Link to={`/user/${userData.id}/follower`}>
+              <Link to={`${userLink + path.user.follower}`}>
                 <div>{userData.followerCount}</div>
                 <div>粉絲</div>
               </Link>
@@ -97,7 +101,7 @@ function UserMenu() {
           <div className={style["item-group"]}>
             <div className={style["item"]}>
               <Link
-                to={`/user/${userData.id}/likes`}
+                to={`${userLink + path.user.likes}`}
                 className="user-likes user-menu-item"
                 title="Like artworks"
               >
@@ -106,7 +110,7 @@ function UserMenu() {
             </div>
             <div className={style["item"]}>
               <Link
-                to={`/user/${userData.id}/histories`}
+                to={`${userLink + path.user.histories}`}
                 className="user-histories"
                 title="Browse histories"
               >
@@ -125,7 +129,7 @@ function UserMenu() {
           </div>
           <div className={style["item-group"]}>
             <div className={style["item"]}>
-              <Link to={`/user/${userData.id}/setting`}>設定</Link>
+              <Link to={`${userLink + path.user.settings}`}>設定</Link>
             </div>
           </div>
           <div className={`${style["logout"]} ${style["item-group"]}`}>

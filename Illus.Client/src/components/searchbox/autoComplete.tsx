@@ -1,4 +1,5 @@
 import style from "../../assets/CSS/components/SearchBox.module.css";
+import path from "../../data/JSON/path.json";
 import axios from "axios";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { Link, createSearchParams } from "react-router-dom";
@@ -16,7 +17,7 @@ function RecommandLink(props: {
   return (
     <Link
       to={{
-        pathname: "/artworks",
+        pathname: `${path.artworks.artworkList}`,
         search: `${createSearchParams({ keywords: tempStr })}`,
       }}
       className={style['recommand']}

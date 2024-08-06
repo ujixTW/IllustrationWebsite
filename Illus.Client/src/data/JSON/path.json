@@ -1,38 +1,22 @@
 {
-  "artworks": [
-    {
-      "name": "artworkList",
-      "path": "/artworks"
-    },
-    {
-      "name": "createArtwork",
-      "path": "/artworks/create"
-    },
-    {
-      "name": "artwork",
-      "path": "/artworks/:artworkId"
-    }
-  ],
-  "user": [
-    {
-      "name": "user",
-      "path": "/user/:id"
-    },
-    {
-      "name": "following",
-      "path": "/user/:id/following"
-    },
-    {
-      "name": "follower",
-      "path": "/user/:id/follower"
-    },
-    {
-      "name": "likes",
-      "path": "/user/:id/likes"
-    },
-    {
-      "name": "histories",
-      "path": "/user/:id/histories"
-    }
-  ]
+  "home": "/",
+  "artworks": {
+    "artworkList": "/artworks",
+    "createArtwork": "/artworks/create",
+    "artwork": "/artworks/"
+  },
+  "user": {
+    "user": "/user/",
+    "following": "/following",
+    "follower": "/follower",
+    "likes": "/likes",
+    "histories": "/histories",
+    "settings":"/settings"
+  },
+  "login": {
+    "login": "/login"
+  },
+  "signUp": {
+    "signUp": "/signUp"
+  }
 }

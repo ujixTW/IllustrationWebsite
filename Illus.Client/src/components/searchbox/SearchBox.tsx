@@ -1,4 +1,5 @@
 import style from "../../assets/CSS/components/SearchBox.module.css";
+import path from "../../data/JSON/path.json";
 import SearchMark from "../../assets/searchMark.svg?react";
 import { ChangeEvent, FormEvent } from "../../utils/tsTypesHelper";
 import AutoComplete from "./AutoComplete";
@@ -17,7 +18,7 @@ function SearchBox() {
 
     if (inputStr.trim() != "") {
       navigate({
-        pathname: "/artworks",
+        pathname: `${path.artworks.artworkList}`,
         search: `${createSearchParams({ keywords: inputStr })}`,
       });
     }

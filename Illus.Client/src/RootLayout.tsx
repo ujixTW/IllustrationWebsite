@@ -1,4 +1,5 @@
 import style from "./assets/CSS/RootLayout.module.css";
+import path from "./data/JSON/path.json";
 import unLoginPathData from "./data/JSON/unLoginPath.json";
 import { Link, Outlet } from "react-router-dom";
 import SearchBox from "./components/searchbox/SearchBox";
@@ -32,7 +33,7 @@ function MainNav() {
   return (
     <nav className={`${style["nav"]} ${style["main-nav"]}`}>
       <div className={style["item"]}>
-        <Link to="/" className={`${style["nav"]} ${style["home"]}`}>
+        <Link to={path.home} className={`${style["nav"]} ${style["home"]}`}>
           IllusWeb
         </Link>
       </div>
@@ -42,17 +43,17 @@ function MainNav() {
 
       {isLogin ? (
         <div className={style["item"]}>
-          <Link to="/artworks/create" className={style["btn"]}>
+          <Link to={path.artworks.createArtwork} className={style["btn"]}>
             上傳作品
           </Link>
           <UserMenu />
         </div>
       ) : !isUnLoginPath ? (
         <div className={style["item"]}>
-          <Link to="/login" className={style["btn"]}>
+          <Link to={path.login.login} className={style["btn"]}>
             登入
           </Link>
-          <Link to="/signUp" className={style["btn"]}>
+          <Link to={path.signUp.signUp} className={style["btn"]}>
             註冊
           </Link>
         </div>
