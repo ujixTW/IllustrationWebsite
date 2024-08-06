@@ -27,7 +27,6 @@
 }
 .main-nav {
   justify-content: space-between;
-  /* background-color: var(--bkC); */
 }
 .home {
   font-size: large;

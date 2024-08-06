@@ -1,4 +1,45 @@
-.after{
-    
+.after {
 }
-.before{}
+.before {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+
+  .logo{
+    width: 80%;
+    margin-bottom: 3rem;
+  }
+  .item {
+    margin-top: 1rem;
+  }
+  .btn {
+    width: 40%;
+    padding: 1rem;
+    background-color: var(--searchBkC);
+    border-radius: 1rem;
+    font-size: larger;
+    font-weight: bold;
+    opacity: 0.9;
+
+    &:visited,
+    &:link,
+    &:hover,
+    &:active {
+      color: rgb(30,30,30);
+    }
+
+    &:hover {
+      opacity: 1;
+    }
+    &.login {
+      background-color: var(--mainBlue);
+      &:visited,
+      &:link,
+      &:hover,
+      &:active {
+        color: white;
+      }
+    }
+  }
+}

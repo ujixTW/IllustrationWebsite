@@ -1,6 +1,7 @@
 import style from "./assets/CSS/RootLayout.module.css";
 import path from "./data/JSON/path.json";
 import unLoginPathData from "./data/JSON/unLoginPath.json";
+import IconLong from "./assets/IconLong.svg?react";
 import { Link, Outlet } from "react-router-dom";
 import SearchBox from "./components/searchbox/SearchBox";
 import { useContext, useEffect, useState } from "react";
@@ -34,7 +35,7 @@ function MainNav() {
     <nav className={`${style["nav"]} ${style["main-nav"]}`}>
       <div className={style["item"]}>
         <Link to={path.home} className={`${style["nav"]} ${style["home"]}`}>
-          IllusWeb
+          <IconLong height="100%" width="8rem"/>
         </Link>
       </div>
       <div className={style["item"]}>
