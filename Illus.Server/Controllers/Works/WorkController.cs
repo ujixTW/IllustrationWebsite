@@ -13,12 +13,10 @@ namespace Illus.Server.Controllers.Works
     {
         private readonly WorkService _workServices;
         private readonly string _userIdKey;
-        private readonly int _onePageWorkCount;
         public WorkController(WorkService workServices)
         {
             _workServices = workServices;
             _userIdKey = "UserId";
-            _onePageWorkCount = 24;
         }
 
         #region 取得作品資訊 
@@ -29,12 +27,9 @@ namespace Illus.Server.Controllers.Works
             [FromQuery] int orderType, [FromQuery] bool isR18, [FromQuery] bool isAI,
             [FromQuery] int workCount)
         {
-            if (page <= 0) page = 0;
-            if (string.IsNullOrWhiteSpace(keywords)) keywords = string.Empty;
+            if (string.IsNullOrEmpty(keywords)) keywords = string.Empty;
 
-            var userIdStr = Request.Cookies[_userIdKey];
-
-            var list = await _workServices.GetWorkList(new WorkListCommand
+            var list = await _workServices.GetWorkList(SetWorkListCommand(new WorkListCommand
             {
                 Page = page,
                 Count = workCount,
@@ -43,37 +38,65 @@ namespace Illus.Server.Controllers.Works
                 IsAI = isAI,
                 Keywords = keywords,
                 OrderType = orderType
-            }, int.TryParse(userIdStr, out int userId) ? userId : null);
+            }));
 
             return Ok(list);
         }
         [HttpGet("GetList/Daily")]
         public async Task<IActionResult> GetDailyWorkList(
-            [FromQuery] bool isR18, [FromQuery] bool isAI, [FromQuery] int workCount)
+            [FromQuery] int page, [FromQuery] bool isR18, [FromQuery] bool isAI,
+            [FromQuery] int workCount)
         {
-            var userIdStr = Request.Cookies[_userIdKey];
-            var list = await _workServices.GetDailyWorkList(
-                isR18, isAI, workCount,
-                int.TryParse(userIdStr, out int userId) ? userId : null);
+            var list = new ArtworkViewListModel();
+            var commend = SetWorkListCommand(new WorkListCommand
+            {
+                Page = page,
+                Count = workCount,
+                IsAI = isAI,
+                IsR18 = isR18
+            });
 
+            if (commend.UserId >= 0)
+            {
+                list = await _workServices.GetDailyWorkList(commend);
+            }
             return Ok(list);
         }
         [HttpGet("GetList/Artist/{id}")]
         public async Task<IActionResult> GetArtistWorkList(
-            int id, [FromQuery] int page, [FromQuery] bool isDesc, [FromQuery] int orderType)
+            int id, [FromQuery] int page, [FromQuery] bool isDesc, [FromQuery] int orderType,
+            [FromQuery] int workCount)
         {
-            var userIdStr = Request.Cookies[_userIdKey];
-            var isOwnWorks = (int.TryParse(userIdStr, out int userId) && userId == id) ? true : false;
-            var command = new WorkListCommand
+
+            var commend = SetWorkListCommand(new WorkListCommand
             {
                 Page = page,
-                Count = _onePageWorkCount,
+                Count = workCount,
                 IsDesc = isDesc,
                 OrderType = orderType
-            };
+            });
+            var idList = new List<int> { id };
+            var isOwn = commend.UserId == id;
 
-            var list = await _workServices.GetArtistWorkList(command, id, isOwnWorks, userId);
+            var list = await _workServices.GetArtistWorkList(commend, idList, isOwn);
             return Ok(list);
+        }
+        [HttpGet("GetList/Following")]
+        public async Task<IActionResult> GetFollowingWorkList(
+            [FromQuery] int page, [FromQuery] bool isR18, [FromQuery] int workCount)
+        {
+            var result = new ArtworkViewListModel();
+            var commend = SetWorkListCommand(new WorkListCommand
+            {
+                Page = page,
+                IsR18 = isR18,
+                Count = workCount
+            });
+            if (commend.UserId >= 0)
+            {
+                result = await _workServices.GetFollowingWorkList(commend);
+            }
+            return Ok(result);
         }
         [HttpGet("GetList/Background")]
         public async Task<IActionResult> GetBackgroundWorkList()
@@ -100,39 +123,35 @@ namespace Illus.Server.Controllers.Works
             return (success) ? Ok(model) : NotFound();
         }
         [HttpGet("GetList/History")]
-        public IActionResult GetArtworkHistoryList([FromQuery] int page, [FromQuery] bool isDesc)
+        public IActionResult GetArtworkHistoryList([FromQuery] int page, [FromQuery] bool isDesc, [FromQuery] int workCount)
         {
-            var userIdStr = Request.Cookies[_userIdKey];
             var result = new ArtworkViewListModel();
-            var success = false;
-            if (int.TryParse(userIdStr, out int userId))
+            var commend = SetWorkListCommand(new WorkListCommand
             {
-                result = _workServices.GetArtworkHistoryList(new WorkListCommand
-                {
-                    Page = page,
-                    Count = _onePageWorkCount,
-                    IsDesc = isDesc
-                }, userId);
-                success = true;
+                Page = page,
+                Count = workCount,
+                IsDesc = isDesc
+            });
+            if (commend.UserId >= 0)
+            {
+                result = _workServices.GetArtworkHistoryList(commend);
             }
-            return success ? Ok(result) : BadRequest();
+            return Ok(result);
         }
         [HttpGet("GetList/Like")]
-        public IActionResult GetLikeArtWorkList([FromQuery] int page)
+        public IActionResult GetLikeArtWorkList([FromQuery] int page, [FromQuery] int workCount)
         {
-            var userIdStr = Request.Cookies[_userIdKey];
             var result = new ArtworkViewListModel();
-            var success = false;
-            if (int.TryParse(userIdStr, out int userId))
+            var commend = SetWorkListCommand(new WorkListCommand
             {
-                result = _workServices.GetLikeArtWorkList(new WorkListCommand
-                {
-                    Page = page,
-                    Count = _onePageWorkCount,
-                }, userId);
-                success = true;
+                Page = page,
+                Count = workCount
+            });
+            if (commend.UserId >= 0)
+            {
+                result = _workServices.GetLikeArtWorkList(commend);
             }
-            return success ? Ok(result) : BadRequest();
+            return Ok(result);
         }
         #endregion
         #region 編輯作品 
@@ -241,9 +260,28 @@ namespace Illus.Server.Controllers.Works
             var recommandList = new List<TagModel>();
             if (!string.IsNullOrWhiteSpace(st))
             {
-                recommandList=await _workServices.GetSearchRecommand(st);
+                recommandList = await _workServices.GetSearchRecommand(st);
             }
             return Ok(recommandList);
+        }
+        [NonAction]
+        private WorkListCommand SetWorkListCommand(WorkListCommand command)
+        {
+            var userIdStr = Request.Cookies[_userIdKey];
+            var orderTypeArr = Enum.GetValues(typeof(WorkListOrder));
+
+            return new WorkListCommand
+            {
+                UserId = (int.TryParse(userIdStr, out int userId)) ? userId : -1,
+                Page = (command.Page < 0) ? 0 : command.Page,
+                Count = (command.Count <= 100) ? command.Count : 0,
+                IsR18 = command.IsR18,
+                IsAI = command.IsAI,
+                Keywords = command.Keywords.Trim(),
+                IsDesc = command.IsDesc,
+                OrderType = (command.OrderType > orderTypeArr.GetValue(orderTypeArr.GetUpperBound(0))!.GetHashCode()) ?
+                    (int)WorkListOrder.Hot : command.OrderType,
+            };
         }
     }
 }

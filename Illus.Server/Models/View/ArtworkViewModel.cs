@@ -22,5 +22,6 @@
     {
         public List<ArtworkViewModel> ArtworkList { get; set; } = new List<ArtworkViewModel>();
         public int MaxCount { get; set; }
+        public string DailyTheme { get; set; }= string.Empty;
     }
 }

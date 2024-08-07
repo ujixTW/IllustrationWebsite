@@ -17,11 +17,11 @@ namespace Illus.Server.Sservices.Works
             _context = context;
         }
         #region 取得作品資訊
-        public async Task<ArtworkViewListModel> GetWorkList(WorkListCommand command, int? userId)
+        public async Task<ArtworkViewListModel> GetWorkList(WorkListCommand command)
         {
             var keywordList = new List<string>();
 
-            if (!string.IsNullOrWhiteSpace(command.Keywords))
+            if (!string.IsNullOrEmpty(command.Keywords))
                 keywordList = command.Keywords.Trim().Split(' ').ToList();
 
             var workList = new List<ArtworkViewModel>();
@@ -35,18 +35,9 @@ namespace Illus.Server.Sservices.Works
                         (!command.IsAI) ? p.IsAI == false : true &&
                         (!command.IsR18) ? p.IsR18 == false : true &&
                         keywordList.Any() ?
-                            keywordList.Any(w => p.Tags.Any(t => t.Content.Equals(w))) : true)
-                    .Union(
-                        _context.Artwork
-                        .Include(p => p.Tags)
-                        .Where(p =>
-                            p.IsOpen == true &&
-                            (!command.IsAI) ? p.IsAI == false : true &&
-                            (!command.IsR18) ? p.IsR18 == false : true &&
-                            keywordList.Any() ?
-                                keywordList.Any(w => p.Title.Contains(w)) : true))
+                            keywordList.Any(w => p.Tags.Any(t => t.Content.Equals(w)) || p.Title.Contains(w)) : true)
                     .Include(p => p.Artist)
-                    .Include(p => p.Likes.Where(l => l.UserId == userId && l.Status == true).FirstOrDefault())
+                    .Include(p => p.Likes.Where(l => l.UserId == command.UserId && l.Status == true).FirstOrDefault())
                     .AsNoTracking();
 
                 switch (command.OrderType)
@@ -96,7 +87,7 @@ namespace Illus.Server.Sservices.Works
                         IsLike = item.Likes.Any(),
                         ArtistName = item.Artist.Nickname,
                         ArtistHeadshotContent =
-                            (string.IsNullOrWhiteSpace(item.Artist.HeadshotContent)) ?
+                            (string.IsNullOrEmpty(item.Artist.HeadshotContent)) ?
                             string.Empty : item.Artist.HeadshotContent,
                         CoverImg = item.CoverImg
                     });
@@ -110,37 +101,37 @@ namespace Illus.Server.Sservices.Works
 
             return temp;
         }
-        public async Task<ArtworkViewListModel> GetDailyWorkList(bool isR18, bool isAi, int workCount, int? userId)
+        public async Task<ArtworkViewListModel> GetDailyWorkList(WorkListCommand command)
         {
             var workList = new ArtworkViewListModel();
             var todayTheme = _context.DailyTheme.AsNoTracking()
-                .Include(p => p.Tag.Content)
+                .Include(p => p.Tag)
                 .SingleOrDefault(p => p.SpecifyDay.Date == DateTime.Today.Date && p.IsEnable == true);
 
             if (todayTheme != null)
             {
-                workList = await GetWorkList(new WorkListCommand
-                {
-                    Page = 0,
-                    Count = workCount,
-                    IsR18 = isR18,
-                    IsAI = isAi,
-                    Keywords = todayTheme.Tag.Content,
-                    OrderType = (int)WorkListOrder.Hot
-                }, userId);
+                command.Keywords = todayTheme.Tag.Content;
+                command.OrderType = (int)WorkListOrder.Hot;
+                workList = await GetWorkList(command);
+                workList.DailyTheme = todayTheme.Tag.Content;
             }
             return workList;
         }
-        public async Task<ArtworkViewListModel> GetArtistWorkList(WorkListCommand command, int id, bool isOwn, int? userId)
+        public async Task<ArtworkViewListModel> GetArtistWorkList(WorkListCommand command, List<int> idList, bool isOwn)
         {
             var workList = new List<ArtworkViewModel>();
             var maxCount = 0;
             try
             {
                 var list = _context.Artwork
-                    .Include(p => p.Likes.Where(l => l.UserId == userId && l.Status == true).FirstOrDefault())
-                    .Where(p => p.ArtistId == id && isOwn ? p.IsDelete == false : p.IsOpen == true)
-                    .AsNoTracking();
+                    .AsNoTracking()
+                    .Where(p =>
+                        p.IsR18 == command.IsR18 &&
+                        (isOwn) ? p.IsDelete == false : p.IsOpen == true &&
+                        idList.Any(id => id == p.ArtistId))
+                    .Include(p => p.Likes
+                        .Where(l => l.UserId == command.UserId && l.Status == true))
+                    .Include(p => p.Artist);
 
 
                 switch (command.OrderType)
@@ -191,6 +182,32 @@ namespace Illus.Server.Sservices.Works
             var temp = new ArtworkViewListModel { ArtworkList = workList, MaxCount = maxCount };
 
             return temp;
+        }
+        public async Task<ArtworkViewListModel> GetFollowingWorkList(WorkListCommand command)
+        {
+            var result = new ArtworkViewListModel();
+            try
+            {
+                var list = await _context.Follow
+                    .AsNoTracking()
+                    .Where(p => p.FollowerId == command.UserId && p.Following.IsActivation == true)
+                    .ToListAsync();
+
+                if (list.Any())
+                {
+                    var followingList = new List<int>();
+                    foreach (var item in list)
+                    {
+                        followingList.Add(item.FollowingId);
+                    }
+                    result = await GetArtistWorkList(command, followingList, false);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("GetFollowingWorkList", ex);
+            }
+            return result;
         }
         public async Task<List<ArtworkViewModel>> GetBackgroundWorkList()
         {
@@ -250,15 +267,16 @@ namespace Illus.Server.Sservices.Works
                     .SingleOrDefault(
                         p => p.Id == id &&
                         (p.ArtistId == userId) ? p.IsDelete == false : p.IsOpen == true &&
-                        p.PostTime <= today);
+                        (p.ArtistId != userId) ? p.PostTime <= today : true);
                 var history = _context.History.Where(p => p.ArtworkId == id).ToList();
 
                 if (work != null)
                 {
                     #region 紀錄閱讀紀錄
+
+                    var hasData = false;
                     if (userId != null)
                     {
-                        var hasData = false;
                         foreach (var h in history)
                         {
                             if (h.UserId == userId)
@@ -268,20 +286,16 @@ namespace Illus.Server.Sservices.Works
                                 break;
                             }
                         }
-
-                        if (!hasData)
-                        {
-                            history.Add(new HistoryModel
-                            {
-                                ArtworkId = id,
-                                UserId = userId,
-                                BrowseTime = today
-                            });
-                        }
                     }
-                    else
+
+                    if (!hasData)
                     {
-                        history.Add(new HistoryModel { ArtworkId = id, BrowseTime = today });
+                        history.Add(new HistoryModel
+                        {
+                            ArtworkId = id,
+                            UserId = userId,
+                            BrowseTime = today
+                        });
                     }
 
                     work.ReadCounts = history.Count;
@@ -316,7 +330,7 @@ namespace Illus.Server.Sservices.Works
             }
             return model;
         }
-        public ArtworkViewListModel GetArtworkHistoryList(WorkListCommand command, int userId)
+        public ArtworkViewListModel GetArtworkHistoryList(WorkListCommand command)
         {
             var result = new ArtworkViewListModel();
             try
@@ -325,7 +339,7 @@ namespace Illus.Server.Sservices.Works
                     .AsNoTracking()
                     .Include(p => p.Artwork)
                     .ThenInclude(p => p.Artist)
-                    .Where(p => p.UserId == userId && p.Artwork.IsOpen == true);
+                    .Where(p => p.UserId == command.UserId && p.Artwork.IsOpen == true);
                 var count = hisList.Count();
 
                 if (command.IsDesc)
@@ -363,7 +377,7 @@ namespace Illus.Server.Sservices.Works
             }
             return result;
         }
-        public ArtworkViewListModel GetLikeArtWorkList(WorkListCommand command, int userId)
+        public ArtworkViewListModel GetLikeArtWorkList(WorkListCommand command)
         {
             var result = new ArtworkViewListModel();
             try
@@ -372,15 +386,17 @@ namespace Illus.Server.Sservices.Works
                     .AsNoTracking()
                     .Include(p => p.Artwork)
                     .ThenInclude(p => p.Artist)
-                    .Where(p => p.UserId == userId && p.Status == true && p.Artwork.IsOpen == true)
-                    .OrderByDescending(p => p.UpdateTime)
+                    .Where(p =>
+                        p.UserId == command.UserId &&
+                        p.Status == true &&
+                        p.Artwork.IsOpen == true);
+
+                var count = likeList.Count();
+
+                likeList.OrderByDescending(p => p.UpdateTime)
                     .Skip(command.Count * command.Page)
                     .Take(command.Count)
                     .ToList();
-                var count = _context.Like
-                    .AsNoTracking()
-                    .Where(p => p.UserId == userId && p.Artwork.IsOpen == true)
-                    .Count();
 
                 foreach (var like in likeList)
                 {
