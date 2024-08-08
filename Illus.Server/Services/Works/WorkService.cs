@@ -166,11 +166,14 @@ namespace Illus.Server.Sservices.Works
                         Id = work.Id,
                         ArtistId = work.ArtistId,
                         Title = work.Title,
-                        CoverImg = work.CoverImg,
-                        LikeCounts = work.LikeCounts,
-                        ReadCounts = work.ReadCounts,
-                        PostTime = work.PostTime,
+                        IsR18 = work.IsR18,
+                        IsAI = work.IsAI,
                         IsLike = work.Likes.Any(),
+                        ArtistName = work.Artist.Nickname,
+                        ArtistHeadshotContent =
+                            (string.IsNullOrEmpty(work.Artist.HeadshotContent)) ?
+                            string.Empty : work.Artist.HeadshotContent,
+                        CoverImg = work.CoverImg
                     });
                 }
             }
