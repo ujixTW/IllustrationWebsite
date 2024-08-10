@@ -7,7 +7,7 @@ import {
 import "./assets/CSS/App.css";
 import NoMatch from "./pages/NoMatch";
 import RootLayout from "./RootLayout";
-import Home from "./pages/Home";
+import Home from "./pages/Home/Home";
 import ArtworkList from "./pages/artwork/ArtworkList";
 import CreateArtwork from "./pages/artwork/Create";
 
