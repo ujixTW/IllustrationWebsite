@@ -32,10 +32,10 @@ function MainNav() {
   }, [location.pathname]);
 
   return (
-    <nav className={`${style["nav"]} ${style["main-nav"]}`}>
+    <nav className={style["nav"] + " " + style["main-nav"]}>
       <div className={style["item"]}>
-        <Link to={path.home} className={`${style["nav"]} ${style["home"]}`}>
-          <IconLong height="100%" width="8rem"/>
+        <Link to={path.home} className={style["nav"] + " " + style["home"]}>
+          <IconLong height="100%" width="8rem" />
         </Link>
       </div>
       <div className={style["item"]}>
@@ -65,7 +65,7 @@ function MainNav() {
   );
 }
 function RootLayout() {
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [userData, setUserData] = useState<userDataType>(
     defaultUserDataContextValue
   );

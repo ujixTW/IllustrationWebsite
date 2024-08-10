@@ -1,6 +1,6 @@
 type TagType = { id: number; content: string };
 type ArtworkImgType = { id: number; content: string };
-type ArtworkDetailType = {
+type ArtworkType = {
   id: number;
   artistId: number;
   title: string;
@@ -17,15 +17,9 @@ type ArtworkDetailType = {
   tags: TagType[];
   imgs: ArtworkImgType[];
 };
-type ArtworkCostDownType = {
-  id: number;
-  artistId: number;
-  title: string;
-  coverImg: string;
-  isLike: boolean;
-  isR18: boolean;
-  isAI: boolean;
-  artistName: string;
-  artistHeadshotContent: string;
+type ArtworkListType = {
+  artworkList: ArtworkType[];
+  maxCount: number;
+  dailyTheme: string;
 };
-export type { TagType, ArtworkDetailType, ArtworkImgType, ArtworkCostDownType };
+export type { TagType, ArtworkType, ArtworkImgType, ArtworkListType };

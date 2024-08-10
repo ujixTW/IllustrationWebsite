@@ -2,12 +2,12 @@ import { createContext } from "react";
 import { userDataType } from "../data/typeModels/user";
 export const defaultUserDataContextValue: userDataType = {
   id: -1,
-  account: "dsaddas4dsd",
-  email: "456dsad@gmail.com",
-  nickName: "b45",
-  profile: "iadgadkllkjdkalsjdkl",
-  cover: "Work/img-costdown/0 cover.png",
-  headshot: "Work/img-costdown/0 cover.png",
+  account: "",
+  email: "",
+  nickName: "",
+  profile: "",
+  cover: "",
+  headshot: "/defaultImg/defaultHeadshot.svg",
   isFollow: false,
   followerCount: 0,
   followingCount: 0,

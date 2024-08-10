@@ -124,7 +124,7 @@ function UserMenu() {
               onChange={() => setIsDarkMode(!isDarkMode)}
             >
               <div>夜間模式</div>
-              <CapsuleSwitch name="dark theme" />
+              <CapsuleSwitch name="dark theme" checked={isDarkMode} />
             </label>
           </div>
           <div className={style["item-group"]}>

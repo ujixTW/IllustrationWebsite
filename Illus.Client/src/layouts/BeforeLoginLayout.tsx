@@ -1,32 +1,15 @@
 import { Link } from "react-router-dom";
 import style from "../assets/CSS/layouts/BeforeLoginLayout.module.css";
-import { ArtworkDetailType } from "../data/typeModels/artwork";
+import { ArtworkType } from "../data/typeModels/artwork";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { testArtwork } from "../data/testData";
 
-const defaultData: ArtworkDetailType = {
-  id: -1,
-  artistId: -1,
-  title: "預設的作品名",
-  description: "",
-  coverImg: "",
-  likeCount: 0,
-  readCount: 0,
-  isLike: false,
-  isR18: false,
-  isAI: false,
-  postTime: new Date(),
-  artistName: "預設的人",
-  artistHeadshotContent: "/defaultImg/defaultHeadshot.svg",
-  tags: [],
-  imgs: [{ id: -1, content: "/Work/img-costdown/0 cover.png" }],
-};
+
 
 export default function BeforeLoginLayOut(props: { context: JSX.Element }) {
-  const [bkDataList, setBkDataList] = useState<ArtworkDetailType[]>([
-    defaultData,
-  ]);
-  const [bkData, setBkData] = useState<ArtworkDetailType>(defaultData);
+  const [bkDataList, setBkDataList] = useState<ArtworkType[]>([]);
+  const [bkData, setBkData] = useState<ArtworkType | undefined>(undefined);
   const [bkIndex, setBkIndex] = useState<number>(0);
 
   useEffect(() => {
@@ -45,6 +28,7 @@ export default function BeforeLoginLayOut(props: { context: JSX.Element }) {
     //   .catch((err) => {
     //     console.log(err);
     //   });
+    setBkDataList([testArtwork]);
 
     const changeBk = () =>
       setBkIndex(bkIndex < bkDataList.length - 1 ? bkIndex + 1 : 0);
@@ -59,26 +43,28 @@ export default function BeforeLoginLayOut(props: { context: JSX.Element }) {
   return (
     <div
       className={`${style["bk"]} ${style["bk-img"]}`}
-      style={{ backgroundImage: `url("${bkData.imgs[0].content}")` }}
+      style={{ backgroundImage: `url("${bkData?.imgs[0].content}")` }}
     >
       <div className={style["content"]}>{props.context}</div>
       <div className={style["artist"]}>
         <div>
-          <Link to={`/user/${bkData.artistId}`}>
+          <Link to={`/user/${bkData?.artistId}`}>
             <div
               className={`${style["headshot"]} ${style["bk-img"]}`}
               style={{
-                backgroundImage: `url("${bkData.artistHeadshotContent}")`,
+                backgroundImage: `url("${bkData?.artistHeadshotContent}")`,
               }}
             ></div>
           </Link>
         </div>
-        <div>
-          <Link to={`/artwork/${bkData.artistId}`}>
-            <div>{bkData.title}</div>
-            <div>{bkData.artistName}的作品</div>
-          </Link>
-        </div>
+        {bkData != undefined && (
+          <div>
+            <Link to={`/artwork/${bkData.artistId}`}>
+              <div>{bkData.title}</div>
+              <div>{bkData.artistName}的作品</div>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

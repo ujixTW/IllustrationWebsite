@@ -1,0 +1,26 @@
+.btn {
+  display: inline-block;
+}
+.check {
+  display: none;
+  &:checked + .text {
+    background-color: var(--mainBlue);
+    color: white;
+    opacity: 0.8;
+  }
+}
+.text {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background-color: var(--bkC);
+  color: var(--fontC);
+  cursor: pointer;
+  opacity: 0.8;
+  transition: background-color 0.2s;
+  &:hover {
+    opacity: 1;
+  }
+  &.has-bk{
+    background-color: rgba(127,127,127,0.2);
+  }
+}

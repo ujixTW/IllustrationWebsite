@@ -1,0 +1,96 @@
+.card {
+  .artwork-box {
+    display: flex;
+    position: relative;
+    width: 184px;
+    height: 184px;
+    .link {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .artwork {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 0.5rem;
+    background-color: var(--bkC);
+    object-fit: cover;
+    object-position: center center;
+    transition: opacity 0.2s;
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+  .like {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    width: 32px;
+    height: 32px;
+    .btn-like {
+      height: 100%;
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0);
+      border: 0;
+      padding: 0;
+    }
+    .icon-like {
+      height: 100%;
+      width: 100%;
+      stroke: var(--fontC);
+      fill: var(--bkC);
+      stroke-miterlimit: 15;
+      transition: all 0.2s;
+      &:hover {
+        stroke: var(--mainBlue);
+      }
+      &:active {
+        stroke-opacity: 0;
+        fill: var(--heartRed);
+      }
+      &.is-like {
+        stroke: var(--heartRed);
+        fill: var(--heartRed);
+      }
+    }
+  }
+  .data {
+    position: relative;
+    .link {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      &:visited,
+      &:link,
+      &:active,
+      &:hover {
+        color: var(--fontC);
+      }
+      &.title {
+        font-weight: bold;
+        margin: 0.5rem 0;
+      }
+    }
+    .artist {
+      display: flex;
+      .head {
+        width: 24px;
+        height: 24px;
+        margin-right: 0.5rem;
+        border-radius: 50%;
+      }
+      .head-link {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .head-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+    
+  }
+}
