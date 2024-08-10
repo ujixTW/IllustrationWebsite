@@ -7,7 +7,7 @@ import BeforeLoginLayOut from "../layouts/BeforeLoginLayout";
 import { Link } from "react-router-dom";
 import { ArtworkListType, ArtworkType } from "../data/typeModels/artwork";
 import axios from "axios";
-import ArtworkCard from "../components/artworkList/ArtworkCard";
+import ArtworkCard from "../components/artwork/ArtworkCard";
 import { testArtwork } from "../data/testData";
 import CheckBtn from "../components/CheckBtn";
 
@@ -100,12 +100,6 @@ const test=useMemo(()=><ArtworkCard artwork={testArtwork} />,[]);
     //   })
     //   .catch((err) => console.log(err));
   }, []);
-  useEffect(() => {
-    console.log("ai:"+isAI);
-  }, [isAI]);
-  useEffect(() => {
-    console.log("r18:"+isR18);
-  }, [isR18]);
 
   return (
     <div className={style["after"]}>

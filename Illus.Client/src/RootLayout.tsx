@@ -2,7 +2,7 @@ import style from "./assets/CSS/RootLayout.module.css";
 import path from "./data/JSON/path.json";
 import unLoginPathData from "./data/JSON/unLoginPath.json";
 import IconLong from "./assets/IconLong.svg?react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import SearchBox from "./components/searchbox/SearchBox";
 import { useContext, useEffect, useState } from "react";
 import { userDataType } from "./data/typeModels/user";
@@ -18,15 +18,16 @@ import { ImagePathHelper } from "./utils/ImagePathHelper";
 function MainNav() {
   const { isLogin } = useContext(IsLoginContext);
   const [isUnLoginPath, setIsUnLogin] = useState<boolean>();
+  const location = useLocation();
 
   useEffect(() => {
     if (!isLogin) {
-      for (const path of unLoginPathData.unLoginPath) {
-        if (path.path == location.pathname) {
+      setIsUnLogin(false);
+      for (const unLoginPath of unLoginPathData.unLoginPath) {
+        if (unLoginPath.path == location.pathname) {
           setIsUnLogin(true);
           break;
         }
-        setIsUnLogin(false);
       }
     }
   }, [location.pathname]);
