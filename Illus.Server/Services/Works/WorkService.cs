@@ -101,6 +101,26 @@ namespace Illus.Server.Sservices.Works
 
             return temp;
         }
+        public async Task<List<ArtworkViewListModel>> GetHomeArtworkList(WorkListCommand command)
+        {
+            var result = new List<ArtworkViewListModel>();
+            try
+            {
+                if (command.UserId == -1) return result;
+                var follow = await GetFollowingWorkList(command);
+                var daily= await GetDailyWorkList(command);
+                var pop= await GetWorkList(command);
+                follow.Type = (int)ArtworkListType.Follow;
+                daily.Type = (int)ArtworkListType.Daily;
+                pop.Type = (int)ArtworkListType.Pop;
+                result.AddRange([follow, daily, pop]);
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("GetHomeArtworkList", ex);
+            }
+            return result;
+        }
         public async Task<ArtworkViewListModel> GetDailyWorkList(WorkListCommand command)
         {
             var workList = new ArtworkViewListModel();

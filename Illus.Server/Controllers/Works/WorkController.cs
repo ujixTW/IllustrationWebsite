@@ -42,6 +42,17 @@ namespace Illus.Server.Controllers.Works
 
             return Ok(list);
         }
+        [HttpGet("GetList/Home")]
+        public async Task<IActionResult> GetHomeArtworkList([FromQuery] bool isR18, [FromQuery] bool isAI, [FromQuery] int workCount)
+        {
+            var list = await _workServices.GetHomeArtworkList(SetWorkListCommand(new WorkListCommand
+            {
+                IsR18 = isR18,
+                IsAI = isAI,
+                Count = workCount
+            }));
+            return Ok();
+        }
         [HttpGet("GetList/Daily")]
         public async Task<IActionResult> GetDailyWorkList(
             [FromQuery] int page, [FromQuery] bool isR18, [FromQuery] bool isAI,
@@ -279,7 +290,7 @@ namespace Illus.Server.Controllers.Works
                 IsAI = command.IsAI,
                 Keywords = command.Keywords.Trim(),
                 IsDesc = command.IsDesc,
-                OrderType = (command.OrderType > orderTypeArr.GetValue(orderTypeArr.GetUpperBound(0))!.GetHashCode()) ?
+                OrderType = (command.OrderType >= orderTypeArr.Length || command.OrderType < 0) ?
                     (int)WorkListOrder.Hot : command.OrderType,
             };
         }

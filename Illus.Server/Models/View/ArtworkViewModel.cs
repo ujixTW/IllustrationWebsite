@@ -1,5 +1,11 @@
 ﻿namespace Illus.Server.Models.View
 {
+    public enum ArtworkListType : int
+    {
+        Pop = 0,
+        Daily = 1,
+        Follow = 2
+    }
     public class ArtworkViewModel
     {
         public int Id { get; set; }
@@ -22,6 +28,7 @@
     {
         public List<ArtworkViewModel> ArtworkList { get; set; } = new List<ArtworkViewModel>();
         public int MaxCount { get; set; }
-        public string DailyTheme { get; set; }= string.Empty;
+        public string DailyTheme { get; set; } = string.Empty;
+        public int Type { get; set; }
     }
 }
