@@ -2,7 +2,7 @@
 {
     public enum ArtworkListType : int
     {
-        Pop = 0,
+        Hot = 0,
         Daily = 1,
         Follow = 2
     }

@@ -109,11 +109,11 @@ namespace Illus.Server.Sservices.Works
                 if (command.UserId == -1) return result;
                 var follow = await GetFollowingWorkList(command);
                 var daily= await GetDailyWorkList(command);
-                var pop= await GetWorkList(command);
+                var hot= await GetWorkList(command);
                 follow.Type = (int)ArtworkListType.Follow;
                 daily.Type = (int)ArtworkListType.Daily;
-                pop.Type = (int)ArtworkListType.Pop;
-                result.AddRange([follow, daily, pop]);
+                hot.Type = (int)ArtworkListType.Hot;
+                result.AddRange([follow, daily, hot]);
             }
             catch (Exception ex)
             {
