@@ -167,6 +167,8 @@ namespace Illus.Server.Sservices.Works
                         ArtistId = work.ArtistId,
                         Title = work.Title,
                         CoverImg = work.CoverImg,
+                        IsR18 = work.IsR18,
+                        IsAI = work.IsAI,
                         LikeCounts = work.LikeCounts,
                         ReadCounts = work.ReadCounts,
                         PostTime = work.PostTime,
