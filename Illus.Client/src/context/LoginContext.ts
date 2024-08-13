@@ -14,10 +14,6 @@ export const defaultUserDataContextValue: userDataType = {
   language: { id: -1, content: "" },
   contry: { id: -1, content: "" },
 };
-export const IsLoginContext = createContext({
-  isLogin: false,
-  setIsLogin: (state:boolean) => {},
-});
 export const UserDataContext = createContext({
   userData: defaultUserDataContextValue,
   setUserData: (state:userDataType) => {},

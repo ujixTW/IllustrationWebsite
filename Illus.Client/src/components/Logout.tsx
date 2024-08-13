@@ -1,23 +1,25 @@
 import style from "../assets/CSS/components/LogOut.module.css";
 import { useContext, useState } from "react";
 import {
-  IsLoginContext,
   UserDataContext,
   defaultUserDataContextValue,
 } from "../context/LoginContext";
 import axios from "axios";
 import { ClickBtnEvent, ClickDivEvent } from "../utils/tsTypesHelper";
+import { useAppDispatch } from "../hooks/redux";
+import { loginActions } from "../data/reduxModels/loginRedux";
 
 export default function LogOut(props: { itemClass: string }) {
-  const { setIsLogin } = useContext(IsLoginContext);
+  const dispatch = useAppDispatch();
   const { setUserData } = useContext(UserDataContext);
   const [isLogout, setIsLogout] = useState(false);
+  const logoutHandler = () => dispatch(loginActions.logout());
 
   const logout = async () => {
     await axios
       .get("/api/Logout")
       .then(() => {
-        setIsLogin(false);
+        logoutHandler();
         setUserData(defaultUserDataContextValue);
       })
       .catch((err) => console.log(err));
@@ -28,10 +30,7 @@ export default function LogOut(props: { itemClass: string }) {
   };
   return (
     <>
-      <div
-        className={props.itemClass}
-        onClick={() => setIsLogout(true)}
-      >
+      <div className={props.itemClass} onClick={() => setIsLogout(true)}>
         登出
       </div>
       {isLogout && (

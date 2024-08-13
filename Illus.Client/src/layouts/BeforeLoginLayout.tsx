@@ -13,21 +13,21 @@ export default function BeforeLoginLayOut(props: { context: JSX.Element }) {
   const [bkIndex, setBkIndex] = useState<number>(0);
 
   useEffect(() => {
-    // axios
-    //   .get("/api/GetList/Background")
-    //   .then((res) => {
-    //     const resData = res.data as ArtworkDetailType[];
-    //     setBkDataList(resData as ArtworkDetailType[]);
-    //     setBkData(resData[0] as ArtworkDetailType);
+    axios
+      .get("/api/GetList/Background")
+      .then((res) => {
+        const resData = res.data as ArtworkType[];
+        setBkDataList(resData as ArtworkType[]);
+        setBkData(resData[0] as ArtworkType);
 
-    //     const changeBk = () =>
-    //       setBkIndex(bkIndex < resData.length - 1 ? bkIndex + 1 : 0);
-    //     const interval = window.setInterval(changeBk, 30000);
-    //     return window.clearInterval(interval);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+        const changeBk = () =>
+          setBkIndex(bkIndex < resData.length - 1 ? bkIndex + 1 : 0);
+        const interval = window.setInterval(changeBk, 30000);
+        return window.clearInterval(interval);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     setBkDataList([testArtwork]);
 
     const changeBk = () =>

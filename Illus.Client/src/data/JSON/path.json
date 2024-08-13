@@ -1,8 +1,9 @@
 {
   "home": "/",
   "artworks": {
-    "artworkList": "/artworks",
-    "createArtwork": "/artworks/create",
+    "list": "/artworks",
+    "followingList":"/artworks/following",
+    "create": "/artworks/create",
     "artwork": "/artworks/"
   },
   "user": {

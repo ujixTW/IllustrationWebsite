@@ -4,28 +4,29 @@ import unLoginPathData from "./data/JSON/unLoginPath.json";
 import IconLong from "./assets/IconLong.svg?react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import SearchBox from "./components/searchbox/SearchBox";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { userDataType } from "./data/typeModels/user";
 import axios from "axios";
 import {
-  IsLoginContext,
   UserDataContext,
   defaultUserDataContextValue,
 } from "./context/LoginContext";
 import UserMenu from "./components/UserMenu";
 import { ImagePathHelper } from "./utils/ImagePathHelper";
+import { loginActions } from "./data/reduxModels/loginRedux";
+import { useAppDispatch, useAppSelector } from "./hooks/redux";
 
 function MainNav() {
-  const { isLogin } = useContext(IsLoginContext);
-  const [isUnLoginPath, setIsUnLogin] = useState<boolean>();
+  const isLogin = useAppSelector((state) => state.login);
+  const [isUnLoginPath, setIsUnLoginPath] = useState<boolean>();
   const location = useLocation();
 
   useEffect(() => {
     if (!isLogin) {
-      setIsUnLogin(false);
+      setIsUnLoginPath(false);
       for (const unLoginPath of unLoginPathData.unLoginPath) {
         if (unLoginPath.path == location.pathname) {
-          setIsUnLogin(true);
+          setIsUnLoginPath(true);
           break;
         }
       }
@@ -66,38 +67,37 @@ function MainNav() {
   );
 }
 function RootLayout() {
-  const [isLogin, setIsLogin] = useState(true);
+  const dispatch = useAppDispatch();
   const [userData, setUserData] = useState<userDataType>(
     defaultUserDataContextValue
   );
+  const loginHandler = () => {
+    dispatch(loginActions.login());
+  };
   useEffect(() => {
-    // axios
-    //   .get("/api/LoginCheck")
-    //   .then((res) => {
-    //     let userData = res.data as userDataType;
-    //     userData.cover = ImagePathHelper(userData.cover);
-    //     userData.headshot =
-    //       userData.headshot != ""
-    //         ? ImagePathHelper(userData.headshot)
-    //         : "defaultImg/defaultHeadshot.svg";
-    //     setUserData(userData);
-    //     setIsLogin(true);
-    //   });
+    axios.get("/api/LoginCheck").then((res) => {
+      let userData = res.data as userDataType;
+      userData.cover = ImagePathHelper(userData.cover);
+      userData.headshot =
+        userData.headshot != ""
+          ? ImagePathHelper(userData.headshot)
+          : defaultUserDataContextValue.headshot;
+      setUserData(userData);
+      loginHandler();
+    });
   }, []);
 
   return (
-    <UserDataContext.Provider
-      value={{ userData: userData, setUserData: setUserData }}
-    >
-      <IsLoginContext.Provider
-        value={{ isLogin: isLogin, setIsLogin: setIsLogin }}
+    <>
+      <UserDataContext.Provider
+        value={{ userData: userData, setUserData: setUserData }}
       >
         <MainNav />
-        <main>
-          <Outlet />
-        </main>
-      </IsLoginContext.Provider>
-    </UserDataContext.Provider>
+      </UserDataContext.Provider>
+      <main>
+        <Outlet />
+      </main>
+    </>
   );
 }
 

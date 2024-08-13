@@ -1,9 +1,15 @@
 .after {
+  padding: 0 2rem;
   .option-bar {
     display: flex;
-    >*{margin: 0 0.2rem;}
+    > div {
+      margin: 0 0.2rem;
+      &:first-of-type {
+        margin-left: auto;
+      }
+    }
   }
-  .list{
+  .list {
     display: flex;
   }
 }
