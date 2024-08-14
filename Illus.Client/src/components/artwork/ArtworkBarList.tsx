@@ -3,7 +3,7 @@ import style from "../../assets/CSS/components/artwork/ArtworkList.module.css";
 import Arrow from "../../assets/arrow.svg?react";
 import ArtworkCard from "./ArtworkCard";
 import { Link } from "react-router-dom";
-import { memo, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 
 function ArtworkBarList(props: {
   list: ArtworkType[];
@@ -34,13 +34,11 @@ function ArtworkBarList(props: {
     }
   }, [totalSkip]);
 
-  const list = useMemo(() => {
-    return props.list.map((artwork: ArtworkType) => (
-      <div className={style["item"]} ref={itemRef}>
-        <ArtworkCard artwork={artwork} />
-      </div>
-    ));
-  }, [props.list]);
+  const list = props.list.map((artwork: ArtworkType) => (
+    <div className={style["item"]} ref={itemRef}>
+      <ArtworkCard artwork={artwork} />
+    </div>
+  ));
 
   const skip = () => {
     const list = listRef.current;
@@ -70,7 +68,7 @@ function ArtworkBarList(props: {
     }
   };
   return (
-    <div className={style["bar"]}>
+    <div className={style["bar"] + " " + style["base"]}>
       <div className={style["title-bar"]}>
         <h2 className={style["title"]}>{props.title}</h2>
         {props.more && props.link != undefined && (

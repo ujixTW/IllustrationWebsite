@@ -13,8 +13,8 @@ import { Link } from "react-router-dom";
 import path from "../../data/JSON/path.json";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { artworkCateActions } from "../../data/reduxModels/artworkCateRedux";
-import { testArtwork } from "../../data/testData";
 import ArtworkBarList from "../../components/artwork/ArtworkBarList";
+import ArtworkList from "../../components/artwork/ArtworkList";
 
 interface ArtworkListAction {
   type: ArtworkListTypeData;
@@ -35,17 +35,16 @@ const artworkListReducer = function (
   switch (type) {
     case ArtworkListTypeData.HOT:
       stateCopy.hot.push(...list);
-      break;
+      return stateCopy;
     case ArtworkListTypeData.FOLLOW:
       stateCopy.follow.push(...list);
-      break;
+      return stateCopy;
     case ArtworkListTypeData.DAILY:
       stateCopy.daily.push(...list);
-      break;
+      return stateCopy;
     default:
-      break;
+      return state;
   }
-  return stateCopy;
 };
 
 function HomeAfterLogin() {
@@ -58,7 +57,7 @@ function HomeAfterLogin() {
   const isR18 = useAppSelector((state) => state.artworkCate.isR18);
   const isAI = useAppSelector((state) => state.artworkCate.isAI);
   const [dailyTheme, setDailyTheme] = useState<string>("");
-  const artworkPCount: number = 16;
+  const artworkPCount: number = 15;
   const r18Handler = () => dispatch(artworkCateActions.switchR18());
   const aiHandler = () => dispatch(artworkCateActions.switchAI());
 
@@ -83,25 +82,6 @@ function HomeAfterLogin() {
     }),
     [isR18, isAI]
   );
-
-  const testList = [
-    testArtwork,
-    testArtwork,
-    testArtwork,
-    testArtwork,
-    testArtwork,
-    testArtwork,
-    testArtwork,
-    testArtwork,
-    testArtwork,
-    testArtwork,
-    testArtwork,
-    testArtwork,
-    testArtwork,
-    testArtwork,
-    testArtwork,
-    testArtwork,
-  ];
 
   const followArtworkArr = useMemo(() => {
     return artworkList.follow.map((artwork: ArtworkType) => [
@@ -165,11 +145,6 @@ function HomeAfterLogin() {
         <div className={style["title"]}></div>
         <div className={style["list"]}>{popArtworkArr}</div>
       </div>
-      <ArtworkBarList
-        list={testList}
-        title="test"
-
-      />
     </div>
   );
 }
