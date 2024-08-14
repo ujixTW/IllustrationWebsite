@@ -13,6 +13,8 @@ import { Link } from "react-router-dom";
 import path from "../../data/JSON/path.json";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { artworkCateActions } from "../../data/reduxModels/artworkCateRedux";
+import { testArtwork } from "../../data/testData";
+import ArtworkBarList from "../../components/artwork/ArtworkBarList";
 
 interface ArtworkListAction {
   type: ArtworkListTypeData;
@@ -82,6 +84,25 @@ function HomeAfterLogin() {
     [isR18, isAI]
   );
 
+  const testList = [
+    testArtwork,
+    testArtwork,
+    testArtwork,
+    testArtwork,
+    testArtwork,
+    testArtwork,
+    testArtwork,
+    testArtwork,
+    testArtwork,
+    testArtwork,
+    testArtwork,
+    testArtwork,
+    testArtwork,
+    testArtwork,
+    testArtwork,
+    testArtwork,
+  ];
+
   const followArtworkArr = useMemo(() => {
     return artworkList.follow.map((artwork: ArtworkType) => [
       <ArtworkCard artwork={artwork} />,
@@ -144,6 +165,11 @@ function HomeAfterLogin() {
         <div className={style["title"]}></div>
         <div className={style["list"]}>{popArtworkArr}</div>
       </div>
+      <ArtworkBarList
+        list={testList}
+        title="test"
+
+      />
     </div>
   );
 }

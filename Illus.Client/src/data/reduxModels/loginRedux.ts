@@ -1,16 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initState = { value: false };
+const initState = true;
 
 const loginSlice = createSlice({
   name: "login",
   initialState: initState,
   reducers: {
     login(state) {
-      state.value = true;
+      state = true;
     },
     logout(state) {
-      state.value = false;
+      state = false;
     },
   },
 });

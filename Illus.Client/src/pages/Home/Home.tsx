@@ -1,10 +1,10 @@
 import { useContext } from "react";
-import { IsLoginContext } from "../../context/LoginContext";
 import HomeBeforeLogin from "./HomeBeforeLogin";
 import HomeAfterLogin from "./HomeAfterLogin";
+import { useAppSelector } from "../../hooks/redux";
 
 function Home() {
-  const { isLogin } = useContext(IsLoginContext);
+  const isLogin = useAppSelector((state) => state.login);
 
   return isLogin ? <HomeAfterLogin /> : <HomeBeforeLogin />;
 }
