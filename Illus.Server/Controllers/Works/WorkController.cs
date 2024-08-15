@@ -42,17 +42,7 @@ namespace Illus.Server.Controllers.Works
 
             return Ok(list);
         }
-        [HttpGet("GetList/Home")]
-        public async Task<IActionResult> GetHomeArtworkList([FromQuery] bool isR18, [FromQuery] bool isAI, [FromQuery] int workCount)
-        {
-            var list = await _workServices.GetHomeArtworkList(SetWorkListCommand(new WorkListCommand
-            {
-                IsR18 = isR18,
-                IsAI = isAI,
-                Count = workCount
-            }));
-            return Ok();
-        }
+        
         [HttpGet("GetList/Daily")]
         public async Task<IActionResult> GetDailyWorkList(
             [FromQuery] int page, [FromQuery] bool isR18, [FromQuery] bool isAI,
@@ -76,7 +66,7 @@ namespace Illus.Server.Controllers.Works
         [HttpGet("GetList/Artist/{id}")]
         public async Task<IActionResult> GetArtistWorkList(
             int id, [FromQuery] int page, [FromQuery] bool isDesc, [FromQuery] int orderType,
-            [FromQuery] int workCount)
+            [FromQuery] bool isR18, [FromQuery] int workCount)
         {
 
             var commend = SetWorkListCommand(new WorkListCommand
@@ -84,7 +74,8 @@ namespace Illus.Server.Controllers.Works
                 Page = page,
                 Count = workCount,
                 IsDesc = isDesc,
-                OrderType = orderType
+                OrderType = orderType,
+                IsR18 = isR18
             });
             var idList = new List<int> { id };
             var isOwn = commend.UserId == id;
@@ -141,7 +132,7 @@ namespace Illus.Server.Controllers.Works
             {
                 Page = page,
                 Count = workCount,
-                IsDesc = isDesc
+                IsDesc = isDesc,
             });
             if (commend.UserId >= 0)
             {

@@ -2,14 +2,14 @@ import { ArtworkType } from "../../data/typeModels/artwork";
 import style from "../../assets/CSS/components/artwork/ArtworkList.module.css";
 import Arrow from "../../assets/arrow.svg?react";
 import ArtworkCard from "./ArtworkCard";
-import { Link } from "react-router-dom";
+import { Link, To } from "react-router-dom";
 import { memo, useEffect, useRef, useState } from "react";
 
 function ArtworkBarList(props: {
   list: ArtworkType[];
   title: string;
   more?: boolean;
-  link?: string;
+  link?: To;
   getMoreDataFnc?: (...args: any[]) => any;
 }) {
   const listRef = useRef<HTMLDivElement>(null);

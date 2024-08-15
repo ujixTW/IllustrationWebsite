@@ -21,11 +21,5 @@ type ArtworkListType = {
   artworkList: ArtworkType[];
   maxCount: number;
   dailyTheme: string;
-  type: number;
 };
-export enum ArtworkListTypeData{
-  HOT = 0,
-  DAILY = 1,
-  FOLLOW = 2,
-}
 export type { TagType, ArtworkType, ArtworkImgType, ArtworkListType };

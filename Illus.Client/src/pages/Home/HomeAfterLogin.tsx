@@ -1,54 +1,77 @@
-import {
-  ArtworkListType,
-  ArtworkListTypeData,
-  ArtworkType,
-} from "../../data/typeModels/artwork";
+import { ArtworkListType, ArtworkType } from "../../data/typeModels/artwork";
 import style from "../../assets/CSS/pages/Home.module.css";
-import { useEffect, useMemo, useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import axios from "axios";
 import CheckBtn from "../../components/CheckBtn";
-import ArtworkCard from "../../components/artwork/ArtworkCard";
 import { asyncDebounce } from "../../utils/debounce";
-import { Link } from "react-router-dom";
 import path from "../../data/JSON/path.json";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { artworkCateActions } from "../../data/reduxModels/artworkCateRedux";
-import ArtworkBarList from "../../components/artwork/ArtworkBarList";
-import ArtworkList from "../../components/artwork/ArtworkList";
+import ArtworkBarListContainer from "../../components/artwork/ArtworkBarListContainer";
+import ArtworkListContainer from "../../components/artwork/ArtworkListContainer";
+
+enum ActionType {
+  FOLLOW = 0,
+  DAILY = 1,
+  HOT = 2,
+}
 
 interface ArtworkListAction {
-  type: ArtworkListTypeData;
+  type: ActionType;
+  isAdd: boolean;
   list: ArtworkType[];
+}
+interface pageMaxAction {
+  type: ActionType;
+  state: boolean;
 }
 interface ArtworkListState {
   hot: ArtworkType[];
   daily: ArtworkType[];
   follow: ArtworkType[];
 }
-
+interface pageMaxState {
+  follow: boolean;
+  hot: boolean;
+}
 const artworkListReducer = function (
   state: ArtworkListState,
   action: ArtworkListAction
 ) {
-  const { type, list } = action;
+  const { type, isAdd, list } = action;
   const stateCopy = Object.assign({}, state);
   switch (type) {
-    case ArtworkListTypeData.HOT:
-      stateCopy.hot.push(...list);
+    case ActionType.FOLLOW:
+      if (isAdd) stateCopy.follow.push(...list);
+      else stateCopy.follow = [...list];
       return stateCopy;
-    case ArtworkListTypeData.FOLLOW:
-      stateCopy.follow.push(...list);
+    case ActionType.DAILY:
+      if (isAdd) stateCopy.daily.push(...list);
+      else stateCopy.daily = [...list];
       return stateCopy;
-    case ArtworkListTypeData.DAILY:
-      stateCopy.daily.push(...list);
+    case ActionType.HOT:
+      if (isAdd) stateCopy.hot.push(...list);
+      else stateCopy.hot = [...list];
       return stateCopy;
     default:
       return state;
   }
 };
-
+const pageMaxReducer = function (state: pageMaxState, action: pageMaxAction) {
+  const copyState = Object.assign({}, state);
+  switch (action.type) {
+    case ActionType.FOLLOW:
+      copyState.follow = action.state;
+      return copyState;
+    case ActionType.HOT:
+      copyState.hot = action.state;
+      return copyState;
+    default:
+      return state;
+  }
+};
 function HomeAfterLogin() {
-  const [artworkList, setArtworkList] = useReducer(artworkListReducer, {
+  const [artworkList, artworkListDispatch] = useReducer(artworkListReducer, {
     follow: [],
     daily: [],
     hot: [],
@@ -60,44 +83,87 @@ function HomeAfterLogin() {
   const artworkPCount: number = 15;
   const r18Handler = () => dispatch(artworkCateActions.switchR18());
   const aiHandler = () => dispatch(artworkCateActions.switchAI());
+  const [pageMax, pageMaxDispatch] = useReducer(pageMaxReducer, {
+    follow: false,
+    hot: false,
+  });
 
   useEffect(
-    asyncDebounce(() => {
-      // 呼叫順序:關注>每日>推薦>最新(使用者下滑一定距離後)
-      axios
-        .get("/api/Work/GetList/Home", {
-          params: { isAI: isAI, isR18: isR18, workCount: artworkPCount },
-        })
-        .then((res) => {
-          const data: ArtworkListType[] = res.data as ArtworkListType[];
-          data.forEach((list) => {
-            if (list.dailyTheme != "") setDailyTheme(list.dailyTheme);
-            setArtworkList({
-              type: list.type,
-              list: list.artworkList,
-            });
+    asyncDebounce(async () => {
+      // 呼叫順序:關注>每日>推薦
+      const axiosArr = [
+        axios.get("/api/Work/GetList/Following", {
+          params: { isR18: isR18, workCount: artworkPCount },
+        }),
+        axios.get("/api/Work/GetList/Daily", {
+          params: { isR18: isR18, isAI: isAI, workCount: artworkPCount },
+        }),
+        axios.get("/api/Work/GetList", {
+          params: { isR18: isR18, isAI: isAI, workCount: artworkPCount },
+        }),
+      ];
+      await Promise.all(axiosArr)
+        .then(([follow, daily, hot]) => {
+          const [fData, dData, hData] = [
+            follow.data,
+            daily.data,
+            hot.data,
+          ] as ArtworkListType[];
+          artworkListDispatch({
+            type: ActionType.FOLLOW,
+            isAdd: false,
+            list: fData.artworkList,
           });
+          artworkListDispatch({
+            type: ActionType.DAILY,
+            isAdd: false,
+            list: dData.artworkList,
+          });
+          artworkListDispatch({
+            type: ActionType.HOT,
+            isAdd: false,
+            list: hData.artworkList,
+          });
+          if (dData.artworkList.length > 0) setDailyTheme(dData.dailyTheme);
         })
         .catch((err) => console.log(err));
     }),
     [isR18, isAI]
   );
 
-  const followArtworkArr = useMemo(() => {
-    return artworkList.follow.map((artwork: ArtworkType) => [
-      <ArtworkCard artwork={artwork} />,
-    ]);
-  }, []);
-  const dailyArtworkArr = useMemo(() => {
-    return artworkList.daily.map((artwork: ArtworkType) => [
-      <ArtworkCard artwork={artwork} />,
-    ]);
-  }, []);
-  const popArtworkArr = useMemo(() => {
-    return artworkList.hot.map((artwork: ArtworkType) => [
-      <ArtworkCard artwork={artwork} />,
-    ]);
-  }, []);
+  const handleGetMoreList = async (
+    actType: ActionType,
+    oldList: ArtworkType[],
+    url: string
+  ) => {
+    await axios
+      .get(url)
+      .then((res) => {
+        const data = res.data as ArtworkListType;
+        artworkListDispatch({
+          type: actType,
+          isAdd: true,
+          list: data.artworkList,
+        });
+        if (data.maxCount <= oldList.length + data.artworkList.length)
+          pageMaxDispatch({ state: true, type: actType });
+      })
+      .catch((err) => console.log(err));
+  };
+  const handleFollowList = async () => {
+    const page: number = artworkList.follow.length / artworkPCount;
+    const url =
+      "/api/Work/GetList/Following?" +
+      `page=${page}&isR18=${isR18}&workCount=${artworkPCount}`;
+    await handleGetMoreList(ActionType.FOLLOW, artworkList.follow, url);
+  };
+  const handleHotList = async () => {
+    const page: number = artworkList.hot.length / artworkPCount;
+    const url =
+      "/api/Work/GetList?" +
+      `page=${page}&isR18=${isR18}&isAI=${isAI}&workCount=${artworkPCount}`;
+    await handleGetMoreList(page, artworkList.hot, url);
+  };
 
   return (
     <div className={style["after"]}>
@@ -121,29 +187,34 @@ function HomeAfterLogin() {
           />
         </div>
       </div>
-      <div className={style["follow"]}>
-        <div className={style["title"]}>
-          <div>已關注用戶的作品</div>
-          <Link to={path.artworks.followingList} className={style["more"]}>
-            查看更多
-          </Link>
-        </div>
-        <div className={style["list"]}>
-          <div className={style["back"]}></div>
-          <div>{followArtworkArr}</div>
-          <div className={style["next"]}></div>
-        </div>
-      </div>
-
-      {dailyArtworkArr.length > 0 && (
-        <div className={style["daily"]}>
-          <div className={style["title"]}>{dailyTheme}主題日!</div>
-          <div className={style["list"]}>{dailyArtworkArr}</div>
+      {artworkList.follow.length > 0 && (
+        <div className={style["follow"]}>
+          <ArtworkBarListContainer
+            title="已追隨使用者的作品"
+            list={artworkList.follow}
+            more
+            link={path.artworks.followingList}
+            getMoreDataFnc={!pageMax ? handleFollowList : undefined}
+          />
         </div>
       )}
-      <div className={style["pop"]}>
-        <div className={style["title"]}></div>
-        <div className={style["list"]}>{popArtworkArr}</div>
+
+      {artworkList.daily.length > 0 && (
+        <div className={style["daily"]}>
+          <ArtworkListContainer
+            title={`${dailyTheme}主題日!`}
+            list={artworkList.daily}
+            more
+            link={(path.artworks.list, { search: `?keywords=${dailyTheme}` })}
+          />
+        </div>
+      )}
+      <div className={style["hot"]}>
+        <ArtworkListContainer
+          title="熱門作品"
+          list={artworkList.hot}
+          getMoreDataFnc={!pageMax ? handleHotList : undefined}
+        />
       </div>
     </div>
   );

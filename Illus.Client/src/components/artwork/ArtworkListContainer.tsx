@@ -1,17 +1,16 @@
 import { ArtworkType } from "../../data/typeModels/artwork";
 import style from "../../assets/CSS/components/artwork/ArtworkList.module.css";
 import { memo, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, LinkProps, To } from "react-router-dom";
 import ArtworkCard from "./ArtworkCard";
 
 function ArtworkList(props: {
   list: ArtworkType[];
   title?: string;
   more?: boolean;
-  link?: string;
+  link?: To;
   getMoreDataFnc?: (...args: any[]) => any;
 }) {
-  useEffect(() => console.log(props.list.length), [props.list]);
   const list = props.list.map((artwork: ArtworkType) => (
     <div className={style["item"]}>
       <ArtworkCard artwork={artwork} />

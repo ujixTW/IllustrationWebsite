@@ -101,26 +101,6 @@ namespace Illus.Server.Sservices.Works
 
             return temp;
         }
-        public async Task<List<ArtworkViewListModel>> GetHomeArtworkList(WorkListCommand command)
-        {
-            var result = new List<ArtworkViewListModel>();
-            try
-            {
-                if (command.UserId == -1) return result;
-                var follow = await GetFollowingWorkList(command);
-                var daily= await GetDailyWorkList(command);
-                var hot= await GetWorkList(command);
-                follow.Type = (int)ArtworkListType.Follow;
-                daily.Type = (int)ArtworkListType.Daily;
-                hot.Type = (int)ArtworkListType.Hot;
-                result.AddRange([follow, daily, hot]);
-            }
-            catch (Exception ex)
-            {
-                Logger.WriteLog("GetHomeArtworkList", ex);
-            }
-            return result;
-        }
         public async Task<ArtworkViewListModel> GetDailyWorkList(WorkListCommand command)
         {
             var workList = new ArtworkViewListModel();
@@ -146,7 +126,7 @@ namespace Illus.Server.Sservices.Works
                 var list = _context.Artwork
                     .AsNoTracking()
                     .Where(p =>
-                        p.IsR18 == command.IsR18 &&
+                        (!command.IsR18) ? p.IsR18 == false : true &&
                         (isOwn) ? p.IsDelete == false : p.IsOpen == true &&
                         idList.Any(id => id == p.ArtistId))
                     .Include(p => p.Likes
