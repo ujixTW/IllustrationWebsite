@@ -1,7 +1,7 @@
 import { ArtworkType } from "../../data/typeModels/artwork";
 import style from "../../assets/CSS/components/artwork/ArtworkList.module.css";
-import { memo, useEffect } from "react";
-import { Link, LinkProps, To } from "react-router-dom";
+import { memo } from "react";
+import { Link, To } from "react-router-dom";
 import ArtworkCard from "./ArtworkCard";
 
 function ArtworkList(props: {
