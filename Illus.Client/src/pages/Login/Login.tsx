@@ -1,15 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
-import style from "../assets/CSS/pages/Login.module.css";
-import path from "../data/JSON/path.json";
-import InputPassword from "../components/Account/InputPassword";
-import InputAccount from "../components/Account/InputAccount";
-import { ChangeEvent, FormEvent } from "../utils/tsTypesHelper";
+import style from "../../assets/CSS/pages/Login.module.css";
+import path from "../../data/JSON/path.json";
+import InputPassword from "../../components/Account/InputPassword";
+import InputAccount from "../../components/Account/InputAccount";
+import { ChangeEvent, FormEvent } from "../../utils/tsTypesHelper";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { loginPostData } from "../data/postData/account";
-import { accountReg, emailReg, passwordReg } from "../utils/regexHelper";
-import { useAppDispatch, useAppSelector } from "../hooks/redux";
-import { loginActions } from "../data/reduxModels/loginRedux";
+import { loginPostData } from "../../data/postData/account";
+import { accountReg, emailReg, passwordReg } from "../../utils/regexHelper";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { loginActions } from "../../data/reduxModels/loginRedux";
 
 function Login() {
   const [notFinish, setNotFinish] = useState<boolean>(true);
