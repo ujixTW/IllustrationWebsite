@@ -18,7 +18,7 @@ function SearchBox() {
 
     if (inputStr.trim() != "") {
       navigate({
-        pathname: `${path.artworks.artworkList}`,
+        pathname: `${path.artworks.list}`,
         search: `${createSearchParams({ keywords: inputStr })}`,
       });
     }

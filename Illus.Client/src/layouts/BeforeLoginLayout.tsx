@@ -1,11 +1,10 @@
 import { Link } from "react-router-dom";
 import style from "../assets/CSS/layouts/BeforeLoginLayout.module.css";
+import IconLong from "../assets/IconLong.svg?react";
 import { ArtworkType } from "../data/typeModels/artwork";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { testArtwork } from "../data/testData";
-
-
 
 export default function BeforeLoginLayOut(props: { context: JSX.Element }) {
   const [bkDataList, setBkDataList] = useState<ArtworkType[]>([]);
@@ -32,6 +31,7 @@ export default function BeforeLoginLayOut(props: { context: JSX.Element }) {
 
     const changeBk = () =>
       setBkIndex(bkIndex < bkDataList.length - 1 ? bkIndex + 1 : 0);
+
     const interval = window.setInterval(changeBk, 30000);
     return window.clearInterval(interval);
   }, []);
@@ -41,31 +41,38 @@ export default function BeforeLoginLayOut(props: { context: JSX.Element }) {
   }, [bkIndex]);
 
   return (
-    <div
-      className={`${style["bk"]} ${style["bk-img"]}`}
-      style={{ backgroundImage: `url("${bkData?.imgs[0].content}")` }}
-    >
-      <div className={style["content"]}>{props.context}</div>
-      <div className={style["artist"]}>
-        <div>
-          <Link to={`/user/${bkData?.artistId}`}>
-            <div
-              className={`${style["headshot"]} ${style["bk-img"]}`}
-              style={{
-                backgroundImage: `url("${bkData?.artistHeadshotContent}")`,
-              }}
-            ></div>
-          </Link>
-        </div>
-        {bkData != undefined && (
+    <>
+      <div
+        className={`${style["bk"]} ${style["bk-img"]}`}
+        style={{ backgroundImage: `url("${bkData?.imgs[0].content}")` }}
+      >
+        <div className={style["artist"]}>
           <div>
-            <Link to={`/artwork/${bkData.artistId}`}>
-              <div>{bkData.title}</div>
-              <div>{bkData.artistName}的作品</div>
+            <Link to={`/user/${bkData?.artistId}`}>
+              <div
+                className={`${style["headshot"]} ${style["bk-img"]}`}
+                style={{
+                  backgroundImage: `url("${bkData?.artistHeadshotContent}")`,
+                }}
+              ></div>
             </Link>
           </div>
-        )}
+          {bkData != undefined && (
+            <div>
+              <Link to={`/artwork/${bkData.artistId}`}>
+                <div>{bkData.title}</div>
+                <div>{bkData.artistName}的作品</div>
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+      <div className={style["content"]}>
+        <div>
+          <IconLong className={style["logo"]} />
+        </div>
+        {props.context}
+      </div>
+    </>
   );
 }

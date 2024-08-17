@@ -2,7 +2,7 @@
   "home": "/",
   "artworks": {
     "list": "/artworks",
-    "followingList":"/artworks/following",
+    "followingList": "/artworks/following",
     "create": "/artworks/create",
     "artwork": "/artworks/"
   },
@@ -12,10 +12,11 @@
     "follower": "/follower",
     "likes": "/likes",
     "histories": "/histories",
-    "settings":"/settings"
+    "settings": "/settings"
   },
   "login": {
-    "login": "/login"
+    "login": "/login",
+    "forget": "/login/forget"
   },
   "signUp": {
     "signUp": "/signUp"

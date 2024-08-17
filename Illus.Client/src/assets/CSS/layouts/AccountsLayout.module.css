@@ -1,32 +1,8 @@
-.nav {
-  display: flex;
-  padding: 0.5rem 1rem;
-  align-items: center;
-}
-.item {
-  display: flex;
-  align-items: center;
-  &.nav-middle {
-    width: 30%;
-  }
-}
-.btn {
-  &:link,
-  &:visited {
-    color: var(--searchBkC);
-    padding: 0.5rem 1rem;
-    margin-right: 1rem;
-    border-radius: 1rem;
-    border: 0.15rem solid var(--searchBkC);
-  }
-  &:hover,
-  &:active {
-    color: var(--mainBlue);
-    border-color: var(--mainBlue);
-  }
-}
 .main-nav {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
+  padding: 0.5rem 1rem;
 }
 .home {
   font-size: large;
@@ -34,5 +10,19 @@
   &:visited {
     color: var(--mainBlue);
     font-weight: bold;
+  }
+}
+.btn {
+  &:link,
+  &:visited {
+    color: var(--searchBkC);
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    border: 0.15rem solid var(--searchBkC);
+  }
+  &:hover,
+  &:active {
+    color: var(--mainBlue);
+    border-color: var(--mainBlue);
   }
 }

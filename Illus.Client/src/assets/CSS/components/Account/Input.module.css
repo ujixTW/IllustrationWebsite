@@ -1,0 +1,36 @@
+.pwd-container {
+  position: relative;
+}
+.input-text {
+  width: 100%;
+  height: 2.5rem;
+  padding: 0 0.8rem;
+  background-color: var(--searchBkC);
+  border: 0;
+  border-radius: 0.3rem;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1rem;
+  outline: 0;
+  transition: all 0.2s;
+  &:focus {
+    box-shadow: 0 0 3px 2px var(--mainBlue);
+  }
+}
+.pwd {
+  padding-right: 36px;
+}
+.hidden {
+  display: flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 36px;
+ 
+  svg {
+    display: inline-block;
+    margin: auto;
+    opacity: 0.5;
+  }
+}

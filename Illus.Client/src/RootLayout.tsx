@@ -1,6 +1,5 @@
 import style from "./assets/CSS/RootLayout.module.css";
 import path from "./data/JSON/path.json";
-import unLoginPathData from "./data/JSON/unLoginPath.json";
 import IconLong from "./assets/IconLong.svg?react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import SearchBox from "./components/searchbox/SearchBox";
@@ -18,20 +17,7 @@ import { useAppDispatch, useAppSelector } from "./hooks/redux";
 
 function MainNav() {
   const isLogin = useAppSelector((state) => state.login);
-  const [isUnLoginPath, setIsUnLoginPath] = useState<boolean>();
   const location = useLocation();
-
-  useEffect(() => {
-    if (!isLogin) {
-      setIsUnLoginPath(false);
-      for (const unLoginPath of unLoginPathData.unLoginPath) {
-        if (unLoginPath.path == location.pathname) {
-          setIsUnLoginPath(true);
-          break;
-        }
-      }
-    }
-  }, [location.pathname]);
 
   return (
     <nav className={style["nav"] + " " + style["main-nav"]}>
@@ -46,12 +32,12 @@ function MainNav() {
 
       {isLogin ? (
         <div className={style["item"]}>
-          <Link to={path.artworks.createArtwork} className={style["btn"]}>
+          <Link to={path.artworks.create} className={style["btn"]}>
             上傳作品
           </Link>
           <UserMenu />
         </div>
-      ) : !isUnLoginPath ? (
+      ) : location.pathname == path.home ? (
         <div className={style["item"]}>
           <Link to={path.login.login} className={style["btn"]}>
             登入
