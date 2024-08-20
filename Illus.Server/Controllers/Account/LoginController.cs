@@ -25,9 +25,9 @@ namespace Illus.Server.Controllers.Account
         {
             var result = false;
 
-            if (!string.IsNullOrWhiteSpace(command.Account) ||
+            if (StringHelper.IsValidAccount(command.Account) ||
                 StringHelper.IsValidEmail(command.Email) &&
-                !string.IsNullOrWhiteSpace(command.Password)
+                StringHelper.IsValidPassword(command.Password)
               )
             {
                 var token = _loginService.Login(command);

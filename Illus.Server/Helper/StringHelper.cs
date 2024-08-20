@@ -17,18 +17,42 @@ namespace Illus.Server.Helper
         }
         public static bool IsValidEmail(string email)
         {
-            if (string.IsNullOrWhiteSpace(email)) return false;
-
+            var reg = @"^\w+((-\w+)|(\.\w+)|(\+\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-za-z]+$";
+            return _isValidString(email, reg, true);
+        }
+        public static bool IsValidAccount(string account)
+        {
+            var reg = @"^[a-zA-Z0-9]${6,16}";
+            return _isValidString(account, reg, false);
+        }
+        public static bool IsValidPassword(string password)
+        {
+            var reg = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[0-9a-zA-Z!@#$.\%\^\&\*\(\)]${6,32}";
+            return _isValidString(password, reg, false);
+        }
+        private static bool _isValidString(string input, string reg, bool IgnoreCase)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return false;
             try
             {
-                return Regex.IsMatch(email,
-                    @"^[^@\s]+@[^@\s]+\.[^@\s]+$", 
-                    RegexOptions.IgnoreCase, 
+                if (IgnoreCase)
+                {
+                    return Regex.IsMatch(input,
+                    reg,
+                    RegexOptions.IgnoreCase,
                     TimeSpan.FromMilliseconds(250));
+                }
+                else
+                {
+                    return Regex.IsMatch(input,
+                    reg, RegexOptions.None,
+                    TimeSpan.FromMilliseconds(250));
+                }
+
             }
             catch (RegexMatchTimeoutException e)
             {
-                Logger.WriteLog("IsValidEmail",e);
+                Logger.WriteLog("IsValidString", e);
                 return false;
             }
         }

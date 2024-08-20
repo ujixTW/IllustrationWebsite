@@ -1,4 +1,5 @@
 ﻿using Illus.Server.Helper;
+using Illus.Server.Models;
 using Illus.Server.Models.Command;
 using Illus.Server.Sservices.Account;
 using Microsoft.AspNetCore.Http;
@@ -25,22 +26,15 @@ namespace Illus.Server.Controllers.Account
         public IActionResult SignUp(LoginCommand command)
         {
             var result = new SignUpResult();
-            if (string.IsNullOrWhiteSpace(command.Account) ||
-                string.IsNullOrWhiteSpace(command.Password) ||
-                StringHelper.IsValidEmail(command.Email))
+
+            var accFormatErr = !StringHelper.IsValidAccount(command.Account);
+            var pwdFormatErr = !StringHelper.IsValidPassword(command.Password);
+            var emailFormatErr = !StringHelper.IsValidEmail(command.Email);
+            if (accFormatErr || pwdFormatErr || emailFormatErr)
             {
-                result.Success = false;
-                result.Error = "DATA ARE NOT ENOUGH";
-            }
-            else if (command.Password.Length < 6 || command.Password.Length > 32)
-            {
-                result.Success = false;
-                result.Error = "PASWORD LENGTH IS NON STANDARD";
-            }
-            else if (command.Account.Length < 6 || command.Account.Length > 16)
-            {
-                result.Success = false;
-                result.Error = "ACCOUNT LENGTH IS NON STANDARD";
+                if (accFormatErr) result.AccError = (int)SignUpError.Format;
+                if (pwdFormatErr) result.PwdError = (int)SignUpError.Format;
+                if (emailFormatErr) result.EmailError = (int)SignUpError.Format;
             }
             else
             {
@@ -53,40 +47,26 @@ namespace Illus.Server.Controllers.Account
         [HttpGet("{CAPTCHA}")]
         public IActionResult Confirm(Guid CAPTCHA)
         {
-            var result = new SignUpResult();
-            if (CAPTCHA == Guid.Empty)
-            {
-                result.Success = false;
-                result.Error = "NO DATA";
-            }
-            else
+            var result = false;
+            if (CAPTCHA != Guid.Empty)
             {
                 var confirmData = _loginService.Comfirm(CAPTCHA);
 
-                //將成功資訊直接傳回前端
-                result.Success = confirmData.Success;
-                result.Error = confirmData.Error;
-
-                if (confirmData.Success)
+                if (confirmData != null)
                 {
                     //將使用者資訊寫入cookie
-                    HttpContext.Response.Cookies.Append(_loginTokenKey, confirmData.Token.ToString()!, new CookieOptions() { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Lax });
-                    HttpContext.Response.Cookies.Append(_userIdKey, confirmData.UserId.ToString()!, new CookieOptions() { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Lax });
+                    HttpContext.Response.Cookies.Append(_loginTokenKey, confirmData.CAPTCHA.ToString(), new CookieOptions() { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Lax });
+                    HttpContext.Response.Cookies.Append(_userIdKey, confirmData.UserId.ToString(), new CookieOptions() { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Lax });
                 }
             }
 
-            return (result.Success) ? Ok() : BadRequest();
+            return Ok(result);
         }
         [HttpGet("confirmAgain/{CAPTCHA}")]
         public IActionResult ConfirmAgain(Guid CAPTCHA)
         {
-            var result = new SignUpResult();
-            if (CAPTCHA == Guid.Empty)
-            {
-                result.Success = false;
-                result.Error = "CAPTCHA IS NULL";
-            }
-            else
+            var result = false;
+            if (CAPTCHA != Guid.Empty)
             {
                 result = _loginService.ConfirmAgain(CAPTCHA);
             }

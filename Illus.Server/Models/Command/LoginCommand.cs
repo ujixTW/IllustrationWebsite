@@ -6,12 +6,17 @@
         public string Password { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
     }
+    public enum SignUpError
+    {
+        None = 0,
+        Format = 1,
+        Duplicate = 2,
+    }
     public class SignUpResult
     {
-        public bool Success { get; set; }
-        public string Error { get; set; } = string.Empty;
-        public int? UserId { get; set; }
-        public Guid? Token { get; set; }
+        public int AccError { get; set; }
+        public int PwdError { get; set; }
+        public int EmailError { get; set; }
     }
     public class EditPasswordCommand
     {
@@ -33,6 +38,6 @@
         public IFormFile? cover { get; set; }
         public IFormFile? headshot { get; set; }
         public int LanguageiD { get; set; }
-        public int CountryiD { get; set; } 
+        public int CountryiD { get; set; }
     }
 }

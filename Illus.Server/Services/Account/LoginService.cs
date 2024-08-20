@@ -145,20 +145,21 @@ namespace Illus.Server.Sservices.Account
             }
             return result;
         }
-        public SignUpResult SignUp(LoginCommand command)
+        public SignUpResult? SignUp(LoginCommand command)
         {
             var result = new SignUpResult();
             try
             {
-                var hasData = _illusContext.User
-                .AsNoTracking()
-                .SingleOrDefault(p =>
-                    p.Email == command.Email ||
-                    p.Account == command.Account
-                );
+                var hasEmail = _illusContext.User
+                    .AsNoTracking()
+                    .SingleOrDefault(p => p.Email == command.Email);
+                var hasAccount = _illusContext.User
+                    .AsNoTracking()
+                    .SingleOrDefault(p => p.Account == command.Account);
+
                 //若資料庫內沒有資料就創建一個傳入資料庫中，
                 //否則回傳錯誤
-                if (hasData == null)
+                if (hasEmail == null && hasAccount == null)
                 {
                     var saltBytes = PWDHelper.BuildNewSalt();
                     var saltString = Convert.ToBase64String(saltBytes);
@@ -183,38 +184,28 @@ namespace Illus.Server.Sservices.Account
                         }
                     };
 
-                    result.Success = MailHelper.SendSignUpMail(user);
-
-                    _illusContext.User.Add(user);
-                    _illusContext.SaveChanges();
+                    if (MailHelper.SendSignUpMail(user))
+                    {
+                        _illusContext.User.Add(user);
+                        _illusContext.SaveChanges();
+                    }
                 }
                 else
                 {
-                    var errorString = string.Empty;
-                    if (hasData.Email == command.Email)
-                    {
-                        errorString = "DUPLICATE EMAIL";
-                    }
-                    else if (hasData.Account == command.Account)
-                    {
-                        errorString = "DUPLICATE ACCOUNT";
-                    }
-                    result.Success = false;
-                    result.Error = errorString;
+                    if (hasAccount != null) result.AccError = (int)SignUpError.Duplicate;
+                    if (hasEmail != null) result.EmailError = (int)SignUpError.Duplicate;
                 }
             }
             catch (Exception ex)
             {
                 Logger.WriteLog("Illus.Server/Sservices/SignUp", ex);
-                result.Success = false;
-                result.Error = "ACCESS DENIED";
             }
 
             return result;
         }
-        public SignUpResult Comfirm(Guid guid)
+        public GotchaModel? Comfirm(Guid guid)
         {
-            var result = new SignUpResult();
+            var result = new GotchaModel();
             var today = DateTime.Now;
             try
             {
@@ -242,28 +233,24 @@ namespace Illus.Server.Sservices.Account
                     user.LoginTokens = new List<LoginTokenModel> { tokenData };
 
                     _illusContext.SaveChanges();
-                    result.Success = true;
                     result.UserId = user.Id;
-                    result.Token = token;
+                    result.CAPTCHA = token;
                 }
                 else
                 {
-                    result.Success = false;
-                    result.Error = "INVALID CAPTCHA";
+                    result = null;
                 }
             }
             catch (Exception ex)
             {
                 Logger.WriteLog("Comfirm", ex);
-                result.Success = false;
-                result.Error = "ACCESS DENIED";
             }
 
             return result;
         }
-        public SignUpResult ConfirmAgain(Guid guid)
+        public bool ConfirmAgain(Guid guid)
         {
-            var result = new SignUpResult();
+            var result =false;
             try
             {
                 var user = _illusContext.User
@@ -283,19 +270,12 @@ namespace Illus.Server.Sservices.Account
                     user.Gotcha!.ExpiryDate = DateTime.Now.AddHours(_captchaExpiryTime);
 
                     _illusContext.SaveChanges();
-                    result.Success = MailHelper.SendSignUpMail(user);
-                }
-                else
-                {
-                    result.Success = false;
-                    result.Error = "NO DATA";
+                    result = MailHelper.SendSignUpMail(user);
                 }
             }
             catch (Exception ex)
             {
                 Logger.WriteLog("ConfirmAgain", ex);
-                result.Success = false;
-                result.Error = "ACCESS DENIED";
             }
 
             return result;
