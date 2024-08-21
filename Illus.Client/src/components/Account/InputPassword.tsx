@@ -4,6 +4,9 @@ import ShowIcon from "../../assets/show.svg?react";
 import HideIcon from "../../assets/hide.svg?react";
 
 export default function InputPassword(props: {
+  id?: string;
+  isNew: boolean;
+  isSec?: boolean;
   value: string;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
 }) {
@@ -13,9 +16,10 @@ export default function InputPassword(props: {
       <input
         type={show ? "text" : "password"}
         placeholder="密碼"
-        name="password"
+        id={props.id}
+        name={props.isSec != true ? "password" : "secPwd"}
         className={style["input-text"] + " " + style["pwd"]}
-        autoComplete="current-password"
+        autoComplete={props.isNew ? "new-password" : "current-password"}
         autoCapitalize="off"
         value={props.value}
         onChange={props.onChange}

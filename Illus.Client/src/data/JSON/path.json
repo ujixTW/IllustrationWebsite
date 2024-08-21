@@ -16,9 +16,13 @@
   },
   "login": {
     "login": "/login",
-    "forget": "/login/forget"
+    "forget": "/login/forget",
+    "resetPwd":"/reset-password"
   },
   "signUp": {
-    "signUp": "/signUp"
+    "signUp": "/signUp",
+    "wait": "/signUp/wait",
+    "confirm": "/confirm",
+    "mailAgain": "/confirm-again"
   }
 }

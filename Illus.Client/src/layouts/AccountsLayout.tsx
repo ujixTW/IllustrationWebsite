@@ -1,11 +1,19 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import style from "../assets/CSS/layouts/AccountsLayout.module.css";
 import path from "../data/JSON/path.json";
 import IconLong from "../assets/IconLong.svg?react";
 import BeforeLoginLayOut from "./BeforeLoginLayout";
+import { useEffect } from "react";
+import { useAppSelector } from "../hooks/redux";
 
 function MainNav() {
   const location = useLocation();
+  const isLogin: boolean = useAppSelector((state) => state.login);
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (isLogin) navigate(path.home);
+  }, []);
 
   const SignUpBtn = () => {
     return (

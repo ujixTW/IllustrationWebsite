@@ -189,6 +189,10 @@ namespace Illus.Server.Sservices.Account
                         _illusContext.User.Add(user);
                         _illusContext.SaveChanges();
                     }
+                    else
+                    {
+                        result = null;
+                    }
                 }
                 else
                 {
@@ -250,7 +254,7 @@ namespace Illus.Server.Sservices.Account
         }
         public bool ConfirmAgain(Guid guid)
         {
-            var result =false;
+            var result = false;
             try
             {
                 var user = _illusContext.User

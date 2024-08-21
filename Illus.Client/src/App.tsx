@@ -12,6 +12,7 @@ import ArtworkList from "./pages/artwork/ArtworkList";
 import CreateArtwork from "./pages/artwork/Create";
 import Login from "./pages/Login/Login";
 import AccountsLayout from "./layouts/AccountsLayout";
+import SignUp from "./pages/SignUp/SignUp";
 
 function App() {
   const router = createBrowserRouter(
@@ -33,7 +34,12 @@ function App() {
           </Route>
         </Route>
         <Route element={<AccountsLayout />}>
-          <Route path="login" element={<Login />} />
+          <Route path="login">
+            <Route index element={<Login />} />
+          </Route>
+          <Route path="signUp">
+            <Route index element={<SignUp />} />
+          </Route>
         </Route>
         <Route path="/admin"></Route>
         <Route path="*" element={<NoMatch />} />

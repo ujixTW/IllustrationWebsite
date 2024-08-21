@@ -8,23 +8,19 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { loginPostData } from "../../data/postData/account";
 import { accountReg, emailReg, passwordReg } from "../../utils/regexHelper";
-import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { useAppDispatch } from "../../hooks/redux";
 import { loginActions } from "../../data/reduxModels/loginRedux";
+import { SureBtn } from "../../components/Account/Button";
 
 function Login() {
-  const [notFinish, setNotFinish] = useState<boolean>(true);
+  const [finish, setFinish] = useState<boolean>(false);
   const [accFail, setAccFail] = useState<boolean>(false);
   const [pwdFail, setPwdFail] = useState<boolean>(false);
   const [loginFail, setLoginFail] = useState<boolean>(false);
   const [account, setAccount] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const dispatch = useAppDispatch();
-  const isLogin: boolean = useAppSelector((state) => state.login);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    if (isLogin) navigate(path.home);
-  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -58,9 +54,9 @@ function Login() {
 
   useEffect(() => {
     if (account.trim() != "" && password.trim() != "") {
-      setNotFinish(false);
+      setFinish(true);
     } else {
-      setNotFinish(true);
+      setFinish(false);
     }
   }, [account, password]);
 
@@ -70,20 +66,18 @@ function Login() {
         <div className={style["input"]}>
           <InputAccount
             value={account}
+            placeholder="請輸入帳號或信箱"
             onChange={(e: ChangeEvent) => setAccount(e.currentTarget.value)}
           />
           {accFail && (
             <p className={style["error"]}>信箱地址或輸入之帳號有誤。</p>
           )}
           <InputPassword
+            isNew={false}
             value={password}
             onChange={(e: ChangeEvent) => setPassword(e.currentTarget.value)}
           />
-          {pwdFail && (
-            <p className={style["error"]}>
-              請將密碼長度設於半形6字元以上32字元以下。
-            </p>
-          )}
+          {pwdFail && <p className={style["error"]}>密碼規格錯誤。</p>}
         </div>
         <div className={style["forget"]}>
           <Link to={path.login.forget} className={style["forget"]}>
@@ -93,9 +87,10 @@ function Login() {
         {loginFail && (
           <p className={style["error"]}>請確認信箱地址、帳號及密碼是否正確。</p>
         )}
-        <button type="submit" className={style["submit"]} disabled={notFinish}>
-          登入
-        </button>
+
+        <div className={style["submit"]}>
+          <SureBtn disabled={!finish} text="登入" onClick={handleSubmit} />
+        </div>
       </form>
     </div>
   );

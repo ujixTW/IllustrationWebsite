@@ -1,18 +1,17 @@
 import style from "../../assets/CSS/components/Account/Input.module.css";
-export default function InputAccount(props: {
+export default function InputEmail(props: {
   id?: string;
   value: string;
-  placeholder: string;
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
+  onChange: (...args: any[]) => any;
 }) {
   return (
     <input
       type="text"
-      placeholder={props.placeholder}
       id={props.id}
-      name="account"
+      name="email"
       className={style["input-text"]}
-      autoComplete="username"
+      placeholder="email@illus.com"
+      autoComplete="email"
       autoCapitalize="off"
       value={props.value}
       onChange={props.onChange}
