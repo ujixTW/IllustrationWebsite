@@ -12,10 +12,17 @@ import {
   signUpError,
   signUpResultType,
 } from "../../data/typeModels/signUpResult";
-import { useNavigate } from "react-router-dom";
-import path from "../../data/JSON/path.json";
 
-function SignUp() {
+function SuccessPage() {
+  return (
+    <div>
+      <h2>送信成功！</h2>
+      <h2>請閱讀信件以完成註冊。</h2>
+    </div>
+  );
+}
+
+function SignUpPage(props: { setFnc: (...args: any[]) => any }) {
   const [account, setAccount] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -25,7 +32,6 @@ function SignUp() {
   const [emailErr, setEmailErr] = useState<signUpError>(signUpError.none);
   const [serverFail, setServerFail] = useState<boolean>(false);
   const [accId, pwdId, emailId] = ["accInput", "pwdInput", "emailInput"];
-  const navigate = useNavigate();
 
   const handleSubmit = async () => {
     if (
@@ -56,7 +62,7 @@ function SignUp() {
             setEmailErr(data.emailError);
             setPwdErr(data.pwdError != 0);
           } else {
-            navigate(path.signUp.wait);
+            props.setFnc(true);
           }
         } else {
           setServerFail(true);
@@ -144,4 +150,11 @@ function SignUp() {
     </div>
   );
 }
+
+function SignUp() {
+  const [success, setSuccess] = useState<boolean>(false);
+
+  return <>{success ? <SuccessPage /> : <SignUpPage setFnc={setSuccess} />}</>;
+}
+
 export default SignUp;

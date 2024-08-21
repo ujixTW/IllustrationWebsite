@@ -21,7 +21,6 @@
   },
   "signUp": {
     "signUp": "/signUp",
-    "wait": "/signUp/wait",
     "confirm": "/confirm",
     "mailAgain": "/confirm-again"
   }
