@@ -39,10 +39,16 @@ function MainNav() {
         </div>
       ) : location.pathname == path.home ? (
         <div className={style["item"]}>
-          <Link to={path.login.login} className={style["btn"]}>
+          <Link
+            to={path.login.login}
+            className={style["btn"] + " " + style["unlogin"]}
+          >
             登入
           </Link>
-          <Link to={path.signUp.signUp} className={style["btn"]}>
+          <Link
+            to={path.signUp.signUp}
+            className={style["btn"] + " " + style["unlogin"]}
+          >
             註冊
           </Link>
         </div>
@@ -61,16 +67,19 @@ function RootLayout() {
     dispatch(loginActions.login());
   };
   useEffect(() => {
-    axios.get("/api/LoginCheck").then((res) => {
-      let userData = res.data as userDataType;
-      userData.cover = ImagePathHelper(userData.cover);
-      userData.headshot =
-        userData.headshot != ""
-          ? ImagePathHelper(userData.headshot)
-          : defaultUserDataContextValue.headshot;
-      setUserData(userData);
-      loginHandler();
-    });
+    axios
+      .get("/api/LoginCheck")
+      .then((res) => {
+        let userData = res.data as userDataType;
+        userData.cover = ImagePathHelper(userData.cover);
+        userData.headshot =
+          userData.headshot != ""
+            ? ImagePathHelper(userData.headshot)
+            : defaultUserDataContextValue.headshot;
+        setUserData(userData);
+        loginHandler();
+      })
+      .catch(() => dispatch(loginActions.logout()));
   }, []);
 
   return (

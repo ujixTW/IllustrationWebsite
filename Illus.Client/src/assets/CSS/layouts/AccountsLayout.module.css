@@ -15,14 +15,14 @@
 .btn {
   &:link,
   &:visited {
-    color: var(--searchBkC);
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
     padding: 0.5rem 1rem;
     border-radius: 1rem;
-    border: 0.15rem solid var(--searchBkC);
+    border: 0;
   }
   &:hover,
   &:active {
     color: var(--mainBlue);
-    border-color: var(--mainBlue);
   }
 }

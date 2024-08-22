@@ -4,13 +4,15 @@ import path from "../data/JSON/path.json";
 import IconLong from "../assets/IconLong.svg?react";
 import BeforeLoginLayOut from "./BeforeLoginLayout";
 import { useEffect } from "react";
-import { useAppSelector } from "../hooks/redux";
+import { useAppDispatch, useAppSelector } from "../hooks/redux";
+import { loginActions } from "../data/reduxModels/loginRedux";
+import axios from "axios";
 
 function MainNav() {
   const location = useLocation();
   const isLogin: boolean = useAppSelector((state) => state.login);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     if (isLogin) navigate(path.home);
   }, []);
@@ -50,6 +52,15 @@ function MainNav() {
   );
 }
 export default function AccountsLayout() {
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    axios
+      .get("/api/LoginCheck")
+      .then(() => {
+        dispatch(loginActions.login());
+      })
+      .catch(() => dispatch(loginActions.logout()));
+  }, []);
   return (
     <>
       <MainNav />

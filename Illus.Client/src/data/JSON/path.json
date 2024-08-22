@@ -14,14 +14,17 @@
     "histories": "/histories",
     "settings": "/settings"
   },
+  "account":{
+    "emailComfirm":"/account/email/confirm"
+  },
   "login": {
     "login": "/login",
     "forget": "/login/forget",
-    "resetPwd":"/reset-password"
+    "resetPwd":"/login/reset-password"
   },
   "signUp": {
     "signUp": "/signUp",
-    "confirm": "/confirm",
-    "mailAgain": "/confirm-again"
+    "confirm": "/signUp/confirm",
+    "mailAgain": "/signUp/confirm-again"
   }
 }

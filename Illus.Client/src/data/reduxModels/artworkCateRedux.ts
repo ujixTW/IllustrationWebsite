@@ -16,9 +16,11 @@ const artworkCateSlice = createSlice({
   reducers: {
     switchAI(state) {
       state.isAI = !state.isAI;
+      return state;
     },
     switchR18(state) {
       state.isR18 = !state.isR18;
+      return state;
     },
   },
 });

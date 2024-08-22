@@ -4,7 +4,6 @@ import IconLong from "../assets/IconLong.svg?react";
 import { ArtworkType } from "../data/typeModels/artwork";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { testArtwork } from "../data/testData";
 
 export default function BeforeLoginLayOut(props: { context: JSX.Element }) {
   const [bkDataList, setBkDataList] = useState<ArtworkType[]>([]);
@@ -27,7 +26,6 @@ export default function BeforeLoginLayOut(props: { context: JSX.Element }) {
       .catch((err) => {
         console.log(err);
       });
-    setBkDataList([testArtwork]);
 
     const changeBk = () =>
       setBkIndex(bkIndex < bkDataList.length - 1 ? bkIndex + 1 : 0);

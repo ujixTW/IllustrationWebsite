@@ -13,16 +13,31 @@
 .btn {
   &:link,
   &:visited {
-    color: var(--searchBkC);
+    color: var(--fontC);
     padding: 0.5rem 1rem;
     margin-right: 1rem;
     border-radius: 1rem;
-    border: 0.15rem solid var(--searchBkC);
+    border: 0.15rem solid var(--fontC);
+    font-weight: bold;
+    opacity: 0.9;
   }
   &:hover,
   &:active {
     color: var(--mainBlue);
     border-color: var(--mainBlue);
+  }
+  &.unlogin {
+    &:link,
+    &:visited {
+      color: white;
+      background-color: rgba(0, 0, 0, 0.5);
+      font-weight: normal;
+      border: 0;
+    }
+    &:hover,
+    &:active {
+      color: var(--mainBlue);
+    }
   }
 }
 .main-nav {

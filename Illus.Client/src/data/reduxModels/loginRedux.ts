@@ -7,10 +7,10 @@ const loginSlice = createSlice({
   initialState: initState,
   reducers: {
     login(state) {
-      state = true;
+      return true;
     },
     logout(state) {
-      state = false;
+      return false;
     },
   },
 });
