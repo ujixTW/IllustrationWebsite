@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import style from "../../assets/CSS/pages/Home.module.css";
 import path from "../../data/JSON/path.json";
-import BeforeLoginLayOut from "../../layouts/BeforeLoginLayout";
+import BeforeLoginLayOut from "../../layouts/ArtworkBG";
 
 export default function HomeBeforeLogin() {
   const Context = () => (

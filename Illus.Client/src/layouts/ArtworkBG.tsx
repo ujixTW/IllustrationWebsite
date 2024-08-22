@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import style from "../assets/CSS/layouts/BeforeLoginLayout.module.css";
+import style from "../assets/CSS/layouts/ArtworkBG.module.css";
 import IconLong from "../assets/IconLong.svg?react";
 import { ArtworkType } from "../data/typeModels/artwork";
 import { useEffect, useState } from "react";
