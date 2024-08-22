@@ -13,6 +13,8 @@ import CreateArtwork from "./pages/artwork/Create";
 import Login from "./pages/Login/Login";
 import AccountsLayout from "./layouts/AccountsLayout";
 import SignUp from "./pages/SignUp/SignUp";
+import Confirm from "./pages/SignUp/Confirm";
+import ConfirmAgain from "./pages/SignUp/ConfirmAgain";
 
 function App() {
   const router = createBrowserRouter(
@@ -39,6 +41,8 @@ function App() {
           </Route>
           <Route path="signUp">
             <Route index element={<SignUp />} />
+            <Route path="confirm/:captcha" element={<Confirm />} />
+            <Route path="confirm-again/:captcha" element={<ConfirmAgain />} />
           </Route>
         </Route>
         <Route path="/admin"></Route>

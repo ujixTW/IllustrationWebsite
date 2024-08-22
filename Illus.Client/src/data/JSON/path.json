@@ -24,7 +24,7 @@
   },
   "signUp": {
     "signUp": "/signUp",
-    "confirm": "/signUp/confirm",
+    "confirm": "/signUp/confirm/",
     "mailAgain": "/signUp/confirm-again"
   }
 }

@@ -3,7 +3,7 @@ import style from "../assets/CSS/layouts/AccountsLayout.module.css";
 import path from "../data/JSON/path.json";
 import IconLong from "../assets/IconLong.svg?react";
 import BeforeLoginLayOut from "./ArtworkBG";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { loginActions } from "../data/reduxModels/loginRedux";
 import axios from "axios";
@@ -53,6 +53,8 @@ function MainNav() {
 }
 export default function AccountsLayout() {
   const dispatch = useAppDispatch();
+  const location = useLocation();
+  const [hasArtworkBG, setHasArtworkBG] = useState<boolean>(false);
   useEffect(() => {
     axios
       .get("/api/LoginCheck")
@@ -61,11 +63,33 @@ export default function AccountsLayout() {
       })
       .catch(() => dispatch(loginActions.logout()));
   }, []);
+
+  useEffect(() => {
+    const hasBGPath = [path.login.login, path.signUp.signUp];
+
+    let has: boolean = false;
+    hasBGPath.forEach((p: string) => {
+      if (p == location.pathname) {
+        has = true;
+        return;
+      }
+    });
+    setHasArtworkBG(has);
+  }, [location.pathname]);
+
   return (
     <>
       <MainNav />
       <main>
-        <BeforeLoginLayOut context={<Outlet />} />
+        {hasArtworkBG ? (
+          <BeforeLoginLayOut context={<Outlet />} />
+        ) : (
+          <div className={style["none-bk-content"]}>
+            <div className={style["bg"]}></div>
+            <IconLong className={style["logo"]} />
+            <Outlet />
+          </div>
+        )}
       </main>
     </>
   );

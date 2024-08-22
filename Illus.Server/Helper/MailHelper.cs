@@ -49,7 +49,7 @@ namespace Illus.Server.Helper
                "<p>請點擊下方按鈕完成註冊：</p>" +
                $"<a href=\"https://localhost:5173/signUp/confirm/{user.Gotcha.CAPTCHA}\" style=\"background-color: rgb(238, 42, 42); color: white; text-decoration: none; font-size: 1.5rem; padding: 5px 15px; margin: 10px; border-radius: 5px;\" >完成註冊</a>" +
                "<p>若無法點擊按鈕，請複製下方網址並貼到瀏覽器的網址列上：</p>" +
-               $"<a href=\"https://localhost:5173/signUp/confirm/{user.Gotcha.CAPTCHA}\">https://localhost:5173/confirm/{user.Gotcha.CAPTCHA}</a>" +
+               $"<a href=\"https://localhost:5173/signUp/confirm/{user.Gotcha.CAPTCHA}\">https://localhost:5173/signUp/confirm/{user.Gotcha.CAPTCHA}</a>" +
                "<p>此連結將於48小時候失效，若逾期，請" +
                $"<a href\"https://localhost:5173/signUp/confirm-again/{user.Gotcha.CAPTCHA}\">點此重新寄送驗證信</a>" +
                "。</p>";

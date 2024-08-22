@@ -88,7 +88,7 @@ namespace Illus.Server.Sservices.Account
                         var emailContent =
                     $"<p>親愛的 {userName} 您好：" +
                     "<p>請點選下方連結，完成信箱認證：</p>" +
-                    $"<a href=\"https://localhost:5173/edit-email-comfirm?apiKey={captcha}\" style=\"background-color: rgb(238, 42, 42); color: white; text-decoration: none; font-size: 1.5rem; padding: 5px 15px; margin: 10px; border-radius: 5px;\">" +
+                    $"<a href=\"https://localhost:5173/account/email/confirm?apiKey={captcha}\" style=\"background-color: rgb(238, 42, 42); color: white; text-decoration: none; font-size: 1.5rem; padding: 5px 15px; margin: 10px; border-radius: 5px;\">" +
                     "認證信箱</a>";
 
                         var mailData = new BaseMailDataModel()
@@ -219,7 +219,7 @@ namespace Illus.Server.Sservices.Account
                     var emailContent =
                         $"<p>親愛的 {userName} 您好：" +
                         "<p>請點選下方連結，完成變更密碼的動作：</p>" +
-                        $"<a href=\"https://localhost:5173/reset-password?apiKey={captcha}&pwrt={loginToken}\" style=\"background-color: rgb(238, 42, 42); color: white; text-decoration: none; font-size: 1.5rem; padding: 5px 15px; margin: 10px; border-radius: 5px;\">" +
+                        $"<a href=\"https://localhost:5173/login/reset-password?apiKey={captcha}&pwrt={loginToken}\" style=\"background-color: rgb(238, 42, 42); color: white; text-decoration: none; font-size: 1.5rem; padding: 5px 15px; margin: 10px; border-radius: 5px;\">" +
                         "重設密碼</a>" +
                         "<p>如果您不打算重設密碼，則可以忽略此電子郵件，您的密碼將不會被更改。</p>" +
                         "<hr>" +

@@ -57,6 +57,7 @@ namespace Illus.Server.Controllers.Account
                     //將使用者資訊寫入cookie
                     HttpContext.Response.Cookies.Append(_loginTokenKey, confirmData.CAPTCHA.ToString(), new CookieOptions() { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Lax });
                     HttpContext.Response.Cookies.Append(_userIdKey, confirmData.UserId.ToString(), new CookieOptions() { HttpOnly = true, Secure = true, SameSite = SameSiteMode.Lax });
+                    result = true;
                 }
             }
 
