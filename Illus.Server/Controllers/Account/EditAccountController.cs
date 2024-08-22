@@ -23,7 +23,7 @@ namespace Illus.Server.Controllers.Account
         }
         //變更帳號
         [HttpPost("Account")]
-        public IActionResult EditAccount(string accountCommand)
+        public IActionResult EditAccount(string accountCommend)
         {
             var result = false;
             var userIdStr = Request.Cookies[_userIdKey];
@@ -31,12 +31,10 @@ namespace Illus.Server.Controllers.Account
 
             if (int.TryParse(userIdStr, out int userId) &&
                 Guid.TryParse(tokenStr, out Guid token) &&
-                !string.IsNullOrWhiteSpace(accountCommand) &&
-                accountCommand.Length >= 6 &&
-                accountCommand.Length <= 16 &&
+                StringHelper.IsValidAccount(accountCommend) &&
                 _editService.CheckUserIdentity(token, userId))
             {
-                result = _editService.EditAccount(accountCommand, userId);
+                result = _editService.EditAccount(accountCommend, userId);
             }
             return Ok(result);
         }
@@ -75,10 +73,8 @@ namespace Illus.Server.Controllers.Account
             var result = false;
             if (int.TryParse(userIdStr, out int userId) &&
                 Guid.TryParse(tokenStr, out Guid token) &&
-                !string.IsNullOrWhiteSpace(command.OldPWD) &&
-                !string.IsNullOrWhiteSpace(command.NewPWD) &&
-                command.NewPWD.Length >= 6 &&
-                command.NewPWD.Length <= 32 &&
+                StringHelper.IsValidPassword(command.OldPWD) &&
+                StringHelper.IsValidPassword(command.NewPWD) &&
                 !string.Equals(command.OldPWD, command.NewPWD) &&
                 string.Equals(command.NewPWD, command.NewPWDAgain) &&
                 _editService.CheckUserIdentity(token, userId))
@@ -109,10 +105,8 @@ namespace Illus.Server.Controllers.Account
             var result = false;
             var pwds = command.PasswordCommand;
 
-            if (!string.IsNullOrWhiteSpace(pwds.OldPWD) &&
-                !string.IsNullOrWhiteSpace(pwds.NewPWD) &&
-                pwds.NewPWD.Length >= 6 &&
-                pwds.NewPWD.Length <= 32 &&
+            if (StringHelper.IsValidPassword(pwds.OldPWD) &&
+                StringHelper.IsValidPassword(pwds.NewPWD) &&
                 !string.Equals(pwds.OldPWD, pwds.NewPWD) &&
                 string.Equals(pwds.NewPWD, pwds.NewPWDAgain))
             {
