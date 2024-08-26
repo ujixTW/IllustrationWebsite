@@ -96,7 +96,7 @@ namespace Illus.Server.Controllers.Account
             {
                 result = _editService.ForgetPassword(email);
             }
-            return (result) ? Ok() : BadRequest();
+            return Ok();
         }
         //變更密碼(信箱連結)
         [HttpPost("ForgetPassword")]
@@ -105,7 +105,8 @@ namespace Illus.Server.Controllers.Account
             var result = false;
             var pwds = command.PasswordCommand;
 
-            if (StringHelper.IsValidPassword(pwds.OldPWD) &&
+            if (StringHelper.IsValidEmail(command.Email) &&
+                StringHelper.IsValidPassword(pwds.OldPWD) &&
                 StringHelper.IsValidPassword(pwds.NewPWD) &&
                 !string.Equals(pwds.OldPWD, pwds.NewPWD) &&
                 string.Equals(pwds.NewPWD, pwds.NewPWDAgain))

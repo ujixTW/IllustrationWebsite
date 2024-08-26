@@ -166,7 +166,6 @@ namespace Illus.Server.Sservices.Account
                     .Where(p => p.Email == email && p.EmailConfirmed == true && p.IsActivation == true)
                     .SingleOrDefault();
                 var captcha = Guid.NewGuid();
-                var loginToken = Guid.NewGuid();
 
                 #region 將驗證用資料存入資料庫
                 if (user != null)
@@ -178,33 +177,6 @@ namespace Illus.Server.Sservices.Account
                         UserId = user.Id,
                         IsUsed = false
                     };
-                    var userTokens = _context.LoginToken
-                        .Where(p => p.UserId == user.Id)
-                        .OrderBy(p => p.ExpiryDate)
-                        .ToList();
-
-                    var token = new LoginTokenModel()
-                    {
-                        LoginToken = loginToken,
-                        UserId = user.Id,
-                        ExpiryDate = DateTime.Now.AddHours(_captchaExpiryTime)
-                    };
-
-                    if (userTokens != null &&
-                        userTokens.Count >= _maxLoginCount)
-                    {
-                        userTokens[0].User = token.User;
-                        userTokens[0].LoginToken = token.LoginToken;
-                        userTokens[0].ExpiryDate = token.ExpiryDate;
-                    }
-                    else if (userTokens != null)
-                    {
-                        userTokens.Add(token);
-                    }
-                    else
-                    {
-                        user.LoginTokens = new List<LoginTokenModel> { token };
-                    }
                     user.Gotcha = gotcha;
                     _context.SaveChanges();
                 }
@@ -218,13 +190,12 @@ namespace Illus.Server.Sservices.Account
 
                     var emailContent =
                         $"<p>親愛的 {userName} 您好：" +
-                        "<p>請點選下方連結，完成變更密碼的動作：</p>" +
-                        $"<a href=\"https://localhost:5173/login/reset-password?apiKey={captcha}&pwrt={loginToken}\" style=\"background-color: rgb(238, 42, 42); color: white; text-decoration: none; font-size: 1.5rem; padding: 5px 15px; margin: 10px; border-radius: 5px;\">" +
+                        "<p>為確認您的信箱地址，請將下列認證碼輸入至確認頁面：</p>" +
+                        $"<p style=\"margin: 2rem 0; font-size: 1.5rem;\">{captcha}</p>" +
                         "重設密碼</a>" +
-                        "<p>如果您不打算重設密碼，則可以忽略此電子郵件，您的密碼將不會被更改。</p>" +
-                        "<hr>" +
-                        "<p>如果您尚未註冊IllusWebSite會員，並錯誤的收到了此封電子郵件，請忽略它。" +
-                        "我們不會為您發送任何進一步的資訊。</p>";
+                        "<hr/>" +
+                        "<p>※此封郵件為系統自動發送。無法直接回覆此郵件。敬請見諒。</p>" +
+                        "<p>※若並未進行密碼重置，可能是因為他人輸入了錯誤的信箱地址而導致您收到此郵件。可直接刪除此郵件。</p>";
                     var mailData = new BaseMailDataModel()
                     {
                         Recipient = userName,
@@ -256,19 +227,14 @@ namespace Illus.Server.Sservices.Account
                 var user = _context.User
                     .Include(p => p.Gotcha)
                     .Where(p =>
+                        p.Email == command.Email &&
                         p.Gotcha != null &&
                         p.Gotcha.CAPTCHA == command.CAPTCHA &&
                         p.Gotcha.ExpiryDate >= nowTime &&
                         p.IsActivation == true
                     )
                     .SingleOrDefault();
-
-                var userToken = _context.LoginToken
-                    .Where(p => p.LoginToken == command.Token && p.ExpiryDate >= nowTime)
-                    .FirstOrDefault();
-
-                //如果都找的到資料，且資料對的上，就更改密碼。
-                if (user != null && userToken != null && user.Id == userToken.UserId)
+                if (user != null)
                 {
                     var pwds = command.PasswordCommand;
                     var saltBytes = Encoding.UTF8.GetBytes(user.PasswordSalt);
@@ -289,13 +255,11 @@ namespace Illus.Server.Sservices.Account
                             user.Gotcha.ExpiryDate = nowTime;
                             user.Gotcha.IsUsed = true;
                         }
-                        userToken.ExpiryDate = nowTime;
 
                         _context.SaveChanges();
                         result = true;
                     }
                 }
-
             }
             catch (Exception ex)
             {
