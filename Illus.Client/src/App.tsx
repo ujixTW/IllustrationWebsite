@@ -16,6 +16,7 @@ import SignUp from "./pages/SignUp/SignUp";
 import Confirm from "./pages/SignUp/Confirm";
 import ConfirmAgain from "./pages/SignUp/ConfirmAgain";
 import Forget from "./pages/Login/Forget";
+import ResetPwd from "./pages/Login/ResetPwd";
 
 function App() {
   const router = createBrowserRouter(
@@ -40,6 +41,7 @@ function App() {
           <Route path="login">
             <Route index element={<Login />} />
             <Route path="forget" element={<Forget />} />
+            <Route path="reset-password/:email" element={<ResetPwd />} />
           </Route>
           <Route path="signUp">
             <Route index element={<SignUp />} />

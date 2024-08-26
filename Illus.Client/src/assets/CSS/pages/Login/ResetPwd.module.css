@@ -1,0 +1,34 @@
+.input {
+  > label {
+    display: block;
+    margin: 0.5rem 0;
+  }
+}
+.btn {
+    width: 50%;
+    height: 3rem;
+    margin: 0 auto;
+    margin-top: 2rem;
+}
+.linkBtn {
+  width: 100%;
+  padding: 1rem 0;
+  border-radius: 1rem;
+  font-size: larger;
+  transition: all 0.4s;
+  &:link,
+  &:visited {
+    color: white;
+    background-color: var(--mainBlue);
+    opacity: 0.9;
+  }
+  &:hover{
+    opacity: 0.8;
+  }
+  &:active{
+    opacity: 1;
+  }
+}
+.error{
+    color: var(--heartRed);
+}

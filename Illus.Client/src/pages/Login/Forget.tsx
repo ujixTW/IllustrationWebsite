@@ -36,7 +36,7 @@ function Forget() {
   const submitCaptcha = () => {
     if (guidReg.test(captcha)) {
       axios
-        .get(`/api/EditAccount/Email/${email}`, {
+        .get(`/api/EditAccount/EmailConfirm/${email}`, {
           params: { CAPTCHA: captcha },
         })
         .then(() => {

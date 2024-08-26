@@ -251,28 +251,23 @@ namespace Illus.Server.Sservices.Account
                 if (user != null)
                 {
                     var pwds = command.PasswordCommand;
-                    var saltBytes = Encoding.UTF8.GetBytes(user.PasswordSalt);
-                    var oldPwdBytes = PWDHelper.GetHashPassword(user.Account, pwds.OldPWD, saltBytes);
 
-                    if (user.Password == Convert.ToBase64String(oldPwdBytes))
+                    var newSaltBytes = PWDHelper.BuildNewSalt();
+                    var newSaltString = Convert.ToBase64String(newSaltBytes);
+                    var newPwdHashBytes = PWDHelper.GetHashPassword(user.Account, pwds.NewPWD, newSaltBytes);
+                    var newPwdHashString = Convert.ToBase64String(newPwdHashBytes);
+
+                    user.Password = newPwdHashString;
+                    user.PasswordSalt = newSaltString;
+
+                    if (user.Gotcha != null)
                     {
-                        var newSaltBytes = PWDHelper.BuildNewSalt();
-                        var newSaltString = Convert.ToBase64String(newSaltBytes);
-                        var newPwdHashBytes = PWDHelper.GetHashPassword(user.Account, pwds.NewPWD, newSaltBytes);
-                        var newPwdHashString = Convert.ToBase64String(newPwdHashBytes);
-
-                        user.Password = newPwdHashString;
-                        user.PasswordSalt = newSaltString;
-
-                        if (user.Gotcha != null)
-                        {
-                            user.Gotcha.ExpiryDate = nowTime;
-                            user.Gotcha.IsUsed = true;
-                        }
-
-                        _context.SaveChanges();
-                        result = true;
+                        user.Gotcha.ExpiryDate = nowTime;
+                        user.Gotcha.IsUsed = true;
                     }
+
+                    _context.SaveChanges();
+                    result = true;
                 }
             }
             catch (Exception ex)

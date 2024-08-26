@@ -56,12 +56,12 @@ namespace Illus.Server.Controllers.Account
             return Ok(result);
         }
         //信箱認證
-        [HttpGet("Email/{email}")]
+        [HttpGet("EmailConfirm/{email}")]
         public IActionResult EmailComfirm(string email, [FromQuery] Guid CAPTCHA)
         {
             var result = false;
             if (StringHelper.IsValidEmail(email))
-                result = _editService.EmailComfirm(email,CAPTCHA);
+                result = _editService.EmailComfirm(email, CAPTCHA);
             return (result) ? Ok() : BadRequest();
         }
         //變更密碼(登入狀態)
@@ -107,16 +107,14 @@ namespace Illus.Server.Controllers.Account
             var pwds = command.PasswordCommand;
 
             if (StringHelper.IsValidEmail(command.Email) &&
-                StringHelper.IsValidPassword(pwds.OldPWD) &&
                 StringHelper.IsValidPassword(pwds.NewPWD) &&
-                !string.Equals(pwds.OldPWD, pwds.NewPWD) &&
                 string.Equals(pwds.NewPWD, pwds.NewPWDAgain))
             {
 
                 result = _editService.EditPWDFormEmail(command);
             }
 
-            return Ok(result);
+            return result ? Ok() : BadRequest();
         }
         [HttpPost("UserData")]
         public async Task<IActionResult> EditUserData(EditUserDataCommand command)
