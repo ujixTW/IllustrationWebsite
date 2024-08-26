@@ -96,7 +96,7 @@ namespace Illus.Server.Controllers.Account
             {
                 result = _editService.ForgetPassword(email);
             }
-            return Ok();
+            return Ok(result);
         }
         //變更密碼(信箱連結)
         [HttpPost("ForgetPassword")]
@@ -115,7 +115,7 @@ namespace Illus.Server.Controllers.Account
                 result = _editService.EditPWDFormEmail(command);
             }
 
-            return (result) ? Ok() : BadRequest();
+            return Ok(result);
         }
         [HttpPost("UserData")]
         public async Task<IActionResult> EditUserData(EditUserDataCommand command)
