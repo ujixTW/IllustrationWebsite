@@ -112,14 +112,19 @@ namespace Illus.Server.Sservices.Account
             }
             return result;
         }
-        public bool EditEmailComfirm(Guid captcha)
+        public bool EmailComfirm(string email, Guid captcha)
         {
             var result = false;
             try
             {
+                var tody = DateTime.Now;
                 var gotcha = _context.Gotcha
                     .Include(p => p.User)
-                    .SingleOrDefault(p => p.CAPTCHA == captcha && p.IsUsed == false);
+                    .SingleOrDefault(p =>
+                        p.User.Email == email &&
+                        p.CAPTCHA == captcha &&
+                        p.IsUsed == false &&
+                        p.ExpiryDate > tody);
 
                 if (gotcha != null)
                 {
@@ -144,11 +149,20 @@ namespace Illus.Server.Sservices.Account
                 var user = _context.User.SingleOrDefault(p => p.Id == userId);
                 if (user != null)
                 {
-                    if (string.Equals(user.Password, command.OldPWD)) user.Password = command.NewPWD;
-                    _context.SaveChanges();
-                    result = true;
-                }
+                    var salt = Encoding.UTF8.GetBytes(user.PasswordSalt);
+                    var hashOldPwd = PWDHelper.GetHashPassword(user.Account, command.OldPWD, salt);
+                    if (user.Password == Convert.ToBase64String(hashOldPwd))
+                    {
+                        var newSalt = PWDHelper.BuildNewSalt();
+                        var newHashPwd = PWDHelper.GetHashPassword(user.Account, command.NewPWD, newSalt);
 
+                        user.PasswordSalt = Convert.ToBase64String(newSalt);
+                        user.Password = Convert.ToBase64String(newHashPwd);
+
+                        _context.SaveChanges();
+                        result = true;
+                    }
+                }
             }
             catch (Exception ex)
             {

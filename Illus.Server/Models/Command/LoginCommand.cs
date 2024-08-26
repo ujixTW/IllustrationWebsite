@@ -27,7 +27,7 @@
     public class EditPWDFromEmailCommand
     {
         public Guid CAPTCHA { get; set; }
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
         public EditPasswordCommand PasswordCommand { get; set; } = new EditPasswordCommand();
     }
     public class EditUserDataCommand

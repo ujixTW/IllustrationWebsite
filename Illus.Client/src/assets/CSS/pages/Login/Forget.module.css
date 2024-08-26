@@ -1,0 +1,22 @@
+.title {
+  margin: 0;
+}
+.sub-title {
+  margin-top: 0;
+  margin-bottom: 2rem;
+  opacity: 0.8;
+}
+.input {
+  width: 80%;
+  margin: 0 auto;
+}
+.btn {
+  width: 10rem;
+  height: 3rem;
+  margin: 2rem auto;
+  margin-bottom: 0;
+}
+.error{
+    color: var(--heartRed);
+    font-weight: bold;
+}

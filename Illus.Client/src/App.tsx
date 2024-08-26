@@ -15,6 +15,7 @@ import AccountsLayout from "./layouts/AccountsLayout";
 import SignUp from "./pages/SignUp/SignUp";
 import Confirm from "./pages/SignUp/Confirm";
 import ConfirmAgain from "./pages/SignUp/ConfirmAgain";
+import Forget from "./pages/Login/Forget";
 
 function App() {
   const router = createBrowserRouter(
@@ -38,6 +39,7 @@ function App() {
         <Route element={<AccountsLayout />}>
           <Route path="login">
             <Route index element={<Login />} />
+            <Route path="forget" element={<Forget />} />
           </Route>
           <Route path="signUp">
             <Route index element={<SignUp />} />

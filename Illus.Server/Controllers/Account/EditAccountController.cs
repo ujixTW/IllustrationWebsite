@@ -56,11 +56,12 @@ namespace Illus.Server.Controllers.Account
             return Ok(result);
         }
         //信箱認證
-        [HttpGet("Email/{CAPTCHA}")]
-        public IActionResult EditEmailComfirm(Guid CAPTCHA)
+        [HttpGet("Email/{email}")]
+        public IActionResult EmailComfirm(string email, [FromQuery] Guid CAPTCHA)
         {
             var result = false;
-            result = _editService.EditEmailComfirm(CAPTCHA);
+            if (StringHelper.IsValidEmail(email))
+                result = _editService.EmailComfirm(email,CAPTCHA);
             return (result) ? Ok() : BadRequest();
         }
         //變更密碼(登入狀態)

@@ -9,7 +9,7 @@ type editPasswordPostData = {
   newPWDAgain: string;
 };
 type editPWDFromEmailPostData = {
-  token: string;
+  email: string;
   CAPTCHA: string;
   passwordCommand: editPasswordPostData;
 };

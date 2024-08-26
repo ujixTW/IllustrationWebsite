@@ -20,7 +20,7 @@
   "login": {
     "login": "/login",
     "forget": "/login/forget",
-    "resetPwd":"/login/reset-password"
+    "resetPwd":"/login/reset-password/"
   },
   "signUp": {
     "signUp": "/signUp",

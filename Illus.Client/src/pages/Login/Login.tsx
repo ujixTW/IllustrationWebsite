@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import style from "../../assets/CSS/pages/Login.module.css";
+import style from "../../assets/CSS/pages/Login/Login.module.css";
 import path from "../../data/JSON/path.json";
 import InputPassword from "../../components/Account/InputPassword";
 import InputAccount from "../../components/Account/InputAccount";
