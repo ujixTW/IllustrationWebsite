@@ -11,6 +11,7 @@ import { accountReg, emailReg, passwordReg } from "../../utils/regexHelper";
 import { useAppDispatch } from "../../hooks/redux";
 import { loginActions } from "../../data/reduxModels/loginRedux";
 import { SureBtn } from "../../components/Account/Button";
+import changeWebTitle from "../../utils/changeWebTitle";
 
 function Login() {
   const [finish, setFinish] = useState<boolean>(false);
@@ -21,6 +22,8 @@ function Login() {
   const [password, setPassword] = useState<string>("");
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => changeWebTitle("登入 | "), []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();

@@ -5,6 +5,7 @@ import { guidReg } from "../../utils/regexHelper";
 import path from "../../data/JSON/path.json";
 import { SureBtn } from "../../components/Account/Button";
 import style from "../../assets/CSS/pages/signUp/Confirm.module.css";
+import changeWebTitle from "../../utils/changeWebTitle";
 
 function Confirm() {
   const [fail, setFail] = useState<boolean>(true);
@@ -12,6 +13,8 @@ function Confirm() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    changeWebTitle("驗證註冊信箱 | ");
+
     if (captcha != undefined && guidReg.test(captcha)) {
       axios
         .get(`/api/SignUp/${captcha}`)

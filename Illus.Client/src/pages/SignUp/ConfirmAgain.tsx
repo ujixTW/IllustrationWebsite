@@ -3,12 +3,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import { guidReg } from "../../utils/regexHelper";
 import path from "../../data/JSON/path.json";
 import axios from "axios";
+import changeWebTitle from "../../utils/changeWebTitle";
 
 function ConfirmAgain() {
   const [fail, setFail] = useState<boolean>(false);
   const { captcha } = useParams();
   const navigate = useNavigate();
   useEffect(() => {
+    changeWebTitle("驗證信寄送 | ");
+
     if (captcha != undefined && guidReg.test(captcha)) {
       axios
         .get(`/api/SignUp/confirmAgain/${captcha}`)

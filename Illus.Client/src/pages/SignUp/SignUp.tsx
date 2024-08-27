@@ -12,6 +12,7 @@ import {
   signUpError,
   signUpResultType,
 } from "../../data/typeModels/signUpResult";
+import changeWebTitle from "../../utils/changeWebTitle";
 
 function SuccessPage() {
   return (
@@ -153,6 +154,10 @@ function SignUpPage(props: { setFnc: (...args: any[]) => any }) {
 
 function SignUp() {
   const [success, setSuccess] = useState<boolean>(false);
+
+  useEffect(() => {
+    changeWebTitle("註冊 | ");
+  }, []);
 
   return <>{success ? <SuccessPage /> : <SignUpPage setFnc={setSuccess} />}</>;
 }

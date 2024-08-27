@@ -7,6 +7,7 @@ import { emailReg, guidReg } from "../../utils/regexHelper";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import path from "../../data/JSON/path.json";
+import changeWebTitle from "../../utils/changeWebTitle";
 
 enum stepEnum {
   email = 0,
@@ -19,6 +20,8 @@ function Forget() {
   const [step, setStep] = useState<stepEnum>(stepEnum.email);
   const navigate = useNavigate();
   const [captcha, setCaptcha] = useState<string>("");
+
+  useEffect(() => changeWebTitle("忘記密碼 | "), []);
 
   useEffect(() => {
     switch (step) {

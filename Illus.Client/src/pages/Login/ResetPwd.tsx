@@ -12,6 +12,7 @@ import {
   editPWDFromEmailPostData,
   editPasswordPostData,
 } from "../../data/postData/account";
+import changeWebTitle from "../../utils/changeWebTitle";
 
 function SuccessPage() {
   return (
@@ -55,7 +56,7 @@ function ResetPage(props: {
         navigate(path.home);
       }
     } else {
-        navigate(path.home);
+      navigate(path.home);
     }
   }, []);
 
@@ -130,6 +131,8 @@ function ResetPage(props: {
 }
 function ResetPwd() {
   const [success, setSuccess] = useState<boolean>(false);
+
+  useEffect(() => changeWebTitle("重置密碼 | "), []);
 
   return success ? <SuccessPage /> : <ResetPage setSuccess={setSuccess} />;
 }
