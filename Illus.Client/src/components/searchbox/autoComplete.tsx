@@ -17,7 +17,7 @@ function RecommandLink(props: {
   return (
     <Link
       to={{
-        pathname: `${path.artworks.artworkList}`,
+        pathname: `${path.artworks.list}`,
         search: `${createSearchParams({ keywords: tempStr })}`,
       }}
       className={style['recommand']}

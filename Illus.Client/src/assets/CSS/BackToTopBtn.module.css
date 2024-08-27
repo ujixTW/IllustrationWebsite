@@ -1,0 +1,22 @@
+.btn {
+  --r: 3rem;
+  position: fixed;
+  bottom: var(--r);
+  right: var(--r);
+  width: var(--r);
+  height: var(--r);
+  color: white;
+  background-color: var(--mainBlue);
+  border: 0;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: all 0.4s;
+  &:hover {
+    opacity: 1;
+  }
+  &:active{
+    opacity: 0.9;
+  }
+}
