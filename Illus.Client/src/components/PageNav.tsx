@@ -49,7 +49,11 @@ export default function PageNav(props: { max: number; pageCount: number }) {
   const maxPage: number =
     max % pageCount > 0 ? Math.floor(max / pageCount) + 1 : max / pageCount;
   const baseForNum: number =
-    index > maxPage - 2 ? maxPage - 5 : index > 2 ? index - 2 : 0;
+    index > maxPage - 2 && maxPage >= 5
+      ? maxPage - 5
+      : index > 2
+      ? index - 2
+      : 0;
   const maxForNum: number = baseForNum + 5 > maxPage ? maxPage : baseForNum + 5;
 
   for (let i = baseForNum; i < maxForNum; i++) {
