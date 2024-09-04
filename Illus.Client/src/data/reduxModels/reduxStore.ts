@@ -1,11 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
 import loginRedux from "./loginRedux";
-import artworkCateRedux from "./artworkCateRedux";
 
 export const store = configureStore({
   reducer: {
     login: loginRedux,
-    artworkCate: artworkCateRedux,
   },
 });
 

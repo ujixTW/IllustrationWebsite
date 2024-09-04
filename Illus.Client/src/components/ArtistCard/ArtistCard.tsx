@@ -5,7 +5,7 @@ import { asyncDebounce } from "../../utils/debounce";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import path from "../../data/JSON/path.json";
-import CheckBtn from "../CheckBtn";
+import CheckBtn from "../Button/CheckBtn";
 
 function ArtistCard(props: { artistId: number; artworkId: number }) {
   const [data, setData] = useState<userDataType | undefined>(undefined);

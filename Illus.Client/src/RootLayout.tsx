@@ -14,7 +14,7 @@ import UserMenu from "./components/UserMenu";
 import { ImagePathHelper } from "./utils/ImagePathHelper";
 import { loginActions } from "./data/reduxModels/loginRedux";
 import { useAppDispatch, useAppSelector } from "./hooks/redux";
-import BackToTopBtn from "./components/BackToTopBtn";
+import BackToTopBtn from "./components/Button/BackToTopBtn";
 
 function MainNav() {
   const isLogin = useAppSelector((state) => state.login);

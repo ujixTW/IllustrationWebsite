@@ -2,13 +2,13 @@ import { ArtworkListType, ArtworkType } from "../../data/typeModels/artwork";
 import style from "../../assets/CSS/pages/Home.module.css";
 import { useEffect, useReducer, useState } from "react";
 import axios from "axios";
-import CheckBtn from "../../components/CheckBtn";
 import { asyncDebounce } from "../../utils/debounce";
 import path from "../../data/JSON/path.json";
-import { useAppDispatch, useAppSelector } from "../../hooks/redux";
-import { artworkCateActions } from "../../data/reduxModels/artworkCateRedux";
 import ArtworkBarListContainer from "../../components/artwork/ArtworkBarListContainer";
 import ArtworkListContainer from "../../components/artwork/ArtworkListContainer";
+import ArtworksFilter from "../../components/artwork/ArtworksFilter";
+import { useLocation } from "react-router-dom";
+import { AIReg, r18Reg } from "../../utils/parmasHelper";
 
 enum ActionType {
   FOLLOW = 0,
@@ -76,13 +76,12 @@ function HomeAfterLogin() {
     daily: [],
     hot: [],
   });
-  const dispatch = useAppDispatch();
-  const isR18 = useAppSelector((state) => state.artworkCate.isR18);
-  const isAI = useAppSelector((state) => state.artworkCate.isAI);
+  const location = useLocation();
+  const [isR18, setIsR18] = useState(false);
+  const [isAI, setIsAI] = useState(false);
   const [dailyTheme, setDailyTheme] = useState<string>("");
   const artworkPCount: number = 15;
-  const r18Handler = () => dispatch(artworkCateActions.switchR18());
-  const aiHandler = () => dispatch(artworkCateActions.switchAI());
+
   const [pageMax, pageMaxDispatch] = useReducer(pageMaxReducer, {
     follow: false,
     hot: false,
@@ -90,16 +89,20 @@ function HomeAfterLogin() {
 
   useEffect(
     asyncDebounce(async () => {
+      const [ai, r18] = [
+        AIReg.test(location.search),
+        r18Reg.test(location.search),
+      ];
       // 呼叫順序:關注>每日>推薦
       const axiosArr = [
         axios.get("/api/Work/GetList/Following", {
-          params: { isR18: isR18, workCount: artworkPCount },
+          params: { isR18: r18, workCount: artworkPCount },
         }),
         axios.get("/api/Work/GetList/Daily", {
-          params: { isR18: isR18, isAI: isAI, workCount: artworkPCount },
+          params: { isR18: r18, isAI: ai, workCount: artworkPCount },
         }),
         axios.get("/api/Work/GetList", {
-          params: { isR18: isR18, isAI: isAI, workCount: artworkPCount },
+          params: { isR18: r18, isAI: ai, workCount: artworkPCount },
         }),
       ];
       await Promise.all(axiosArr)
@@ -125,10 +128,13 @@ function HomeAfterLogin() {
             list: hData.artworkList,
           });
           if (dData.artworkList.length > 0) setDailyTheme(dData.dailyTheme);
+
+          setIsAI(ai);
+          setIsR18(isR18);
         })
         .catch((err) => console.log(err));
     }),
-    [isR18, isAI]
+    [location.search]
   );
 
   const handleGetMoreList = async (
@@ -167,26 +173,7 @@ function HomeAfterLogin() {
 
   return (
     <div className={style["after"]}>
-      <div className={style["option-bar"]}>
-        <div>
-          <CheckBtn
-            name="isAI"
-            text="AI"
-            onChange={aiHandler}
-            checked={isAI}
-            hasBackground={false}
-          />
-        </div>
-        <div>
-          <CheckBtn
-            name="isR18"
-            text="R-18"
-            onChange={r18Handler}
-            checked={isR18}
-            hasBackground={false}
-          />
-        </div>
-      </div>
+      <ArtworksFilter />
       {artworkList.follow.length > 0 && (
         <div className={style["follow"]}>
           <ArtworkBarListContainer

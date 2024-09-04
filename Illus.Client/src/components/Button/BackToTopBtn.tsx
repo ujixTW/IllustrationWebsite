@@ -1,5 +1,5 @@
 import { RefObject, useEffect, useState } from "react";
-import style from "../assets/CSS/BackToTopBtn.module.css";
+import style from "../../assets/CSS/components/Button/BackToTopBtn.module.css";
 
 function BackToTopBtn(props: { scope?: RefObject<HTMLDivElement> }) {
   const [show, setShow] = useState<boolean>(false);

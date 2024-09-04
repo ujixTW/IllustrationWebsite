@@ -2,14 +2,20 @@ import style from "../../assets/CSS/components/SearchBox.module.css";
 import path from "../../data/JSON/path.json";
 import SearchMark from "../../assets/searchMark.svg?react";
 import { ChangeEvent, FormEvent } from "../../utils/tsTypesHelper";
-import AutoComplete from "./AutoComplete";
+import AutoComplete from "./autoComplete";
 import { useEffect, useRef, useState } from "react";
-import { createSearchParams, useNavigate } from "react-router-dom";
+import {
+  createSearchParams,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
+import { keywordParma } from "../../utils/parmasHelper";
 
 function SearchBox() {
   const [searchText, setSearchText] = useState<string>("");
   const [isFocus, setIsFocus] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
+  const [searchParmas] = useSearchParams();
   const navigate = useNavigate();
 
   const search = (fd: FormEvent) => {
@@ -37,6 +43,10 @@ function SearchBox() {
         setIsFocus(false);
       else setIsFocus(true);
     });
+    if (searchParmas.has(keywordParma)) {
+      const keyword = searchParmas.get(keywordParma);
+      if (keyword != undefined && keyword != "") setSearchText(keyword);
+    }
   }, []);
 
   useEffect(() => {
@@ -56,18 +66,18 @@ function SearchBox() {
           onFocus={() => setIsFocus(true)}
           autoComplete="off"
         />
-        <div className={style['box-end']}>
+        <div className={style["box-end"]}>
           {searchText.trim() !== "" && isFocus && (
             <button
               type="button"
-              className={style['cancel']}
+              className={style["cancel"]}
               onClick={() => setSearchText("")}
             >
               x
             </button>
           )}
-          <button className={style['submit']} type="submit">
-            <SearchMark className={style['mark']} />
+          <button className={style["submit"]} type="submit">
+            <SearchMark className={style["mark"]} />
           </button>
         </div>
       </form>

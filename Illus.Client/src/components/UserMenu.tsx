@@ -4,7 +4,7 @@ import path from "../data/JSON/path.json";
 import { useContext, useEffect, useState } from "react";
 import { UserDataContext } from "../context/LoginContext";
 import { Link } from "react-router-dom";
-import CapsuleSwitch from "./CapsuleSwitch";
+import CapsuleSwitch from "./Button/CapsuleSwitch";
 import { ChangeEvent } from "../utils/tsTypesHelper";
 import LogOut from "./Logout";
 

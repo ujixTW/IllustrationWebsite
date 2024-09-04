@@ -1,9 +1,9 @@
 import { memo } from "react";
-import style from "../assets/CSS/components/CheckBtn.module.css";
+import style from "../../assets/CSS/components/Button/CheckBtn.module.css";
 
 function CheckBtn(props: {
   checked: boolean;
-  name:string;
+  name: string;
   text: string;
   onChange: (value: any) => void;
   hasBackground?: boolean;

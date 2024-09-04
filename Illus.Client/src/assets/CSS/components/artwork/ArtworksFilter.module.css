@@ -1,0 +1,15 @@
+.filter {
+  display: flex;
+}
+.option-bar {
+  display: flex;
+}
+.side-start {
+  margin-right: auto;
+}
+.side-end {
+  margin-left: auto;
+  > div {
+    margin: 0 0.2rem;
+  }
+}

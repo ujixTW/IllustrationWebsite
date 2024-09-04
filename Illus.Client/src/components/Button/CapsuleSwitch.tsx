@@ -1,4 +1,4 @@
-import style from "../assets/CSS/components/CapsuleSwitch.module.css";
+import style from "../../assets/CSS/components/Button/CapsuleSwitch.module.css";
 
 export default function CapsuleSwitch(props: {
   name: string;

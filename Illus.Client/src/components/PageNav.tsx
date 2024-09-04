@@ -1,8 +1,9 @@
 import style from "../assets/CSS/components/PageNav.module.css";
-import { Link, useLocation } from "react-router-dom";
-import { pageReg } from "../utils/artworkParmasRegHelper";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { pageParma, pageReg } from "../utils/parmasHelper";
 import Arrow from "../assets/arrow.svg?react";
 import ThreeDot from "../assets/threeDot.svg?react";
+import { useEffect } from "react";
 
 function PageBtn(props: {
   isEnd: boolean;
@@ -11,16 +12,19 @@ function PageBtn(props: {
   img?: JSX.Element;
 }) {
   const location = useLocation();
+  const [searchParams] = useSearchParams();
   const pageNo: number = props.num + 1;
+
+  useEffect(() => {
+    if (searchParams.has(pageParma))
+      searchParams.set(pageParma, pageNo.toString());
+    else searchParams.append(pageParma, pageNo.toString());
+  }, []);
+
   return (
     <div>
       <Link
-        to={
-          pageReg.test(location.search)
-            ? location.pathname +
-              location.search.replace(pageReg, `p=${pageNo}`)
-            : location.pathname + location.search + `&p=${pageNo}`
-        }
+        to={location.pathname + "?" + searchParams.toString()}
         className={
           style["link"] +
           (props.isEnd == true ? " " + style["end-link"] : "") +
