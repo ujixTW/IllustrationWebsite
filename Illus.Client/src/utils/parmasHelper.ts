@@ -1,11 +1,11 @@
 import { artworkOrderType } from "../data/postData/artwork";
 
 const keywordReg = /keywords=[^&]+/;
-const pageReg = /&p=[0-9]+/i;
-const orderReg = /&order=(hot%2Bdesc|hot|time%2Bdesc)/i;
+const pageReg = /p=[0-9]+/i;
+const orderReg = /order=(hot%2Bdesc|hot|time%2Bdesc)/i;
 const descReg = /desc/i;
-const r18Reg = /&R18=show/i;
-const AIReg = /&AI=show/i;
+const r18Reg = /R18=show/i;
+const AIReg = /AI=show/i;
 
 const keywordParma = "keywords";
 const pageParma = "p";
