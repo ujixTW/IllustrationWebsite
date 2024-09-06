@@ -1,0 +1,13 @@
+.body {
+  display: flex;
+  padding: 1rem 2rem;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+.content {
+    width: 500px;
+    height: 2000px;
+    max-width:100%;
+    background-color: var(--bkC);
+    border-radius: 1rem;
+}

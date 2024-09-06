@@ -1,4 +1,4 @@
-import style from "../../assets/CSS/components/artwork/Artwork.module.css";
+import style from "../../assets/CSS/components/artwork/ArtworkCard.module.css";
 import path from "../../data/JSON/path.json";
 import LikeImg from "../../assets/like.svg?react";
 import { memo, useCallback, useEffect, useState } from "react";

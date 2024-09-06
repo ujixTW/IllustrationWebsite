@@ -7,6 +7,10 @@
 body {
   margin: 0;
 }
+main {
+  padding-left: 0;
+  padding-right: 0;
+}
 :root {
   --bkC: white;
   --fontC: rgb(51, 51, 51);
@@ -18,5 +22,5 @@ body {
   --fontC-D: rgb(51, 51, 51);
   --fontC-N: rgb(226, 226, 226);
 
-  --heartRed:rgb(223, 67, 67);
+  --heartRed: rgb(223, 67, 67);
 }

@@ -179,7 +179,6 @@ function HomeAfterLogin() {
           <ArtworkBarListContainer
             title="已追隨使用者的作品"
             list={artworkList.follow}
-            more
             link={path.artworks.followingList}
             getMoreDataFnc={!pageMax ? handleFollowList : undefined}
           />
@@ -191,7 +190,6 @@ function HomeAfterLogin() {
           <ArtworkListContainer
             title={`${dailyTheme}主題日!`}
             list={artworkList.daily}
-            more
             link={(path.artworks.list, { search: `?keywords=${dailyTheme}` })}
           />
         </div>

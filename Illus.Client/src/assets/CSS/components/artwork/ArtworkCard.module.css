@@ -54,10 +54,6 @@
     }
   }
 }
-.artwork-box {
-  width: 184px;
-  height: 184px;
-}
 
 .data {
   position: relative;
@@ -76,23 +72,5 @@
       font-weight: bold;
       margin: 0.5rem 0;
     }
-  }
-  .artist {
-    display: flex;
-    .head {
-      width: 24px;
-      height: 24px;
-      margin-right: 0.5rem;
-      border-radius: 50%;
-    }
-    .head-link {
-      width: 100%;
-      height: 100%;
-    }
-  }
-  .head-img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
   }
 }

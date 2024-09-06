@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import path from "../../data/JSON/path.json";
 import CheckBtn from "../Button/CheckBtn";
 
-function ArtistCard(props: { artistId: number; artworkId: number }) {
+function ArtistCard(props: { artistId: number }) {
   const [data, setData] = useState<userDataType | undefined>(undefined);
   const [isFollow, setIsFollow] = useState<boolean>(false);
 
@@ -57,7 +57,7 @@ function ArtistCard(props: { artistId: number; artworkId: number }) {
         </div>
         <div className={style["follow"]}>
           <CheckBtn
-            name={`follow${props.artworkId}`}
+            name={`follow${props.artistId}`}
             text={isFollow ? "已關注" : "關注"}
             onChange={() => {
               setIsFollow(!isFollow);
