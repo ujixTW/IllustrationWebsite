@@ -22,4 +22,22 @@ type ArtworkListType = {
   maxCount: number;
   dailyTheme: string;
 };
+const ArtworkTypeDef: ArtworkType = {
+  id: -1,
+  artistId: -1,
+  title: "",
+  description: "",
+  coverImg: "",
+  likeCount: 0,
+  readCount: 0,
+  isLike: false,
+  isR18: false,
+  isAI: false,
+  postTime: new Date(),
+  artistName: "Artist Name",
+  artistHeadshotContent: "/defaultImg/defaultHeadshot.svg",
+  tags: [],
+  imgs: [],
+};
+export {ArtworkTypeDef}
 export type { TagType, ArtworkType, ArtworkImgType, ArtworkListType };

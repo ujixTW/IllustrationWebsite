@@ -4,12 +4,9 @@ import IconLong from "./assets/IconLong.svg?react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import SearchBox from "./components/searchbox/SearchBox";
 import { useEffect, useState } from "react";
-import { userDataType } from "./data/typeModels/user";
+import { userDataType, userDataTypeDef } from "./data/typeModels/user";
 import axios from "axios";
-import {
-  UserDataContext,
-  defaultUserDataContextValue,
-} from "./context/LoginContext";
+import { UserDataContext } from "./context/LoginContext";
 import UserMenu from "./components/UserMenu";
 import { ImagePathHelper } from "./utils/ImagePathHelper";
 import { loginActions } from "./data/reduxModels/loginRedux";
@@ -61,9 +58,7 @@ function MainNav() {
 }
 function RootLayout() {
   const dispatch = useAppDispatch();
-  const [userData, setUserData] = useState<userDataType>(
-    defaultUserDataContextValue
-  );
+  const [userData, setUserData] = useState<userDataType>(userDataTypeDef);
   const loginHandler = () => {
     dispatch(loginActions.login());
   };
@@ -76,7 +71,7 @@ function RootLayout() {
         userData.headshot =
           userData.headshot != ""
             ? ImagePathHelper(userData.headshot)
-            : defaultUserDataContextValue.headshot;
+            : userDataTypeDef.headshot;
         setUserData(userData);
         loginHandler();
       })
@@ -98,6 +93,7 @@ function RootLayout() {
           style={{
             position: "fixed",
             bottom: "2rem",
+            left: "2rem",
             border: "0",
             borderRadius: "1rem",
             width: "50px",

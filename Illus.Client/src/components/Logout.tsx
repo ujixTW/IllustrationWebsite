@@ -1,13 +1,11 @@
 import style from "../assets/CSS/components/LogOut.module.css";
 import { useContext, useState } from "react";
-import {
-  UserDataContext,
-  defaultUserDataContextValue,
-} from "../context/LoginContext";
+import { UserDataContext } from "../context/LoginContext";
 import axios from "axios";
 import { ClickBtnEvent, ClickDivEvent } from "../utils/tsTypesHelper";
 import { useAppDispatch } from "../hooks/redux";
 import { loginActions } from "../data/reduxModels/loginRedux";
+import { userDataTypeDef } from "../data/typeModels/user";
 
 export default function LogOut(props: { itemClass: string }) {
   const dispatch = useAppDispatch();
@@ -20,7 +18,7 @@ export default function LogOut(props: { itemClass: string }) {
       .get("/api/Logout")
       .then(() => {
         logoutHandler();
-        setUserData(defaultUserDataContextValue);
+        setUserData(userDataTypeDef);
       })
       .catch((err) => console.log(err));
   };
