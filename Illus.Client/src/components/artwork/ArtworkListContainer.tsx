@@ -14,7 +14,7 @@ function ArtworkList(props: {
   length?: number;
 }) {
   const list = props.list.map((artwork: ArtworkType) => (
-    <div className={style["item"]}>
+    <div className={style["item"]} key={props.title + artwork.id.toString()}>
       <ArtworkCard
         artwork={artwork}
         showArtTitle={props.showArtTitle}

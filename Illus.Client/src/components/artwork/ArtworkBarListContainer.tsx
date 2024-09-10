@@ -11,7 +11,7 @@ function ArtworkBarList(props: {
   link?: To;
   getMoreDataFnc?: (...args: any[]) => any;
   showArtTitle?: boolean;
-  showArtistData?:boolean;
+  showArtistData?: boolean;
   length?: number;
 }) {
   const listRef = useRef<HTMLDivElement>(null);
@@ -37,7 +37,11 @@ function ArtworkBarList(props: {
   }, [totalSkip]);
 
   const list = props.list.map((artwork: ArtworkType) => (
-    <div className={style["item"]} ref={itemRef}>
+    <div
+      key={props.title + artwork.id.toString()}
+      className={style["item"]}
+      ref={itemRef}
+    >
       <ArtworkCard
         artwork={artwork}
         showArtTitle={props.showArtTitle}

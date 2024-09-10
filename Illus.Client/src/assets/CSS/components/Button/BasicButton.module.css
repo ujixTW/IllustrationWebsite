@@ -31,3 +31,7 @@
   color: white;
   background-color: var(--heartRed);
 }
+.more {
+  color: white;
+  background-color: rgba(0, 0, 0, 0.8);
+}

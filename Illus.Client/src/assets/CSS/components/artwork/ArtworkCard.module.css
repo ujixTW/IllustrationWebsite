@@ -26,32 +26,6 @@
     right: 4px;
     width: 32px;
     height: 32px;
-    .btn-like {
-      height: 100%;
-      width: 100%;
-      background-color: rgba(0, 0, 0, 0);
-      border: 0;
-      padding: 0;
-    }
-    .icon-like {
-      height: 100%;
-      width: 100%;
-      stroke: var(--fontC);
-      fill: var(--bkC);
-      stroke-miterlimit: 15;
-      transition: all 0.2s;
-      &:hover {
-        stroke: var(--mainBlue);
-      }
-      &:active {
-        stroke-opacity: 0;
-        fill: var(--heartRed);
-      }
-      &.is-like {
-        stroke: var(--heartRed);
-        fill: var(--heartRed);
-      }
-    }
   }
 }
 

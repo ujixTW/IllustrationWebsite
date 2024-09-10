@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import style from "../../assets/CSS/pages/Login/Forget.module.css";
 import InputEmail from "../../components/Account/InputEmail";
 import { ChangeEvent } from "../../utils/tsTypesHelper";
-import { SureBtn } from "../../components/Account/Button";
+import { SureBtn } from "../../components/Button/BasicButton";
 import { emailReg, guidReg } from "../../utils/regexHelper";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";

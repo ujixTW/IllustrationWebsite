@@ -10,7 +10,7 @@ import { loginPostData } from "../../data/postData/account";
 import { accountReg, emailReg, passwordReg } from "../../utils/regexHelper";
 import { useAppDispatch } from "../../hooks/redux";
 import { loginActions } from "../../data/reduxModels/loginRedux";
-import { SureBtn } from "../../components/Account/Button";
+import { SureBtn } from "../../components/Button/BasicButton";
 import changeWebTitle from "../../utils/changeWebTitle";
 
 function Login() {

@@ -181,6 +181,8 @@ function HomeAfterLogin() {
             list={artworkList.follow}
             link={path.artworks.followingList}
             getMoreDataFnc={!pageMax ? handleFollowList : undefined}
+            showArtTitle
+            showArtistData
           />
         </div>
       )}
@@ -191,6 +193,8 @@ function HomeAfterLogin() {
             title={`${dailyTheme}主題日!`}
             list={artworkList.daily}
             link={(path.artworks.list, { search: `?keywords=${dailyTheme}` })}
+            showArtTitle
+            showArtistData
           />
         </div>
       )}
@@ -199,6 +203,8 @@ function HomeAfterLogin() {
           title="熱門作品"
           list={artworkList.hot}
           getMoreDataFnc={!pageMax ? handleHotList : undefined}
+          showArtTitle
+          showArtistData
         />
       </div>
     </div>

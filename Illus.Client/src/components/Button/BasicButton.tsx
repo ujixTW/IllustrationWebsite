@@ -1,9 +1,10 @@
-import style from "../../assets/CSS/components/Account/btn.module.css";
+import style from "../../assets/CSS/components/Button/BasicButton.module.css";
 
 enum btnType {
   normal = 0,
   sure = 1,
   cancel = 2,
+  more = 3,
 }
 function btnClass(type: btnType): string {
   let typeStr: string = "";
@@ -16,6 +17,9 @@ function btnClass(type: btnType): string {
       break;
     case btnType.cancel:
       typeStr = style["cancel"];
+      break;
+    case btnType.more:
+      typeStr = style["more"];
       break;
     default:
       typeStr = "";
@@ -64,4 +68,8 @@ function CancelBtn(props: { text: string; onClick: (...args: any[]) => any }) {
     <Btn text={props.text} onClick={props.onClick} type={btnType.cancel} />
   );
 }
-export { SureBtn, NormalBtn, CancelBtn };
+function MoreBtn(props: { text: string; onClick: (...args: any[]) => any }) {
+  return <Btn text={props.text} onClick={props.onClick} type={btnType.more} />;
+}
+
+export { SureBtn, NormalBtn, CancelBtn, MoreBtn };

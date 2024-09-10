@@ -6,7 +6,7 @@ import style from "../../assets/CSS/pages/Login/ResetPwd.module.css";
 import { signUpError } from "../../data/typeModels/signUpResult";
 import InputPassword from "../../components/Account/InputPassword";
 import { ChangeEvent } from "../../utils/tsTypesHelper";
-import { SureBtn } from "../../components/Account/Button";
+import { SureBtn } from "../../components/Button/BasicButton";
 import axios from "axios";
 import {
   editPWDFromEmailPostData,
