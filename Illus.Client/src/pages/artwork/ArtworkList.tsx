@@ -77,7 +77,7 @@ function ArtworkList() {
   return (
     <div className={style["body"]}>
       <ArtworksFilter hasOrder />
-      <ArtworkListContainer list={list} />
+      <ArtworkListContainer list={list} showArtTitle showArtistData />
       <PageNav max={maxCount} pageCount={pageCount} />
     </div>
   );
