@@ -5,7 +5,7 @@ import { ArtworkType } from "../data/typeModels/artwork";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function BeforeLoginLayOut(props: { context: JSX.Element }) {
+export default function BeforeLoginLayOut(props: { children: JSX.Element }) {
   const [bkDataList, setBkDataList] = useState<ArtworkType[]>([]);
   const [bkData, setBkData] = useState<ArtworkType | undefined>(undefined);
   const [bkIndex, setBkIndex] = useState<number>(0);
@@ -69,7 +69,7 @@ export default function BeforeLoginLayOut(props: { context: JSX.Element }) {
         <div>
           <IconLong className={style["logo"]} />
         </div>
-        {props.context}
+        {props.children}
       </div>
     </>
   );

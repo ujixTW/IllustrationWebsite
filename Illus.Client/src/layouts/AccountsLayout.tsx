@@ -82,7 +82,9 @@ export default function AccountsLayout() {
       <MainNav />
       <main>
         {hasArtworkBG ? (
-          <BeforeLoginLayOut context={<Outlet />} />
+          <BeforeLoginLayOut>
+            <Outlet />
+          </BeforeLoginLayOut>
         ) : (
           <div className={style["none-bk-content"]}>
             <div className={style["bg"]}></div>
