@@ -5,11 +5,13 @@ import { RefObject, useEffect, useRef, useState } from "react";
 import { Link, createSearchParams } from "react-router-dom";
 import { asyncDebounce } from "../../utils/debounce";
 import { TagType } from "../../data/typeModels/artwork";
+import { ClickLinkEvent } from "../../utils/tsTypesHelper";
 
 function RecommandLink(props: {
   recommand: string;
   textArr: string[];
   target: RefObject<HTMLInputElement>;
+  isLink?: boolean;
 }) {
   const tempArr = [...props.textArr];
   tempArr.push(props.recommand);
@@ -20,70 +22,71 @@ function RecommandLink(props: {
         pathname: `${path.artworks.list}`,
         search: `${createSearchParams({ keywords: tempStr })}`,
       }}
-      className={style['recommand']}
-      onClick={() =>
+      className={style["recommand"]}
+      onClick={(e: ClickLinkEvent) => {
+        if (props.isLink != true) e.preventDefault();
         props.target.current != null
-          ? props.target.current.value = tempStr
-          : console.log("No target!")
-      }
+          ? (props.target.current.value = tempStr)
+          : console.log("No target!");
+      }}
     >
       {tempStr}
     </Link>
   );
 }
-
 function AutoComplete(props: {
   inputText: string;
   target: RefObject<HTMLInputElement>;
+  changeAll?: boolean;
+  isLink?: boolean;
 }) {
-  const textArr: string[] = props.inputText.trim().split(" ");
-  const lastInputText: string = textArr[textArr.length - 1];
+  const textArr: string[] = props.changeAll
+    ? [props.inputText.replace(" ", "")]
+    : props.inputText.trim().split(" ");
+  const searchText: string | undefined = textArr.pop();
   const [tagArr, setTagArr] = useState<TagType[]>([
-    { id: 0, content: "aa" },
-    { id: 2, content: "測試2" },
+    { id: 1, content: "sasas" },
+    { id: 2, content: "eqwuih" },
   ]);
   const acRef = useRef<HTMLDivElement>(null);
-  textArr.pop();
 
   useEffect(() => {
     const keyboard = (e: KeyboardEvent) => {
       if (e.key == "ArrowUp" && acRef.current != null) {
+        e.preventDefault();
+        const recommandArr = acRef.current.getElementsByTagName("a");
         if (
           document.activeElement == props.target.current ||
-          document.activeElement == acRef.current.getElementsByTagName("a")[0]
+          document.activeElement == recommandArr[0]
         ) {
           props.target.current?.focus();
         } else {
           for (let i = 1; i < tagArr.length; i++) {
-            if (
-              document.activeElement ==
-              acRef.current.getElementsByTagName("a")[i]
-            ) {
-              acRef.current.getElementsByTagName("a")[i - 1].focus();
+            if (document.activeElement == recommandArr[i]) {
+              recommandArr[i - 1].focus();
               break;
             }
           }
         }
       } else if (e.key == "ArrowDown" && acRef.current != null) {
+        e.preventDefault();
+        const recommandArr = acRef.current.getElementsByTagName("a");
         if (
           document.activeElement == props.target.current ||
-          document.activeElement ==
-            acRef.current.getElementsByTagName("a")[tagArr.length - 1]
+          document.activeElement == recommandArr[tagArr.length - 1]
         ) {
-          acRef.current.getElementsByTagName("a")[0].focus();
+          recommandArr[0].focus();
         } else {
           for (let i = 0; i < tagArr.length - 1; i++) {
-            if (
-              document.activeElement ==
-              acRef.current.getElementsByTagName("a")[i]
-            ) {
-              acRef.current.getElementsByTagName("a")[i + 1].focus();
+            if (document.activeElement == recommandArr[i]) {
+              recommandArr[i + 1].focus();
               break;
             }
           }
         }
       }
     };
+
     window.addEventListener("keydown", keyboard);
     return () => {
       window.removeEventListener("keydown", keyboard);
@@ -92,12 +95,14 @@ function AutoComplete(props: {
 
   useEffect(
     asyncDebounce(async () => {
-      await axios
-        .get("/api/Work/GetSearchRecommand", {
-          params: { st: encodeURI(lastInputText) },
-        })
-        .then((res) => setTagArr(res.data as TagType[]))
-        .catch((err) => console.log("Get Recommand Fail." + err));
+      if (searchText) {
+        await axios
+          .get("/api/Work/GetSearchRecommand", {
+            params: { st: encodeURI(searchText) },
+          })
+          .then((res) => setTagArr(res.data as TagType[]))
+          .catch((err) => console.log("Get Recommand Fail." + err));
+      }
     }),
     [props.inputText]
   );
@@ -108,13 +113,16 @@ function AutoComplete(props: {
       recommand={val.content}
       textArr={textArr}
       target={props.target}
+      isLink={props.isLink}
     />
   ));
 
-  return (
-    <div className={style['auto-complete']} ref={acRef}>
+  return tagArr.length > 0 ? (
+    <div className={style["auto-complete"]} ref={acRef}>
       {list}
     </div>
+  ) : (
+    <></>
   );
 }
 

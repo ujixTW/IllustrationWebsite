@@ -82,7 +82,7 @@ function SearchBox() {
         </div>
       </form>
       {searchText.trim() !== "" && isFocus && (
-        <AutoComplete inputText={searchText} target={searchRef} />
+        <AutoComplete inputText={searchText} target={searchRef} isLink />
       )}
     </search>
   );
