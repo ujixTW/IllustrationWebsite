@@ -47,6 +47,8 @@ function Content(props: {
   inputText: string;
   target: RefObject<HTMLInputElement>;
   changeAll?: boolean;
+  tagArr: TagType[];
+  setTagArr: React.Dispatch<React.SetStateAction<TagType[]>>;
   isLink?: boolean;
   setIsFocus: (...args: any[]) => any;
 }) {
@@ -54,7 +56,7 @@ function Content(props: {
     ? [props.inputText.replace(" ", "")]
     : props.inputText.trim().split(" ");
   const searchText: string | undefined = textArr.pop();
-  const [tagArr, setTagArr] = useState<TagType[]>([]);
+  const { tagArr, setTagArr } = props;
   const acRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -117,7 +119,6 @@ function Content(props: {
       if (acRef.current) {
         let isFocus = false;
         const recommandArr = acRef.current.getElementsByTagName("a");
-
         if (
           props.target.current &&
           props.target.current.contains(document.activeElement)
@@ -131,7 +132,6 @@ function Content(props: {
             }
           }
         }
-
         props.setIsFocus(isFocus);
       }
     }, 0);
@@ -148,7 +148,7 @@ function Content(props: {
     />
   ));
 
-  return tagArr.length > 0 ? <div ref={acRef}>{list}</div> : <></>;
+  return <div ref={acRef}>{list}</div>;
 }
 
 function AutoComplete(props: {
@@ -160,6 +160,7 @@ function AutoComplete(props: {
 }) {
   const [isFocus, setIsFocus] = useState(false);
   const acRef = useRef<HTMLDivElement>(null);
+  const [tagArr, setTagArr] = useState<TagType[]>([]);
 
   useEffect(() => {
     const handleTargetFocus = () => setIsFocus(true);
@@ -192,7 +193,9 @@ function AutoComplete(props: {
     };
   }, []);
 
-  return isFocus && props.target.current?.value.trim() != "" ? (
+  return isFocus &&
+    props.target.current?.value.trim() != "" &&
+    tagArr.length > 0 ? (
     <div
       className={
         style["auto-complete"] +
@@ -205,6 +208,8 @@ function AutoComplete(props: {
         inputText={props.inputText}
         target={props.target}
         changeAll={props.changeAll}
+        tagArr={tagArr}
+        setTagArr={setTagArr}
         isLink={props.isLink}
         setIsFocus={setIsFocus}
       />
