@@ -14,7 +14,7 @@ import { useAppDispatch, useAppSelector } from "./hooks/redux";
 import BackToTopBtn from "./components/Button/BackToTopBtn";
 
 function MainNav() {
-  const isLogin = useAppSelector((state) => state.login);
+  const isLogin = useAppSelector((state) => state.login.isLogin);
   const location = useLocation();
 
   return (
@@ -59,21 +59,21 @@ function MainNav() {
 function RootLayout() {
   const dispatch = useAppDispatch();
   const [userData, setUserData] = useState<userDataType>(userDataTypeDef);
-  const loginHandler = () => {
-    dispatch(loginActions.login());
+  const loginHandler = (id: number) => {
+    dispatch(loginActions.login(id));
   };
   useEffect(() => {
     axios
       .get("/api/LoginCheck")
       .then((res) => {
-        let userData = res.data as userDataType;
+        const userData: userDataType = res.data;
         userData.cover = ImagePathHelper(userData.cover);
         userData.headshot =
           userData.headshot != ""
             ? ImagePathHelper(userData.headshot)
             : userDataTypeDef.headshot;
         setUserData(userData);
-        loginHandler();
+        loginHandler(userData.id);
       })
       .catch(() => dispatch(loginActions.logout()));
   }, []);
@@ -88,7 +88,7 @@ function RootLayout() {
       <main>
         <button
           type="button"
-          onClick={() => dispatch(loginActions.login())}
+          onClick={() => dispatch(loginActions.login(-1))}
           className={style["btn"]}
           style={{
             position: "fixed",
@@ -100,6 +100,8 @@ function RootLayout() {
             height: "50px",
             backgroundColor: "var(--mainBlue)",
             color: "white",
+            zIndex: "2",
+            cursor: "pointer",
           }}
         >
           登入狀態

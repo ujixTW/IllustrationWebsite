@@ -12,7 +12,7 @@ function JumpWindow(props: {
 
   return (
     <div className={style["back"]} onClick={closeWindow}>
-      <div
+      <section
         className={style["window"]}
         onClick={(e: ClickDivEvent) => e.stopPropagation()}
       >
@@ -21,7 +21,7 @@ function JumpWindow(props: {
         </button>
 
         <div>{props.children}</div>
-      </div>
+      </section>
     </div>
   );
 }

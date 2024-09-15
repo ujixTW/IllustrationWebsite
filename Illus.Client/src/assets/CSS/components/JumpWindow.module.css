@@ -9,6 +9,7 @@
   background-color: rgba(0, 0, 0, 0.2);
   align-items: center;
   justify-content: center;
+  z-index: 10;
 }
 .window {
   position: relative;
@@ -16,7 +17,7 @@
   border-radius: 1rem;
 }
 .btn-x {
-  --r: 1.6rem;
+  --r: 2.5rem;
   display: block;
   position: absolute;
   top: 0;
@@ -26,10 +27,13 @@
   background-color: var(--bkC);
   border: 0;
   border-radius: 50%;
+  font-size: x-large;
+  opacity: 0.8;
   cursor: pointer;
 
   &:hover,
   &:active {
+    opacity: 1;
     background-color: rgba(0, 0, 0, 0.2);
   }
 }

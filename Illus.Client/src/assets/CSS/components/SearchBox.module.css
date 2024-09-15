@@ -14,33 +14,6 @@
     outline: 0.2rem solid var(--mainBlue);
   }
 }
-.auto-complete {
-  position: absolute;
-  left: 0;
-  top: 2.2rem;
-  width: 100%;
-  padding: 0.5rem 0;
-  margin: 0;
-  background-color: var(--bkC);
-  border-radius: 0.5rem;
-  box-shadow: 0 0 0.1rem;
-  z-index: 5;
-  .recommand {
-    display: block;
-    text-align: left;
-    padding: 0.5rem 1rem;
-    &:hover,
-    &:focus {
-      background-color: var(--searchBkC);
-    }
-  }
-  >li{
-    &:hover{
-      background-color: var(--searchBkC);
-
-    }
-  }
-}
 .box-end {
   height: 100%;
   position: absolute;
@@ -54,10 +27,12 @@
     height: var(--radius);
     border-radius: 50%;
     border: 0;
-    background-color: rgba(138, 138, 138, 0.5);
-    color: white;
+    background-color: none;
+    color: var(--fontC);
     margin-right: 0.2rem;
+    cursor: pointer;
     &:hover {
+      color: white;
       background-color: rgba(138, 138, 138, 1);
     }
   }
@@ -68,6 +43,7 @@
     border: 0.1rem solid var(--searchBkC);
     border-radius: 0 0.5rem 0.5rem 0;
     background-color: var(--bkC);
+    cursor: pointer;
   }
 }
 

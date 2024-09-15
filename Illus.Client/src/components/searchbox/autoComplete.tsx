@@ -1,7 +1,13 @@
-import style from "../../assets/CSS/components/SearchBox.module.css";
+import style from "../../assets/CSS/components/AutoComplete.module.css";
 import path from "../../data/JSON/path.json";
 import axios from "axios";
-import { RefObject, useEffect, useRef, useState } from "react";
+import {
+  FocusEventHandler,
+  RefObject,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Link, createSearchParams } from "react-router-dom";
 import { asyncDebounce } from "../../utils/debounce";
 import { TagType } from "../../data/typeModels/artwork";
@@ -12,6 +18,7 @@ function RecommandLink(props: {
   textArr: string[];
   target: RefObject<HTMLInputElement>;
   isLink?: boolean;
+  onBlur: FocusEventHandler;
 }) {
   const tempArr = [...props.textArr];
   tempArr.push(props.recommand);
@@ -29,25 +36,25 @@ function RecommandLink(props: {
           ? (props.target.current.value = tempStr)
           : console.log("No target!");
       }}
+      onBlur={props.onBlur}
     >
       {tempStr}
     </Link>
   );
 }
-function AutoComplete(props: {
+
+function Content(props: {
   inputText: string;
   target: RefObject<HTMLInputElement>;
   changeAll?: boolean;
   isLink?: boolean;
+  setIsFocus: (...args: any[]) => any;
 }) {
   const textArr: string[] = props.changeAll
     ? [props.inputText.replace(" ", "")]
     : props.inputText.trim().split(" ");
   const searchText: string | undefined = textArr.pop();
-  const [tagArr, setTagArr] = useState<TagType[]>([
-    { id: 1, content: "sasas" },
-    { id: 2, content: "eqwuih" },
-  ]);
+  const [tagArr, setTagArr] = useState<TagType[]>([]);
   const acRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -55,10 +62,9 @@ function AutoComplete(props: {
       if (e.key == "ArrowUp" && acRef.current != null) {
         e.preventDefault();
         const recommandArr = acRef.current.getElementsByTagName("a");
-        if (
-          document.activeElement == props.target.current ||
-          document.activeElement == recommandArr[0]
-        ) {
+        if (document.activeElement == props.target.current) {
+          recommandArr[recommandArr.length - 1].focus();
+        } else if (document.activeElement == recommandArr[0]) {
           props.target.current?.focus();
         } else {
           for (let i = 1; i < tagArr.length; i++) {
@@ -71,11 +77,10 @@ function AutoComplete(props: {
       } else if (e.key == "ArrowDown" && acRef.current != null) {
         e.preventDefault();
         const recommandArr = acRef.current.getElementsByTagName("a");
-        if (
-          document.activeElement == props.target.current ||
-          document.activeElement == recommandArr[tagArr.length - 1]
-        ) {
+        if (document.activeElement == props.target.current) {
           recommandArr[0].focus();
+        } else if (document.activeElement == recommandArr[tagArr.length - 1]) {
+          props.target.current?.focus();
         } else {
           for (let i = 0; i < tagArr.length - 1; i++) {
             if (document.activeElement == recommandArr[i]) {
@@ -107,6 +112,31 @@ function AutoComplete(props: {
     [props.inputText]
   );
 
+  const handleBlur = async () => {
+    await setTimeout(() => {
+      if (acRef.current) {
+        let isFocus = false;
+        const recommandArr = acRef.current.getElementsByTagName("a");
+
+        if (
+          props.target.current &&
+          props.target.current.contains(document.activeElement)
+        ) {
+          isFocus = true;
+        } else {
+          for (let i = 0; i < recommandArr.length; i++) {
+            if (recommandArr[i].contains(document.activeElement)) {
+              isFocus = true;
+              break;
+            }
+          }
+        }
+
+        props.setIsFocus(isFocus);
+      }
+    }, 0);
+  };
+
   const list = tagArr.map((val: TagType) => (
     <RecommandLink
       key={val.id}
@@ -114,12 +144,70 @@ function AutoComplete(props: {
       textArr={textArr}
       target={props.target}
       isLink={props.isLink}
+      onBlur={handleBlur}
     />
   ));
 
-  return tagArr.length > 0 ? (
-    <div className={style["auto-complete"]} ref={acRef}>
-      {list}
+  return tagArr.length > 0 ? <div ref={acRef}>{list}</div> : <></>;
+}
+
+function AutoComplete(props: {
+  inputText: string;
+  target: RefObject<HTMLInputElement>;
+  changeAll?: boolean;
+  isLink?: boolean;
+  onTargetTop?: boolean;
+}) {
+  const [isFocus, setIsFocus] = useState(false);
+  const acRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleTargetFocus = () => setIsFocus(true);
+    const handleTargetBlur = async () => {
+      await setTimeout(() => {
+        if (acRef.current) {
+          const childArr = acRef.current.querySelectorAll("a");
+          let isChild = false;
+          childArr.forEach((child) => {
+            if (child.contains(document.activeElement as HTMLElement)) {
+              isChild = true;
+              return;
+            }
+          });
+          setIsFocus(isChild);
+        }
+      }, 0);
+    };
+    if (props.target.current) {
+      const target = props.target.current;
+      target.addEventListener("focus", handleTargetFocus);
+      target.addEventListener("blur", handleTargetBlur);
+    }
+    return () => {
+      if (props.target.current) {
+        const target = props.target.current;
+        target.removeEventListener("focus", handleTargetFocus);
+        target.removeEventListener("blur", handleTargetBlur);
+      }
+    };
+  }, []);
+
+  return isFocus && props.target.current?.value.trim() != "" ? (
+    <div
+      className={
+        style["auto-complete"] +
+        " " +
+        (props.onTargetTop ? style["top"] : style["bottom"])
+      }
+      ref={acRef}
+    >
+      <Content
+        inputText={props.inputText}
+        target={props.target}
+        changeAll={props.changeAll}
+        isLink={props.isLink}
+        setIsFocus={setIsFocus}
+      />
     </div>
   ) : (
     <></>
