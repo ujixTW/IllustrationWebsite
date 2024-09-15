@@ -1,6 +1,6 @@
 import style from "./assets/CSS/RootLayout.module.css";
 import path from "./data/JSON/path.json";
-import IconLong from "./assets/IconLong.svg?react";
+import IconLong from "./assets/SVG/IconLong.svg?react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import SearchBox from "./components/searchbox/SearchBox";
 import { useEffect, useState } from "react";

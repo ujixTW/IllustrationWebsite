@@ -23,4 +23,5 @@ main {
   --fontC-N: rgb(226, 226, 226);
 
   --heartRed: rgb(223, 67, 67);
+  --blackMask: rgba(0, 0, 0, 0.2);
 }
