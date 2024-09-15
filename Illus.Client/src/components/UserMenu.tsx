@@ -1,4 +1,4 @@
-import Arrow from "../assets/arrow.svg?react";
+import Arrow from "../assets/SVG/arrow.svg?react";
 import style from "../assets/CSS/components/UserMenu.module.css";
 import path from "../data/JSON/path.json";
 import { useContext, useEffect, useState } from "react";

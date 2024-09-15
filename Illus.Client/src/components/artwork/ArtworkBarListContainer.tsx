@@ -1,6 +1,6 @@
 import { ArtworkType } from "../../data/typeModels/artwork";
 import style from "../../assets/CSS/components/artwork/ArtworkList.module.css";
-import Arrow from "../../assets/arrow.svg?react";
+import Arrow from "../../assets/SVG/arrow.svg?react";
 import ArtworkCard from "./ArtworkCard";
 import { Link, To } from "react-router-dom";
 import { memo, useEffect, useRef, useState } from "react";

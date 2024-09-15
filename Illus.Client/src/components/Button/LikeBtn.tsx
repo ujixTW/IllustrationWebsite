@@ -1,6 +1,6 @@
 import { memo, useCallback, useState } from "react";
 import style from "../../assets/CSS/components/Button/LikeBtn.module.css";
-import LikeImg from "../../assets/like.svg?react";
+import LikeImg from "../../assets/SVG/like.svg?react";
 import { asyncDebounce } from "../../utils/debounce";
 import axios from "axios";
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import style from "../../assets/CSS/components/Account/Input.module.css";
-import ShowIcon from "../../assets/show.svg?react";
-import HideIcon from "../../assets/hide.svg?react";
+import ShowIcon from "../../assets/SVG/show.svg?react";
+import HideIcon from "../../assets/SVG/hide.svg?react";
 
 export default function InputPassword(props: {
   id?: string;

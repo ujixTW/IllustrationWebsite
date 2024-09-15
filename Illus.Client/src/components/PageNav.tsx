@@ -1,8 +1,8 @@
 import style from "../assets/CSS/components/PageNav.module.css";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { pageParma, pageReg } from "../utils/parmasHelper";
-import Arrow from "../assets/arrow.svg?react";
-import ThreeDot from "../assets/threeDot.svg?react";
+import Arrow from "../assets/SVG/arrow.svg?react";
+import ThreeDot from "../assets/SVG/threeDot.svg?react";
 import { useEffect } from "react";
 
 function PageBtn(props: {

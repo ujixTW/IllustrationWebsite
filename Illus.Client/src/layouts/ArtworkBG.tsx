@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import style from "../assets/CSS/layouts/ArtworkBG.module.css";
-import IconLong from "../assets/IconLong.svg?react";
+import IconLong from "../assets/SVG/IconLong.svg?react";
 import { ArtworkType } from "../data/typeModels/artwork";
 import { useEffect, useState } from "react";
 import axios from "axios";

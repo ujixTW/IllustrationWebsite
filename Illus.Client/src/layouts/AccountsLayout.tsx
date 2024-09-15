@@ -1,7 +1,7 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import style from "../assets/CSS/layouts/AccountsLayout.module.css";
 import path from "../data/JSON/path.json";
-import IconLong from "../assets/IconLong.svg?react";
+import IconLong from "../assets/SVG/IconLong.svg?react";
 import BeforeLoginLayOut from "./ArtworkBG";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";

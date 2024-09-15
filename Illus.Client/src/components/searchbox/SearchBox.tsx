@@ -1,6 +1,6 @@
 import style from "../../assets/CSS/components/SearchBox.module.css";
 import path from "../../data/JSON/path.json";
-import SearchMark from "../../assets/searchMark.svg?react";
+import SearchMark from "../../assets/SVG/searchMark.svg?react";
 import { ChangeEvent, FormEvent } from "../../utils/tsTypesHelper";
 import AutoComplete from "./autoComplete";
 import { useEffect, useRef, useState } from "react";
