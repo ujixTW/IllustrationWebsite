@@ -11,36 +11,14 @@ import { useClickOutside } from "../hooks/useClickOutside";
 function Detail(props: {
   showName: string;
   setMenuOpen: (...args: any[]) => void;
+  isDarkMode: boolean;
+  setIsDarkMode: (...args: any[]) => void;
 }) {
   const { userData } = useContext(UserDataContext);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   useClickOutside(menuRef, () => props.setMenuOpen(false));
 
   const userLink: string = path.user.user + userData.id;
-
-  useEffect(() => {
-    const style = document.documentElement.style;
-    if (!isDarkMode) {
-      style.setProperty(
-        "--bkC",
-        getComputedStyle(document.documentElement).getPropertyValue("--bkC-D")
-      );
-      style.setProperty(
-        "--fontC",
-        getComputedStyle(document.documentElement).getPropertyValue("--fontC-D")
-      );
-    } else {
-      style.setProperty(
-        "--bkC",
-        getComputedStyle(document.documentElement).getPropertyValue("--bkC-N")
-      );
-      style.setProperty(
-        "--fontC",
-        getComputedStyle(document.documentElement).getPropertyValue("--fontC-N")
-      );
-    }
-  }, [isDarkMode]);
 
   return (
     <div className={style["menu-detail"]} ref={menuRef}>
@@ -98,10 +76,10 @@ function Detail(props: {
       <div className={style["item-group"]}>
         <label
           className={`${style["item"]} ${style["dark-theme"]}`}
-          onChange={() => setIsDarkMode(!isDarkMode)}
+          onChange={() => props.setIsDarkMode(!props.isDarkMode)}
         >
           <div>夜間模式</div>
-          <CapsuleSwitch name="dark theme" checked={isDarkMode} />
+          <CapsuleSwitch name="dark theme" checked={props.isDarkMode} />
         </label>
       </div>
       <div className={style["item-group"]}>
@@ -119,6 +97,30 @@ function Detail(props: {
 function UserMenu() {
   const { userData } = useContext(UserDataContext);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const style = document.documentElement.style;
+    if (!isDarkMode) {
+      style.setProperty(
+        "--bkC",
+        getComputedStyle(document.documentElement).getPropertyValue("--bkC-D")
+      );
+      style.setProperty(
+        "--fontC",
+        getComputedStyle(document.documentElement).getPropertyValue("--fontC-D")
+      );
+    } else {
+      style.setProperty(
+        "--bkC",
+        getComputedStyle(document.documentElement).getPropertyValue("--bkC-N")
+      );
+      style.setProperty(
+        "--fontC",
+        getComputedStyle(document.documentElement).getPropertyValue("--fontC-N")
+      );
+    }
+  }, [isDarkMode]);
 
   const showName: string = userData.nickName
     ? userData.nickName
@@ -151,7 +153,14 @@ function UserMenu() {
         />
       </label>
 
-      {menuOpen && <Detail showName={showName} setMenuOpen={setMenuOpen} />}
+      {menuOpen && (
+        <Detail
+          showName={showName}
+          setMenuOpen={setMenuOpen}
+          isDarkMode={isDarkMode}
+          setIsDarkMode={setIsDarkMode}
+        />
+      )}
     </div>
   );
 }
