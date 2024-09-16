@@ -443,7 +443,7 @@ namespace Illus.Server.Sservices.Works
                     IsAI = command.IsAI,
                     PostTime = (command.PostTime >= today) ? command.PostTime : today,
                     IsOpen = command.IsOpen,
-                    Tags = _checkTagExisting(command.Tags),
+                    Tags = await _checkTagExisting(command.Tags),
                 };
 
                 _context.Artwork.Add(newWork);
@@ -608,11 +608,12 @@ namespace Illus.Server.Sservices.Works
             }
             return tagList;
         }
-        public void EditTag(EditTagCommand command, int workId, int userId)
+        public async Task<List<TagModel>> EditTag(EditTagCommand command, int workId, int userId)
         {
+            var result = new List<TagModel>();
             try
             {
-                var work = _context.Artwork.Include(p => p.Tags).FirstOrDefault(p => p.Id == workId);
+                var work = await _context.Artwork.Include(p => p.Tags).FirstOrDefaultAsync(p => p.Id == workId);
                 if (work != null)
                 {
                     command.Content = command.Content.Trim();
@@ -620,7 +621,7 @@ namespace Illus.Server.Sservices.Works
                     {
                         if (work.Tags.All(t => t.Id != command.Id) || work.Tags.All(t => t.Content != command.Content))
                         {
-                            var tagList = _checkTagExisting(new List<EditTagCommand> { command });
+                            var tagList = await _checkTagExisting(new List<EditTagCommand> { command });
                             work.Tags.Add(tagList[0]);
                         }
                     }
@@ -637,17 +638,20 @@ namespace Illus.Server.Sservices.Works
                         }
                         else
                         {
-                            var tagList = _checkTagExisting(new List<EditTagCommand> { command });
+                            var tagList = await _checkTagExisting(new List<EditTagCommand> { command });
                             work.Tags.Add(tagList[0]);
                         }
                     }
                     _context.SaveChanges();
+
+                    result = work.Tags;
                 }
             }
             catch (Exception ex)
             {
                 Logger.WriteLog("EditTag", ex);
             }
+            return result;
         }
         #endregion
         public bool LikeWork(int workId, int userId, out int likeCount)
@@ -750,14 +754,14 @@ namespace Illus.Server.Sservices.Works
             return result;
         }
 
-        private List<TagModel> _checkTagExisting(List<EditTagCommand> inputTags)
+        private async Task<List<TagModel>> _checkTagExisting(List<EditTagCommand> inputTags)
         {
             if (inputTags.Any())
             {
-                var dbTags = _context.Tag
+                var dbTags = await _context.Tag
                 .Where(p => inputTags.Any(t => p.Id == t.Id))
                 .Union(_context.Tag.Where(p => inputTags.Any(t => p.Content == t.Content.Trim())))
-                .ToList();
+                .ToListAsync();
 
                 foreach (var input in inputTags)
                 {

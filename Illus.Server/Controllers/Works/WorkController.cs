@@ -42,7 +42,7 @@ namespace Illus.Server.Controllers.Works
 
             return Ok(list);
         }
-        
+
         [HttpGet("GetList/Daily")]
         public async Task<IActionResult> GetDailyWorkList(
             [FromQuery] int page, [FromQuery] bool isR18, [FromQuery] bool isAI,
@@ -227,14 +227,15 @@ namespace Illus.Server.Controllers.Works
             return Ok(tagList);
         }
         [HttpPost("Tag/Edit")]
-        public IActionResult EditTag(EditTagCommand command, int workId)
+        public async Task<IActionResult> EditTag(EditTagCommand command, int workId)
         {
             var userIdStr = Request.Cookies[_userIdKey];
+            var result = new List<TagModel>();
             if (int.TryParse(userIdStr, out int userId))
             {
-                _workServices.EditTag(command, workId, userId);
+                result = await _workServices.EditTag(command, workId, userId);
             }
-            return Ok();
+            return Ok(result);
         }
         #endregion
         [HttpPost("Like")]
