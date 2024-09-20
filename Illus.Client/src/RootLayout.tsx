@@ -3,18 +3,17 @@ import path from "./data/JSON/path.json";
 import IconLong from "./assets/SVG/IconLong.svg?react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import SearchBox from "./components/searchbox/SearchBox";
-import { useEffect, useState } from "react";
-import { userDataType, userDataTypeDef } from "./data/typeModels/user";
+import { useEffect } from "react";
+import { userDataType } from "./data/typeModels/user";
 import axios from "axios";
-import { UserDataContext } from "./context/LoginContext";
 import UserMenu from "./components/UserMenu";
-import { ImagePathHelper } from "./utils/ImagePathHelper";
 import { loginActions } from "./data/reduxModels/loginRedux";
 import { useAppDispatch, useAppSelector } from "./hooks/redux";
 import BackToTopBtn from "./components/Button/BackToTopBtn";
+import { userDataActions } from "./data/reduxModels/userDataRedux";
 
 function MainNav() {
-  const isLogin = useAppSelector((state) => state.login.isLogin);
+  const isLogin = useAppSelector((state) => state.login);
   const location = useLocation();
 
   return (
@@ -58,37 +57,27 @@ function MainNav() {
 }
 function RootLayout() {
   const dispatch = useAppDispatch();
-  const [userData, setUserData] = useState<userDataType>(userDataTypeDef);
-  const loginHandler = (id: number) => {
-    dispatch(loginActions.login(id));
+  const loginHandler = () => {
+    dispatch(loginActions.login());
   };
   useEffect(() => {
     axios
       .get("/api/LoginCheck")
       .then((res) => {
         const userData: userDataType = res.data;
-        userData.cover = ImagePathHelper(userData.cover);
-        userData.headshot =
-          userData.headshot != ""
-            ? ImagePathHelper(userData.headshot)
-            : userDataTypeDef.headshot;
-        setUserData(userData);
-        loginHandler(userData.id);
+        dispatch(userDataActions.setUserData(userData));
+        loginHandler();
       })
       .catch(() => dispatch(loginActions.logout()));
   }, []);
 
   return (
     <>
-      <UserDataContext.Provider
-        value={{ userData: userData, setUserData: setUserData }}
-      >
-        <MainNav />
-      </UserDataContext.Provider>
+      <MainNav />
       <main>
         <button
           type="button"
-          onClick={() => dispatch(loginActions.login(-1))}
+          onClick={() => dispatch(loginActions.login())}
           className={style["btn"]}
           style={{
             position: "fixed",

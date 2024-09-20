@@ -1,12 +1,12 @@
 import Arrow from "../assets/SVG/arrow.svg?react";
 import style from "../assets/CSS/components/UserMenu.module.css";
 import path from "../data/JSON/path.json";
-import { useContext, useEffect, useRef, useState } from "react";
-import { UserDataContext } from "../context/LoginContext";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import CapsuleSwitch from "./Button/CapsuleSwitch";
 import LogOut from "./Logout";
 import { useClickOutside } from "../hooks/useClickOutside";
+import { useAppSelector } from "../hooks/redux";
 
 function Detail(props: {
   showName: string;
@@ -14,7 +14,7 @@ function Detail(props: {
   isDarkMode: boolean;
   setIsDarkMode: (...args: any[]) => void;
 }) {
-  const { userData } = useContext(UserDataContext);
+  const userData = useAppSelector((state) => state.userData);
   const menuRef = useRef<HTMLDivElement>(null);
   useClickOutside(menuRef, () => props.setMenuOpen(false));
 
@@ -95,7 +95,7 @@ function Detail(props: {
 }
 
 function UserMenu() {
-  const { userData } = useContext(UserDataContext);
+  const userData = useAppSelector((state) => state.userData);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
 

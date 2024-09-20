@@ -1,15 +1,13 @@
 import style from "../assets/CSS/components/Logout.module.css";
-import { useContext, useState } from "react";
-import { UserDataContext } from "../context/LoginContext";
+import { useState } from "react";
 import axios from "axios";
 import { useAppDispatch } from "../hooks/redux";
 import { loginActions } from "../data/reduxModels/loginRedux";
-import { userDataTypeDef } from "../data/typeModels/user";
 import JumpWindow from "./JumpWindow";
+import { userDataActions } from "../data/reduxModels/userDataRedux";
 
 export default function LogOut(props: { itemClass: string }) {
   const dispatch = useAppDispatch();
-  const { setUserData } = useContext(UserDataContext);
   const [showWindow, setShowWindow] = useState(false);
   const logoutHandler = () => dispatch(loginActions.logout());
 
@@ -18,7 +16,7 @@ export default function LogOut(props: { itemClass: string }) {
       .get("/api/Logout")
       .then(() => {
         logoutHandler();
-        setUserData(userDataTypeDef);
+        dispatch(userDataActions.logout());
       })
       .catch((err) => console.log(err));
   };

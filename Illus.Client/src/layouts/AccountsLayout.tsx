@@ -8,10 +8,11 @@ import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { loginActions } from "../data/reduxModels/loginRedux";
 import axios from "axios";
 import { userDataType } from "../data/typeModels/user";
+import { userDataActions } from "../data/reduxModels/userDataRedux";
 
 function MainNav() {
   const location = useLocation();
-  const isLogin: boolean = useAppSelector((state) => state.login.isLogin);
+  const isLogin: boolean = useAppSelector((state) => state.login);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -61,7 +62,8 @@ export default function AccountsLayout() {
       .get("/api/LoginCheck")
       .then((res) => {
         const data: userDataType = res.data;
-        dispatch(loginActions.login(data.id));
+        dispatch(loginActions.login());
+        dispatch(userDataActions.setUserData(data));
       })
       .catch(() => dispatch(loginActions.logout()));
   }, []);
