@@ -5,6 +5,7 @@ import { ArtworkType } from "../../data/typeModels/artwork";
 import { Link } from "react-router-dom";
 import ArtworkImgCard from "./ArtworkImgCard";
 import ArtistNametabe from "../ArtistCard/ArtistNametabe";
+import { userHeadshotHelper } from "../../utils/userDataHelper";
 
 function ArtworkCard(props: {
   artwork: ArtworkType;
@@ -12,31 +13,32 @@ function ArtworkCard(props: {
   showArtistData?: boolean;
   length?: number;
 }) {
-  const length = props.length != undefined ? `${props.length}px` : "184px";
+  const { artwork, showArtTitle, showArtistData, length } = props;
+  const imgLength = length != undefined ? `${length}px` : "184px";
 
   return (
     <div className={style["card"]}>
       <div
         className={style["artwork-box"]}
-        style={{ height: length, width: length }}
+        style={{ height: imgLength, width: imgLength }}
       >
-        <ArtworkImgCard artwork={props.artwork} />
+        <ArtworkImgCard artwork={artwork} />
       </div>
 
       <div className={style["data"]}>
-        {props.showArtTitle && (
+        {showArtTitle && (
           <Link
             className={style["link"] + " " + style["title"]}
-            to={`${(path.artworks.artwork + props.artwork.id) as string}`}
+            to={`${(path.artworks.artwork + artwork.id) as string}`}
           >
-            {props.artwork.title}
+            {artwork.title}
           </Link>
         )}
-        {props.showArtistData && (
+        {showArtistData && (
           <ArtistNametabe
-            Id={props.artwork.artistId}
-            headshot={props.artwork.artistHeadshotContent}
-            name={props.artwork.artistName}
+            Id={artwork.artistId}
+            headshot={userHeadshotHelper(artwork.artistHeadshotContent)}
+            name={artwork.artistName}
           />
         )}
       </div>

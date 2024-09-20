@@ -4,6 +4,7 @@ import { memo } from "react";
 import { ArtworkType } from "../../data/typeModels/artwork";
 import { Link } from "react-router-dom";
 import LikeBtn from "../Button/LikeBtn";
+import { ImagePathHelper } from "../../utils/ImagePathHelper";
 
 function ArtworkImgCard(props: { artwork: ArtworkType }) {
   const { artwork } = props;
@@ -16,7 +17,7 @@ function ArtworkImgCard(props: { artwork: ArtworkType }) {
       >
         <img
           className={style["artwork"]}
-          src={artwork.coverImg}
+          src={ImagePathHelper(artwork.coverImg)}
           alt={artwork.title}
         />
       </Link>

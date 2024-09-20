@@ -7,7 +7,8 @@ const testArtwork: ArtworkType = {
   title: "預設的作品名",
   description:
     "對這件作品的簡述 對這件作品的簡述 對這件作品的簡述 對這件作品的簡述 ",
-  coverImg: "/Work/img-costdown/0 cover.png",
+  coverImg:
+    "D:/My Works/2024/code/IllustrationWebsite/IllustrationWebsite/Illus.Client/public/Work/img-costdown/0 cover.png",
   likeCount: 0,
   readCount: 0,
   isLike: false,
@@ -20,7 +21,13 @@ const testArtwork: ArtworkType = {
     { id: 1, content: "狐狸" },
     { id: 2, content: "LOL" },
   ],
-  imgs: [{ id: 0, content: "/Work/img-costdown/0 cover.png" }],
+  imgs: [
+    {
+      id: 0,
+      content:
+        "D:/My Works/2024/code/IllustrationWebsite/IllustrationWebsite/Illus.Client/public/Work/img-costdown/0 cover.png",
+    },
+  ],
 };
 const testUser: userDataType = {
   id: -1,
@@ -28,7 +35,8 @@ const testUser: userDataType = {
   email: "email@123.com",
   nickName: "nickName",
   profile: "profile profile profile profile profile profile profile ",
-  cover: "/Work/img-costdown/0 cover.png",
+  cover:
+    "D:/My Works/2024/code/IllustrationWebsite/IllustrationWebsite/Illus.Client/public/Work/img-costdown/0 cover.png",
   headshot: "/defaultImg/defaultHeadshot.svg",
   isFollow: false,
   followerCount: 0,
