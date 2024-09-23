@@ -38,4 +38,10 @@
 }
 .command-list {
   margin: 1rem 0;
+  .no-data{
+    text-align: center;
+    font-size: small;
+    font-weight: bold;
+    opacity: 0.3;
+  }
 }

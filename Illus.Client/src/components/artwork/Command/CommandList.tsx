@@ -19,7 +19,6 @@ function CommandList() {
   const pageCount = 10;
   const today = new Date();
 
-  
   useEffect(() => {
     handleGetCommand();
   }, []);
@@ -99,7 +98,11 @@ function CommandList() {
         </div>
       </div>
       <div className={style["command-list"]}>
-        {list}
+        {commandArr.length > 0 ? (
+          list
+        ) : (
+          <p className={style["no-data"]}>暫無留言</p>
+        )}
         {hasMore && (
           <div className={style["more"]}>
             <MoreBtn
