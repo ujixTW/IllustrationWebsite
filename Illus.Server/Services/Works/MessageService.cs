@@ -88,18 +88,16 @@ namespace Illus.Server.Sservices.Works
             }
             return result;
         }
-        public async Task<List<MessageViewModel>> GetCommandList(int workId, int page)
+        public async Task<List<MessageViewModel>> GetCommandList(int workId, int pageCount, int? lastId)
         {
             var result = new List<MessageViewModel>();
             try
             {
-                var pageCount = 30;
                 var messageList = await _context.Massage
                     .AsNoTracking()
                     .Include(p => p.User)
-                    .Where(p => p.ArtworkId == workId && p.IsDelete == false)
+                    .Where(p => (lastId != null ? p.Id < lastId : true) && p.ArtworkId == workId && p.IsDelete == false)
                     .OrderByDescending(p => p.Id)
-                    .Skip(page * pageCount)
                     .Take(pageCount)
                     .ToListAsync();
 

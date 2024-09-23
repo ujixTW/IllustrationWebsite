@@ -52,9 +52,9 @@ namespace Illus.Server.Controllers.Works
             return success ? Ok() : BadRequest();
         }
         [HttpGet("{workId}")]
-        public async Task<IActionResult> GetCommandList(int workId, [FromQuery] int p)
+        public async Task<IActionResult> GetCommandList(int workId, [FromQuery] int pageCount, [FromQuery] int? lastId)
         {
-            var messageList = await _messageService.GetCommandList(workId, p);
+            var messageList = await _messageService.GetCommandList(workId, pageCount, lastId);
             return Ok(messageList);
         }
     }
