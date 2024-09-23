@@ -16,18 +16,20 @@ function AutoSizeTextArea(props: {
   const handleReSize = debounce(() => {
     if (textareaRef.current) {
       const target = textareaRef.current;
-      target.style.height = "auto";
+      target.style.height = "auto";      
       target.style.height = `${target.scrollHeight}px`;
     }
   });
   return (
     <textarea
       ref={textareaRef}
+      name="text"
       className={style["auto-size"]}
       placeholder={props.placeholder}
       value={props.value}
       onChange={props.onChange}
       onKeyDown={handleReSize}
+      rows={1}
     />
   );
 }

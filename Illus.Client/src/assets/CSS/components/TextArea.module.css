@@ -1,15 +1,17 @@
 .auto-size {
   box-sizing: border-box;
   width: 100%;
-  min-height: 1rem;
-  padding: 1rem 1rem 1rem 0.5rem;
+  padding: 1rem 0.5rem;
   background-color: var(--searchBkC);
+  font-size: medium;
+  line-height: 100%;
   border: 0;
   border-radius: 0.5rem;
-  overflow: hidden;
+  overflow: hidden auto;
 
   resize: none;
-  &:focus{
+  
+  &:focus {
     outline: 2px solid var(--mainBlue);
   }
 }
