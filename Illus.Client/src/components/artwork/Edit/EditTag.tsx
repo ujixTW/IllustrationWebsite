@@ -72,19 +72,17 @@ function EditTag(props: {
     <JumpWindow closeFnc={props.closeFnc}>
       <div className={style["body"]}>
         <h1 className={style["title"]}>編輯作品標籤</h1>
-        {!props.isOwn && (
-          <aside className={style["warn-container"]}>
-            <div className={style["warn"]}>
-              <h2 className={style["warn-title"]}>
-                <WarnIcon />
-                作者以外的會員也可編輯此作品的標籤
-              </h2>
-              <p className={style["warn-text"]}>
-                任何人都能新增作品的標籤，但僅有作者能刪除標籤。
-              </p>
-            </div>
-          </aside>
-        )}
+        <aside className={style["warn-container"]}>
+          <div className={style["warn"]}>
+            <h2 className={style["warn-title"]}>
+              <WarnIcon />
+              作者以外的會員也可編輯此作品的標籤
+            </h2>
+            <p className={style["warn-text"]}>
+              任何人都能新增作品的標籤，但僅有作者能刪除標籤。
+            </p>
+          </div>
+        </aside>
         <div>
           <div className={style["list-title-container"]}>
             <div>

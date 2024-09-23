@@ -1,0 +1,21 @@
+.body {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+  background-color: white;
+  overflow: auto;
+  .content{
+    position: relative;
+  }
+  .artwork {
+    display: block;
+    width: auto;
+    height: auto;
+    margin: auto;
+    cursor: zoom-out;
+  }
+}

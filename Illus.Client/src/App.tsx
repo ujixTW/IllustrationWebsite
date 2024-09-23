@@ -17,6 +17,7 @@ import Confirm from "./pages/SignUp/Confirm";
 import ConfirmAgain from "./pages/SignUp/ConfirmAgain";
 import Forget from "./pages/Login/Forget";
 import ResetPwd from "./pages/Login/ResetPwd";
+import Artwork from "./pages/artwork/Artwork";
 
 function App() {
   const router = createBrowserRouter(
@@ -27,7 +28,7 @@ function App() {
           <Route path="/artworks">
             <Route index element={<ArtworkList />} />
             <Route path="create" element={<CreateArtwork />} />
-            <Route path=":artworkId" element={<Home />} />
+            <Route path=":artworkId" element={<Artwork />} />
           </Route>
           <Route path="/user/:id">
             <Route index element={<Home />} />
@@ -36,6 +37,7 @@ function App() {
             <Route path="likes" element={<Home />} />
             <Route path="histories" element={<Home />} />
           </Route>
+          <Route path="*" element={<NoMatch />} />
         </Route>
         <Route element={<AccountsLayout />}>
           <Route path="login">
@@ -50,7 +52,6 @@ function App() {
           </Route>
         </Route>
         <Route path="/admin"></Route>
-        <Route path="*" element={<NoMatch />} />
       </Route>
     )
   );
