@@ -42,15 +42,15 @@ const artworkListReducer = function (
   const stateCopy = Object.assign({}, state);
   switch (type) {
     case ActionType.FOLLOW:
-      if (isAdd) stateCopy.follow.push(...list);
+      if (isAdd) stateCopy.follow = stateCopy.follow.concat(list);
       else stateCopy.follow = [...list];
       return stateCopy;
     case ActionType.DAILY:
-      if (isAdd) stateCopy.daily.push(...list);
+      if (isAdd) stateCopy.daily = stateCopy.daily.concat(list);
       else stateCopy.daily = [...list];
       return stateCopy;
     case ActionType.HOT:
-      if (isAdd) stateCopy.hot.push(...list);
+      if (isAdd) stateCopy.hot = stateCopy.hot.concat(list);
       else stateCopy.hot = [...list];
       return stateCopy;
     default:
