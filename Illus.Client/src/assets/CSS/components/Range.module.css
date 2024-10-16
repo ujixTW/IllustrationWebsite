@@ -1,0 +1,31 @@
+.range {
+  --r: 14px;
+  --halfR: 2px;
+  appearance: none;
+  width: 100%;
+  height: var(--halfR);
+  background-color: var(--blackMask);
+  border-radius: var(--r);
+  outline: none;
+  cursor: pointer;
+
+  &::-webkit-slider-thumb {
+    appearance: none;
+    position: relative;
+    width: var(--r);
+    height: var(--r);
+    border-radius: 50%;
+    transition: all 0.2s;
+  }
+}
+.default {
+  &::-webkit-slider-thumb {
+    background-color: var(--mainBlue);
+  }
+  &::-webkit-slider-thumb:hover {
+    box-shadow: 0 0 0 4px var(--mainBlue);
+  }
+  &::-webkit-slider-thumb:active {
+    box-shadow: 0 0 0 2px var(--mainBlue);
+  }
+}

@@ -98,7 +98,15 @@ function UserMenu() {
   const userData = useAppSelector((state) => state.userData);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const darkModeStorageKey = "darkMode";
+  const mounted = useRef<boolean>(false);
 
+  useEffect(() => {
+    const darkModeStorage = localStorage.getItem(darkModeStorageKey);
+    if (darkModeStorage !== null) {
+      setIsDarkMode(darkModeStorage === "true");
+    }
+  }, []);
   useEffect(() => {
     const style = document.documentElement.style;
     if (!isDarkMode) {
@@ -120,6 +128,11 @@ function UserMenu() {
         getComputedStyle(document.documentElement).getPropertyValue("--fontC-N")
       );
     }
+    if (mounted.current === false) {
+      mounted.current = true;
+      return;
+    }
+    localStorage.setItem(darkModeStorageKey, `${isDarkMode}`);
   }, [isDarkMode]);
 
   const showName: string = userData.nickName

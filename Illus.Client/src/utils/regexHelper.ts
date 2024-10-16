@@ -7,4 +7,15 @@ const guidReg =
   /^[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}$/i;
 
 const htmlReg = /<\/?.+?>/gi;
-export { emailReg, accountReg, passwordReg, guidReg, htmlReg };
+
+const dateReg = /^[0-9]{4}[\s\.\/\:]+[0-9]{1,2}[\s\.\/\:]+[0-9]{1,2}$/g;
+const timeReg = /^[0-9]{1,2}[\s\.\/\:]+[0-9]{1,2}$/g;
+export {
+  emailReg,
+  accountReg,
+  passwordReg,
+  guidReg,
+  htmlReg,
+  dateReg,
+  timeReg,
+};
