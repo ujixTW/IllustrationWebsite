@@ -22,6 +22,9 @@
   color: var(--fontC);
   background-color: var(--bkC);
   border: 0;
+  &:read-only{
+    opacity: 0.5;
+  }
 }
 .switch {
   position: absolute;
