@@ -192,7 +192,7 @@ function ArtworkEdit(props: { isCreate?: boolean }) {
       .then(() => {
         setIsDirty(false);
         navigate(path.artworks.editSuccess, {
-          state: { artworkData: postData },
+          state: { artworkData: postData, isCreate: props.isCreate === true },
         });
       })
       .catch(() =>
