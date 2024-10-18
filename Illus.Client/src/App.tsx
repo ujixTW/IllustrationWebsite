@@ -9,7 +9,6 @@ import NoMatch from "./pages/NoMatch";
 import RootLayout from "./RootLayout";
 import Home from "./pages/Home/Home";
 import ArtworkList from "./pages/artwork/ArtworkList";
-import CreateArtwork from "./pages/artwork/Create";
 import Login from "./pages/Login/Login";
 import AccountsLayout from "./layouts/AccountsLayout";
 import SignUp from "./pages/SignUp/SignUp";
@@ -18,6 +17,7 @@ import ConfirmAgain from "./pages/SignUp/ConfirmAgain";
 import Forget from "./pages/Login/Forget";
 import ResetPwd from "./pages/Login/ResetPwd";
 import Artwork from "./pages/artwork/Artwork";
+import ArtworkEdit from "./pages/artwork/Edit/ArtworkEdit";
 
 function App() {
   const router = createBrowserRouter(
@@ -27,8 +27,9 @@ function App() {
           <Route index element={<Home />} />
           <Route path="/artworks">
             <Route index element={<ArtworkList />} />
-            <Route path="create" element={<CreateArtwork />} />
+            <Route path="create" element={<ArtworkEdit isCreate />} />
             <Route path=":artworkId" element={<Artwork />} />
+            <Route path=":artworkId/edit" element={<ArtworkEdit />} />
           </Route>
           <Route path="/user/:id">
             <Route index element={<Home />} />

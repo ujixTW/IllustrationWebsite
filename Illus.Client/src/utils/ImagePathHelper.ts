@@ -12,5 +12,25 @@ function ArtworkImgListHelper(imgArr: ArtworkImgType[]) {
     return { id: img.id, content: ImagePathHelper(img.content) };
   });
 }
+async function ImagePathUrlToFile(_url: string, _name: string) {
+  const url = ImagePathHelper(_url);
+  const response = await fetch(url);
+  if (response) {
+    const blob = await response.blob();
+    return new File([blob], `${_name}.png`, { type: blob.type });
+  }
+}
 
-export { ImagePathHelper, ImagePathListHelper, ArtworkImgListHelper };
+function ImagePathUrlListToFile(_urlArr: string[], _name: string) {
+  return _urlArr.map((item, index) =>
+    ImagePathUrlToFile(item, _name + " " + index)
+  );
+}
+
+export {
+  ImagePathHelper,
+  ImagePathListHelper,
+  ArtworkImgListHelper,
+  ImagePathUrlToFile,
+  ImagePathUrlListToFile,
+};
