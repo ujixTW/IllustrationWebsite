@@ -18,6 +18,7 @@ import Forget from "./pages/Login/Forget";
 import ResetPwd from "./pages/Login/ResetPwd";
 import Artwork from "./pages/artwork/Artwork";
 import ArtworkEdit from "./pages/artwork/Edit/ArtworkEdit";
+import ArtworlEditSuccess from "./pages/artwork/Edit/ArtworkEditSuccess";
 
 function App() {
   const router = createBrowserRouter(
@@ -30,6 +31,7 @@ function App() {
             <Route path="create" element={<ArtworkEdit isCreate />} />
             <Route path=":artworkId" element={<Artwork />} />
             <Route path=":artworkId/edit" element={<ArtworkEdit />} />
+            <Route path="edit/success" element={<ArtworlEditSuccess />} />
           </Route>
           <Route path="/user/:id">
             <Route index element={<Home />} />

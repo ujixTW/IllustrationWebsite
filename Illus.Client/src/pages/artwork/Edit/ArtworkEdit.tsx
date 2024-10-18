@@ -79,7 +79,7 @@ function ArtworkEdit(props: { isCreate?: boolean }) {
 
   useEffect(() => {
     if (!isLogin) return navigate(path.home);
-    changeWebTitle("投稿 - ");
+    changeWebTitle(props.isCreate ? "投稿 - " : "編輯作品 - ");
 
     if (props.isCreate) {
       axios
