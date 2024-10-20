@@ -35,7 +35,7 @@ namespace Illus.Server.Sservices.Works
                         (!command.IsAI) ? p.IsAI == false : true &&
                         (!command.IsR18) ? p.IsR18 == false : true &&
                         keywordList.Any() ?
-                            keywordList.Any(w => p.Tags.Any(t => t.Content.Equals(w)) || p.Title.Contains(w)) : true)
+                            keywordList.All(w => p.Tags.Any(t => t.Content.Equals(w)) || p.Title.Contains(w)) : true)
                     .Include(p => p.Artist)
                     .Include(p => p.Likes.Where(l => l.UserId == command.UserId && l.Status == true).FirstOrDefault())
                     .AsNoTracking();
