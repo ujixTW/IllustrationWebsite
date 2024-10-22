@@ -12,10 +12,10 @@ function useUnSavedChange() {
   );
 
   const checkUnsaved = useCallback(
-    ({ _confirm }: any) => {
+    (_confirm: (...args: any[]) => void) => {
       if (isDirty) {
         setShowWin(true);
-        setConfirm(() => _confirm);
+        setConfirm(() => _confirm());
         return;
       }
       _confirm();

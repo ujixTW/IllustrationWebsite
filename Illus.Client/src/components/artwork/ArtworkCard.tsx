@@ -12,6 +12,7 @@ function ArtworkCard(props: {
   showArtTitle?: boolean;
   showArtistData?: boolean;
   length?: number;
+  isOwn?: boolean;
 }) {
   const { artwork, showArtTitle, showArtistData, length } = props;
   const imgLength = length != undefined ? `${length}px` : "184px";
@@ -22,7 +23,7 @@ function ArtworkCard(props: {
         className={style["artwork-box"]}
         style={{ height: imgLength, width: imgLength }}
       >
-        <ArtworkImgCard artwork={artwork} />
+        <ArtworkImgCard artwork={artwork} isOwn={props.isOwn} />
       </div>
 
       <div className={style["data"]}>

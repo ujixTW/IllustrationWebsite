@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import LikeBtn from "../Button/LikeBtn";
 import { ImagePathHelper } from "../../utils/ImagePathHelper";
 
-function ArtworkImgCard(props: { artwork: ArtworkType }) {
+function ArtworkImgCard(props: { artwork: ArtworkType; isOwn?: boolean }) {
   const { artwork } = props;
 
   return (
@@ -21,9 +21,11 @@ function ArtworkImgCard(props: { artwork: ArtworkType }) {
           alt={artwork.title}
         />
       </Link>
-      <div className={style["like"]}>
-        <LikeBtn artworkId={artwork.id} likeOrigin={artwork.isLike} />
-      </div>
+      {props.isOwn !== true && (
+        <div className={style["like"]}>
+          <LikeBtn artworkId={artwork.id} likeOrigin={artwork.isLike} />
+        </div>
+      )}
     </div>
   );
 }

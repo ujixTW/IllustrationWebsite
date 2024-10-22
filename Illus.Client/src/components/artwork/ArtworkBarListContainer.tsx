@@ -13,6 +13,7 @@ function ArtworkBarList(props: {
   showArtTitle?: boolean;
   showArtistData?: boolean;
   length?: number;
+  isOwn?: boolean;
 }) {
   const listRef = useRef<HTMLDivElement>(null);
   const itemRef = useRef<HTMLDivElement>(null);
@@ -47,6 +48,7 @@ function ArtworkBarList(props: {
         showArtTitle={props.showArtTitle}
         showArtistData={props.showArtistData}
         length={props.length}
+        isOwn={props.isOwn}
       />
     </div>
   ));

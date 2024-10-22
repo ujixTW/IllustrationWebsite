@@ -24,4 +24,5 @@ main {
 
   --heartRed: rgb(223, 67, 67);
   --blackMask: rgba(0, 0, 0, 0.2);
+  --whiteMask: rgba(255, 255, 255, 0.2);
 }

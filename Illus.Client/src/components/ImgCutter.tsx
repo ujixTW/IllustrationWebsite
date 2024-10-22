@@ -14,7 +14,7 @@ function ImgCutter(props: {
   type: cutType;
   aspect: number;
   archiveSize: { width: number; height: number };
-  setCuttingImg: (_img: File) => void;
+  setCuttingImg: (_img?: File) => void;
   closeFnc: (...args: any[]) => any;
   editBoxSize: { width: number; height: number };
   title: string;
@@ -38,7 +38,7 @@ function ImgCutter(props: {
     return () => {
       URL.revokeObjectURL(selectedImg);
     };
-  }, []);
+  }, [props.img]);
 
   const onCropChange = (crop: typeof pos) => {
     setPos(crop);
@@ -60,9 +60,11 @@ function ImgCutter(props: {
           height: props.archiveSize.height,
         }
       );
-      if (tempCover) props.setCuttingImg(tempCover);
+
+      if (tempCover) await props.setCuttingImg(tempCover);
+    } else {
+      await props.setCuttingImg();
     }
-    props.closeFnc();
   };
   const handlecancel = () => {
     props.closeFnc();
@@ -72,26 +74,28 @@ function ImgCutter(props: {
     <JumpWindow closeFnc={props.closeFnc}>
       <div className={style["img-cutter"]}>
         <h1 className={style["title"]}>{props.title}</h1>
-        <div className={style["img"]}>
+        {props.img && (
           <div className={style["preview"]}>
-            <div
-              className={style["crop"]}
-              style={{
-                width: props.editBoxSize.width,
-                height: props.editBoxSize.height,
-              }}
-            >
-              <Cropper
-                image={selectedImg}
-                crop={pos}
-                zoom={zoom}
-                aspect={props.aspect}
-                cropShape={props.type}
-                showGrid={false}
-                onCropChange={onCropChange}
-                onCropComplete={onCropComplete}
-                onZoomChange={onZoomChange}
-              />
+            <div className={style["img"]}>
+              <div
+                className={style["crop"]}
+                style={{
+                  width: props.editBoxSize.width,
+                  height: props.editBoxSize.height,
+                }}
+              >
+                <Cropper
+                  image={selectedImg}
+                  crop={pos}
+                  zoom={zoom}
+                  aspect={props.aspect}
+                  cropShape={props.type}
+                  showGrid={false}
+                  onCropChange={onCropChange}
+                  onCropComplete={onCropComplete}
+                  onZoomChange={onZoomChange}
+                />
+              </div>
             </div>
             <div className={style["controls"]}>
               <div className={style["size"]}>
@@ -108,7 +112,7 @@ function ImgCutter(props: {
               </div>
             </div>
           </div>
-        </div>
+        )}
 
         {props.children}
 

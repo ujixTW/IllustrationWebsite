@@ -1,5 +1,8 @@
 import { ArtworkImgType } from "../data/typeModels/artwork";
 
+function IsDefaultImg(path: string) {
+  return /^\/defaultImg\/\w+/.test(path);
+}
 function ImagePathHelper(path: string) {
   return path.slice(path.indexOf("/Work/"));
 }
@@ -28,6 +31,7 @@ function ImagePathUrlListToFile(_urlArr: string[], _name: string) {
 }
 
 export {
+  IsDefaultImg,
   ImagePathHelper,
   ImagePathListHelper,
   ArtworkImgListHelper,

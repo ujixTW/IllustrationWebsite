@@ -27,6 +27,10 @@
   color: var(--fontC);
   background-color: var(--blackMask);
 }
+.consistent{
+  color: var(--fontC);
+  background-color: var(--bkC);
+}
 .cancel {
   color: white;
   background-color: var(--heartRed);

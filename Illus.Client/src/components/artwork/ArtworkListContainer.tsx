@@ -12,6 +12,7 @@ function ArtworkList(props: {
   showArtTitle?: boolean;
   showArtistData?: boolean;
   length?: number;
+  isOwn?: boolean;
 }) {
   const list = props.list.map((artwork: ArtworkType) => (
     <div className={style["item"]} key={props.title + artwork.id.toString()}>
@@ -20,6 +21,7 @@ function ArtworkList(props: {
         showArtTitle={props.showArtTitle}
         showArtistData={props.showArtistData}
         length={props.length}
+        isOwn={props.isOwn}
       />
     </div>
   ));

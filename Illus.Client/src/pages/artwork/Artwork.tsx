@@ -3,7 +3,6 @@ import style from "../../assets/CSS/pages/Artwork/Artwork.module.css";
 import path from "../../data/JSON/path.json";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { ArtworkListType, ArtworkType } from "../../data/typeModels/artwork";
-import CheckBtn from "../../components/Button/CheckBtn";
 import ArtworkBarListContainer from "../../components/artwork/ArtworkBarListContainer";
 import ArtistNametabe from "../../components/ArtistCard/ArtistNametabe";
 import ArtworkContainer from "./ArtworkContainer";
@@ -16,29 +15,31 @@ import {
 } from "../../utils/ImagePathHelper";
 import axios from "axios";
 import { useAppSelector } from "../../hooks/redux";
+import useFollowUser from "../../hooks/useFollowUser";
+import { userDataType } from "../../data/typeModels/user";
 
 function Base(props: { artwork: ArtworkType; children: JSX.Element }) {
   const { artwork } = props;
   const userId = useAppSelector((state) => state.userData.id);
-  const [isFollow, setIsFollow] = useState(false);
   const [artistArtworkList, setArtistArtworkList] = useState<ArtworkType[]>([]);
+
+  const { followBtn, setIsFollow } = useFollowUser(artwork.artistId);
+
   const pageCount = 8;
   const userLink = path.user.user + artwork.artistId;
 
   useEffect(() => {
+    axios
+      .get(`/api/User/${props.artwork.artistId}`)
+      .then((res) => {
+        const data: userDataType = res.data;
+        setIsFollow(data.isFollow);
+      })
+      .catch((err) => console.log(err));
+      
     handleGetArtistArtwork();
   }, []);
 
-  const handleFollow = async () => {
-    await axios
-      .post(`/api/User/Follow/${artwork.artistId}`)
-      .then(() => {
-        setIsFollow(!isFollow);
-      })
-      .catch(() => {
-        "通訊錯誤，請稍後再試";
-      });
-  };
   const handleGetArtistArtwork = async () => {
     await axios
       .get(`/api/Work/GetList/Artist/${artwork.artistId}`, {
@@ -72,17 +73,7 @@ function Base(props: { artwork: ArtworkType; children: JSX.Element }) {
                     name={artwork.artistName}
                   />
                 </div>
-                {artwork.artistId != userId && (
-                  <div className={style["follow-btn"]}>
-                    <CheckBtn
-                      text={isFollow ? "關注中" : "加關注"}
-                      name="followArtist"
-                      onChange={handleFollow}
-                      checked={!isFollow}
-                      hasBackground
-                    />
-                  </div>
-                )}
+                {artwork.artistId != userId && followBtn}
 
                 <div className={style["more-btn"]}>
                   <Link to={userLink + path.user.artworks}>查看作品目錄</Link>

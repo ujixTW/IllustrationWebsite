@@ -1,15 +1,14 @@
 import style from "../../assets/CSS/components/ArtistCard/ArtistCard.module.css";
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { userDataType } from "../../data/typeModels/user";
-import { asyncDebounce } from "../../utils/debounce";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import path from "../../data/JSON/path.json";
-import CheckBtn from "../Button/CheckBtn";
+import useFollowUser from "../../hooks/useFollowUser";
 
 function ArtistCard(props: { artistId: number }) {
   const [data, setData] = useState<userDataType | undefined>(undefined);
-  const [isFollow, setIsFollow] = useState<boolean>(false);
+  const { followBtn, setIsFollow } = useFollowUser(props.artistId);
 
   useEffect(() => {
     axios
@@ -22,16 +21,6 @@ function ArtistCard(props: { artistId: number }) {
     if (data != undefined) setIsFollow(data.isFollow);
   }, [data]);
 
-  const handelFollow = useCallback(
-    asyncDebounce(() => {
-      axios.post(`/api/User/Follow/${props.artistId}`).then(() => {
-        const temp = data;
-        if (temp != undefined) temp.isFollow = !temp.isFollow;
-        setData(temp);
-      });
-    }),
-    [isFollow]
-  );
   return (
     <div className={style["artist-detail"]}>
       {data?.cover != "" && (
@@ -55,18 +44,7 @@ function ArtistCard(props: { artistId: number }) {
           {data?.profile}
           <Link to={path.user.user + props.artistId}>查看更多</Link>
         </div>
-        <div className={style["follow"]}>
-          <CheckBtn
-            name={`follow${props.artistId}`}
-            text={isFollow ? "已關注" : "關注"}
-            onChange={() => {
-              setIsFollow(!isFollow);
-              handelFollow();
-            }}
-            checked={isFollow}
-            hasBackground={true}
-          />
-        </div>
+        <div className={style["follow"]}>{followBtn}</div>
       </div>
     </div>
   );

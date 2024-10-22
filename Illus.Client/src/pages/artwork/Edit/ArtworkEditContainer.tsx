@@ -488,9 +488,10 @@ function ArtworkEditContainer(props: {
                 img={postData.imgs[0]}
                 type="rect"
                 aspect={1}
-                setCuttingImg={(f: File) =>
-                  postDataDispatch({ type: "editCover", payload: f })
-                }
+                setCuttingImg={(f?: File) => {
+                  if (f) postDataDispatch({ type: "editCover", payload: f });
+                  setEditCover(false);
+                }}
                 closeFnc={() => setEditCover(false)}
               />
             )}

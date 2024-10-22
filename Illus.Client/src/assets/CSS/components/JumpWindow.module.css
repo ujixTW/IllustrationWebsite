@@ -24,7 +24,8 @@
   right: 0;
   width: var(--r);
   height: var(--r);
-  background-color: var(--bkC);
+  color: var(--fontC);
+  background: none;
   border: 0;
   border-radius: 50%;
   font-size: x-large;
