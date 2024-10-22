@@ -139,7 +139,7 @@ namespace Illus.Server.Controllers.Account
             return (result != null) ? Ok(result) : BadRequest();
         }
         [HttpPost("UserCover")]
-        public async Task<IActionResult> EditUserCover(IFormFile file)
+        public async Task<IActionResult> EditUserCover(IFormFile? file)
         {
             var result = false;
             var tokenStr = Request.Cookies[_loginTokenKey];
@@ -158,7 +158,7 @@ namespace Illus.Server.Controllers.Account
             return result ? Ok() : BadRequest();
         }
         [HttpPost("UserHeadshot")]
-        public async Task<IActionResult> EditUserHeadshot(IFormFile file)
+        public async Task<IActionResult> EditUserHeadshot(IFormFile? file)
         {
             var result = false;
             var tokenStr = Request.Cookies[_loginTokenKey];
