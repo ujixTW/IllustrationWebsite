@@ -3,6 +3,7 @@ import style from "../../assets/CSS/components/artwork/ArtworkList.module.css";
 import { memo } from "react";
 import { Link, To } from "react-router-dom";
 import ArtworkCard from "./ArtworkCard";
+import { useAppSelector } from "../../hooks/redux";
 
 function ArtworkList(props: {
   list: ArtworkType[];
@@ -12,8 +13,8 @@ function ArtworkList(props: {
   showArtTitle?: boolean;
   showArtistData?: boolean;
   length?: number;
-  isOwn?: boolean;
 }) {
+  const userId = useAppSelector((state) => state.userData.id);
   const list = props.list.map((artwork: ArtworkType) => (
     <div className={style["item"]} key={props.title + artwork.id.toString()}>
       <ArtworkCard
@@ -21,7 +22,7 @@ function ArtworkList(props: {
         showArtTitle={props.showArtTitle}
         showArtistData={props.showArtistData}
         length={props.length}
-        isOwn={props.isOwn}
+        isOwn={userId === artwork.artistId}
       />
     </div>
   ));

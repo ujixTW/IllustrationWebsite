@@ -173,7 +173,7 @@ function HomeAfterLogin() {
 
   return (
     <div className={style["after"]}>
-      <ArtworksFilter />
+      <ArtworksFilter switchAI switchR18 />
       {artworkList.follow.length > 0 && (
         <div className={style["follow"]}>
           <ArtworkBarListContainer

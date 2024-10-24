@@ -29,6 +29,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="/artworks">
             <Route index element={<ArtworkList />} />
+            <Route path="following" element={<ArtworkList isFollowing />} />
             <Route path="create" element={<ArtworkEdit isCreate />} />
             <Route path=":artworkId" element={<Artwork />} />
             <Route path=":artworkId/edit" element={<ArtworkEdit />} />
@@ -36,6 +37,8 @@ function App() {
           </Route>
           <Route path="/user/:id">
             <Route index element={<User />} />
+            <Route path="settings" element={<Home />} />
+            <Route path="artworks" element={<Home />} />
             <Route path="following" element={<Home />} />
             <Route path="follower" element={<Home />} />
             <Route path="likes" element={<Home />} />
@@ -55,7 +58,6 @@ function App() {
             <Route path="confirm-again/:captcha" element={<ConfirmAgain />} />
           </Route>
         </Route>
-        <Route path="/admin"></Route>
       </Route>
     )
   );

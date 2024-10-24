@@ -4,6 +4,7 @@ import Arrow from "../../assets/SVG/arrow.svg?react";
 import ArtworkCard from "./ArtworkCard";
 import { Link, To } from "react-router-dom";
 import { memo, useEffect, useRef, useState } from "react";
+import { useAppSelector } from "../../hooks/redux";
 
 function ArtworkBarList(props: {
   list: ArtworkType[];
@@ -13,8 +14,8 @@ function ArtworkBarList(props: {
   showArtTitle?: boolean;
   showArtistData?: boolean;
   length?: number;
-  isOwn?: boolean;
 }) {
+  const userId = useAppSelector((state) => state.userData.id);
   const listRef = useRef<HTMLDivElement>(null);
   const itemRef = useRef<HTMLDivElement>(null);
   const [totalSkip, setTotalSkip] = useState<number>(0);
@@ -48,7 +49,7 @@ function ArtworkBarList(props: {
         showArtTitle={props.showArtTitle}
         showArtistData={props.showArtistData}
         length={props.length}
-        isOwn={props.isOwn}
+        isOwn={userId === artwork.artistId}
       />
     </div>
   ));

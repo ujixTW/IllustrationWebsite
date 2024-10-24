@@ -88,7 +88,7 @@ function User() {
     }
   }, []);
   useEffect(() => {
-    const intReg = /^[0-9]$/;
+    const intReg = /^[0-9]+$/;
     if (searchParams.has(artworkParmas.page)) {
       const pageStr = searchParams.get(artworkParmas.page);
       if (pageStr && intReg.test(pageStr)) {
@@ -399,7 +399,6 @@ function User() {
           <ArtworkListContainer
             list={reducer.artworkList.artworkList}
             showArtTitle
-            isOwn={reducer.isOwn}
           />
           <PageNav
             max={reducer.artworkList.maxCount}
