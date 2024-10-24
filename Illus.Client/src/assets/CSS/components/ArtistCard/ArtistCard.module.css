@@ -41,6 +41,7 @@
   }
   .profile {
     word-break: keep-all;
+    white-space: pre-wrap;
     margin: 0.5rem 0;
     > a {
       display: block;
@@ -57,6 +58,6 @@
   .follow {
     width: 6rem;
     height: 2rem;
-    margin:0 auto;
+    margin: 0 auto;
   }
 }

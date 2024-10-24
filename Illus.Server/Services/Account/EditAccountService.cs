@@ -296,8 +296,6 @@ namespace Illus.Server.Sservices.Account
                     {
                         if (!string.IsNullOrWhiteSpace(command.NickName)) user.Nickname = command.NickName;
                         user.Profile = command.Profile;
-                        user.LanguageId = command.LanguageiD;
-                        user.CountryID = command.CountryiD;
 
                         _context.SaveChanges();
                         result = true;

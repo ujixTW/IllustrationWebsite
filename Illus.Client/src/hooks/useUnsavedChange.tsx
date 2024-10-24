@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useBlocker } from "react-router-dom";
 import UnsavedChangeModal from "../components/modals/UnsavedChangeModal";
 
@@ -11,11 +11,15 @@ function useUnSavedChange() {
       isDirty && currentLocation.pathname !== nextLocation.pathname
   );
 
+  useEffect(() => {
+    if (!isDirty) window.onbeforeunload = null;
+  }, [isDirty]);
+
   const checkUnsaved = useCallback(
     (_confirm: (...args: any[]) => void) => {
       if (isDirty) {
         setShowWin(true);
-        setConfirm(() => _confirm());
+        setConfirm(() => _confirm);
         return;
       }
       _confirm();

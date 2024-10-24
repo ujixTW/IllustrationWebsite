@@ -36,7 +36,7 @@ function Base(props: { artwork: ArtworkType; children: JSX.Element }) {
         setIsFollow(data.isFollow);
       })
       .catch((err) => console.log(err));
-      
+
     handleGetArtistArtwork();
   }, []);
 
@@ -76,7 +76,7 @@ function Base(props: { artwork: ArtworkType; children: JSX.Element }) {
                 {artwork.artistId != userId && followBtn}
 
                 <div className={style["more-btn"]}>
-                  <Link to={userLink + path.user.artworks}>查看作品目錄</Link>
+                  <Link to={userLink}>查看作品目錄</Link>
                 </div>
               </div>
               <div className={style["artist-artwork"]}>

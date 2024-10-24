@@ -3,7 +3,7 @@ import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { pageParma, pageReg } from "../utils/parmasHelper";
 import Arrow from "../assets/SVG/arrow.svg?react";
 import ThreeDot from "../assets/SVG/threeDot.svg?react";
-import { useEffect } from "react";
+import { useCallback } from "react";
 
 function PageBtn(props: {
   isEnd: boolean;
@@ -15,16 +15,17 @@ function PageBtn(props: {
   const [searchParams] = useSearchParams();
   const pageNo: number = props.num + 1;
 
-  useEffect(() => {
-    if (searchParams.has(pageParma))
-      searchParams.set(pageParma, pageNo.toString());
-    else searchParams.append(pageParma, pageNo.toString());
-  }, []);
+  const parmas = useCallback(() => {
+    const copyParmas = new URLSearchParams(searchParams);
+    if (copyParmas.has(pageParma)) copyParmas.set(pageParma, pageNo.toString());
+    else copyParmas.append(pageParma, pageNo.toString());
+    return copyParmas.toString();
+  }, [searchParams]);
 
   return (
     <div>
       <Link
-        to={location.pathname + "?" + searchParams.toString()}
+        to={location.pathname + "?" + parmas()}
         className={
           style["link"] +
           (props.isEnd == true ? " " + style["end-link"] : "") +
@@ -48,10 +49,9 @@ export default function PageNav(props: { max: number; pageCount: number }) {
 
   const index = pageReg.test(location.search)
     ? parseInt(location.search.match(pageReg)![0].split("=")[1]) - 1
-    : 1;
+    : 0;
 
-  const maxPage: number =
-    max % pageCount > 0 ? Math.floor(max / pageCount) + 1 : max / pageCount;
+  const maxPage: number = Math.ceil(max / pageCount);
   const baseForNum: number =
     index > maxPage - 2 && maxPage >= 5
       ? maxPage - 5

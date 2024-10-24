@@ -22,9 +22,17 @@ type editUserDataPostData = {
   languageID: number;
   countryID: number;
 };
+const editUserDataPostDataDef: editUserDataPostData = {
+  id: -1,
+  nickName: "",
+  profile: "",
+  languageID: -1,
+  countryID: -1,
+};
 export type {
   loginPostData,
   editPasswordPostData,
   editPWDFromEmailPostData,
   editUserDataPostData,
 };
+export { editUserDataPostDataDef };

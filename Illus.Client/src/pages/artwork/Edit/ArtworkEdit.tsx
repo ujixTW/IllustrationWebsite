@@ -147,11 +147,11 @@ function ArtworkEdit(props: { isCreate?: boolean }) {
     ) {
       postDataDispatch({
         type: "editTitle",
-        payload: postData.title.replace(htmlReg, ""),
+        payload: postData.title.replace(htmlReg, "").trim(),
       });
       postDataDispatch({
         type: "editDescription",
-        payload: postData.description.replace(htmlReg, ""),
+        payload: postData.description.replace(htmlReg, "").trimEnd(),
       });
       setComplete(true);
     } else {

@@ -7,6 +7,7 @@ const guidReg =
   /^[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}$/i;
 
 const htmlReg = /<\/?.+?>/gi;
+const stringNewlineReg = /[\/r\/n|\/r|\/n]/;
 
 const dateReg = /^[0-9]{4}[\s\.\/\:]+[0-9]{1,2}[\s\.\/\:]+[0-9]{1,2}$/g;
 const timeReg = /^[0-9]{1,2}[\s\.\/\:]+[0-9]{1,2}$/g;
@@ -16,6 +17,7 @@ export {
   passwordReg,
   guidReg,
   htmlReg,
+  stringNewlineReg,
   dateReg,
   timeReg,
 };

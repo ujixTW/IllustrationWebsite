@@ -1,0 +1,59 @@
+.headshot {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 0.3rem solid var(--bkC);
+  background-color: var(--blackMask);
+}
+.img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.edit-btn {
+  --r: 30%;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: var(--r);
+  height: var(--r);
+  border-radius: 50%;
+  border: 0;
+  background-color: var(--blackMask);
+  cursor: pointer;
+  opacity: 1;
+  transition: all 0.2s;
+  > svg {
+    width: 100%;
+    height: 100%;
+    fill: white;
+  }
+  &:hover {
+    opacity: 0.8;
+  }
+  &:active {
+    opacity: 0.9;
+  }
+}
+.img-cutter {
+  box-sizing: border-box;
+  padding: 1rem;
+  min-width: 440px;
+  .upload-btn {
+    width: 50%;
+    margin: auto;
+  }
+  .info-container {
+    .info {
+      display: flex;
+      margin-top: 2rem;
+      .title {
+        width: 50%;
+        font-weight: bold;
+      }
+    }
+  }
+}
