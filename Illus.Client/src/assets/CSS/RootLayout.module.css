@@ -12,11 +12,12 @@
   }
 }
 .btn {
+  padding: 0.5rem 1rem;
+  margin-right: 1rem;
+  transition: all 0.2s;
   &:link,
   &:visited {
     color: var(--fontC);
-    padding: 0.5rem 1rem;
-    margin-right: 1rem;
     border-radius: 1rem;
     border: 0.15rem solid var(--fontC);
     font-weight: bold;
@@ -61,4 +62,18 @@
   font-weight: bold;
   justify-content: center;
   align-items: end;
+}
+
+@media screen and (max-width: 620px) {
+  .nav {
+    padding: 0 0.2rem;
+  }
+  .btn {
+    padding: 0.5rem;
+    margin-right: 0;
+    font-size: small;
+  }
+  .post-artwork {
+    display: none;
+  }
 }

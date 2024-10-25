@@ -54,6 +54,11 @@ function Detail(props: {
         </div>
       </div>
       <div className={style["item-group"]}>
+        <div className={style["item"] +" "+ style["post-artwork"]}>
+          <Link to={path.artworks.create} title="Post artwork">上傳作品</Link>
+        </div>
+      </div>
+      <div className={style["item-group"]}>
         <div className={style["item"]}>
           <Link
             to={`${userLink + path.user.likes}`}

@@ -29,7 +29,10 @@ function MainNav() {
 
       {isLogin ? (
         <div className={style["item"]}>
-          <Link to={path.artworks.create} className={style["btn"]}>
+          <Link
+            to={path.artworks.create}
+            className={style["btn"] + " " + style["post-artwork"]}
+          >
             上傳作品
           </Link>
           <UserMenu />
@@ -78,7 +81,6 @@ function RootLayout() {
         <button
           type="button"
           onClick={() => dispatch(loginActions.login())}
-          className={style["btn"]}
           style={{
             position: "fixed",
             bottom: "2rem",
