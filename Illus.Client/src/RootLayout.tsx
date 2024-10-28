@@ -11,6 +11,7 @@ import { loginActions } from "./data/reduxModels/loginRedux";
 import { useAppDispatch, useAppSelector } from "./hooks/redux";
 import BackToTopBtn from "./components/Button/BackToTopBtn";
 import { userDataActions } from "./data/reduxModels/userDataRedux";
+import userDataHelper from "./utils/userDataHelper";
 
 function MainNav() {
   const isLogin = useAppSelector((state) => state.login);
@@ -67,7 +68,7 @@ function RootLayout() {
     axios
       .get("/api/LoginCheck")
       .then((res) => {
-        const userData: userDataType = res.data;
+        const userData: userDataType = userDataHelper(res.data);
         dispatch(userDataActions.setUserData(userData));
         loginHandler();
       })

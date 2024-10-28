@@ -12,9 +12,14 @@ export default function LinkBtn(props: {
   text: string;
   link: To;
   color: btnColorType;
+  state?: Object;
 }) {
   return (
-    <Link to={props.link} className={style["btn"] + " " + style[props.color]}>
+    <Link
+      to={props.link}
+      state={props.state}
+      className={style["btn"] + " " + style[props.color]}
+    >
       {props.text}
     </Link>
   );

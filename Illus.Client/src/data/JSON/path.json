@@ -5,8 +5,8 @@
     "followingList": "/artworks/following",
     "create": "/artworks/create",
     "artwork": "/artworks/",
-    "edit":"/edit",
-    "editSuccess":"/artworks/edit/success"
+    "edit": "/edit",
+    "editSuccess": "/artworks/edit/success"
   },
   "user": {
     "user": "/user/",

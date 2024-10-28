@@ -1,7 +1,7 @@
 import { useEffect, useReducer, useState } from "react";
 import style from "../../assets/CSS/pages/User/User.module.css";
 import path from "../../data/JSON/path.json";
-import { useAppSelector } from "../../hooks/redux";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { userDataType } from "../../data/typeModels/user";
 import axios from "axios";
@@ -25,6 +25,7 @@ import {
 import { htmlReg } from "../../utils/regexHelper";
 import PageNav from "../../components/PageNav";
 import { artworkParmas } from "../../utils/parmasHelper";
+import { userDataActions } from "../../data/reduxModels/userDataRedux";
 
 enum displayArtworkEnum {
   illustration,
@@ -33,6 +34,7 @@ enum displayArtworkEnum {
 
 function User() {
   const loginData = useAppSelector((state) => state.userData);
+  const reduxDispatch = useAppDispatch();
   const [reducer, reducerDispatch] = useReducer(
     userPageReducer,
     userPageStateDef
@@ -60,32 +62,30 @@ function User() {
   useEffect(() => {
     if (!id || !/^\d+$/.test(id)) return navigate(path.home);
 
-    if (id && loginData.id === parseInt(id)) {
-      reducerDispatch({ type: "setIsOwn", payload: true });
-      reducerDispatch({ type: "setUserData", payload: loginData });
+    reducerDispatch({ type: "setIsOwn", payload: false });
+    axios
+      .get(`/api/User/${id}`)
+      .then((res) => {
+        const data = res.data as userDataType;
 
-      reducerDispatch({
-        type: "setUserPostDataFromUserData",
-        payload: loginData,
-      });
-      changeWebTitle(`${loginData.nickName} - `);
-    } else {
-      reducerDispatch({ type: "setIsOwn", payload: false });
-      axios
-        .get(`/api/User/${id}`)
-        .then((res) => {
-          const data = res.data as userDataType;
+        const _userData = userDataHelper(data);
+        _userData.headshot = userHeadshotHelper(_userData.headshot);
 
-          const _userData = userDataHelper(data);
-          _userData.headshot = userHeadshotHelper(_userData.headshot);
+        reducerDispatch({ type: "setUserData", payload: _userData });
+        setIsFollow(_userData.isFollow);
 
-          reducerDispatch({ type: "setUserData", payload: _userData });
-          setIsFollow(_userData.isFollow);
+        if (id && loginData.id === parseInt(id)) {
+          reducerDispatch({ type: "setIsOwn", payload: true });
+          reducerDispatch({
+            type: "setUserPostDataFromUserData",
+            payload: _userData,
+          });
+        }
 
-          changeWebTitle(`${_userData.nickName} - `);
-        })
-        .catch(() => navigate("*"));
-    }
+        changeWebTitle(`${_userData.nickName} - `);
+      })
+      .catch(() => navigate("*"));
+      
   }, []);
   useEffect(() => {
     const intReg = /^[0-9]+$/;
@@ -150,6 +150,7 @@ function User() {
         copyUserData.nickName = copyPostData.nickName;
         copyUserData.profile = copyPostData.profile;
         reducerDispatch({ type: "setUserData", payload: copyUserData });
+        reduxDispatch(userDataActions.setUserData(copyUserData));
 
         setIsDirty(false);
         reducerDispatch({ type: "setIsEdit", payload: false });
