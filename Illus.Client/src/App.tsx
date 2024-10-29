@@ -20,6 +20,7 @@ import Artwork from "./pages/artwork/Artwork";
 import ArtworkEdit from "./pages/artwork/Edit/ArtworkEdit";
 import ArtworlEditSuccess from "./pages/artwork/Edit/ArtworkEditSuccess";
 import User from "./pages/User/User";
+import Settings from "./pages/User/Settings";
 
 function App() {
   const router = createBrowserRouter(
@@ -37,7 +38,7 @@ function App() {
           </Route>
           <Route path="/user/:id">
             <Route index element={<User />} />
-            <Route path="settings" element={<Home />} />
+            <Route path="settings" element={<Settings />} />
             <Route path="artworks" element={<Home />} />
             <Route path="following" element={<Home />} />
             <Route path="follower" element={<Home />} />
