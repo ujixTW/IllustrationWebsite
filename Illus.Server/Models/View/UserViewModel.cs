@@ -10,6 +10,7 @@
         public string? CoverContent { get; set; }
         public string? HeadshotContent { get; set; }
         public bool IsFollow { get; set; }
+        public bool EmailConfirm { get; set; }
         public int FollowerCount { get; set; }
         public int FollowingCount { get; set; }
         public LanguageModel Language { get; set; } = new LanguageModel();

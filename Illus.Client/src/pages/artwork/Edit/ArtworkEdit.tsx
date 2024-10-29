@@ -57,6 +57,7 @@ function ArtworkEdit(props: { isCreate?: boolean }) {
   const [titleLimit, descriptionLimit, tagLimit] = [32, 3000, 10];
   const today = new Date();
   const userId = useAppSelector((state) => state.userData.id);
+  const emailConfired = useAppSelector((state) => state.userData.emailConfirm);
   const isLogin = useAppSelector((state) => state.login);
   const [postData, postDataDispatch] = useReducer(
     artworkPostReducer,
@@ -78,7 +79,7 @@ function ArtworkEdit(props: { isCreate?: boolean }) {
   const { setIsDirty, CheckUnsavedToLeaveModal } = useUnSavedChange();
 
   useEffect(() => {
-    if (!isLogin) return navigate(path.home);
+    if (!isLogin || !emailConfired) return navigate(path.home);
     changeWebTitle(props.isCreate ? "投稿 - " : "編輯作品 - ");
 
     if (props.isCreate) {

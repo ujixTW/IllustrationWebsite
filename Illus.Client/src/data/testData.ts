@@ -39,6 +39,7 @@ const testUser: userDataType = {
     "D:/My Works/2024/code/IllustrationWebsite/IllustrationWebsite/Illus.Client/public/Work/img-costdown/0 cover.png",
   headshot: "/defaultImg/defaultHeadshot.svg",
   isFollow: false,
+  emailConfirm: false,
   followerCount: 0,
   followingCount: 0,
   language: { id: 0, content: "chinese" },

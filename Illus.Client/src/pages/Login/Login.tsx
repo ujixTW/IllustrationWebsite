@@ -79,6 +79,7 @@ function Login() {
             isNew={false}
             value={password}
             onChange={(e: ChangeEvent) => setPassword(e.currentTarget.value)}
+            autoInput
           />
           {pwdFail && <p className={style["error"]}>密碼規格錯誤。</p>}
         </div>

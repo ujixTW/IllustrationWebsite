@@ -15,6 +15,7 @@ import userDataHelper from "./utils/userDataHelper";
 
 function MainNav() {
   const isLogin = useAppSelector((state) => state.login);
+  const emailConfirmed = useAppSelector((state) => state.userData.emailConfirm);
   const location = useLocation();
 
   return (
@@ -30,12 +31,14 @@ function MainNav() {
 
       {isLogin ? (
         <div className={style["item"]}>
-          <Link
-            to={path.artworks.create}
-            className={style["btn"] + " " + style["post-artwork"]}
-          >
-            上傳作品
-          </Link>
+          {emailConfirmed && (
+            <Link
+              to={path.artworks.create}
+              className={style["btn"] + " " + style["post-artwork"]}
+            >
+              上傳作品
+            </Link>
+          )}
           <UserMenu />
         </div>
       ) : location.pathname == path.home ? (

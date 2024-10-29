@@ -33,7 +33,9 @@ function ArtworkContainer(props: {
     setOriginId,
     setImgIndex,
   } = props;
+  const isLogin = useAppSelector((state) => state.login);
   const userId = useAppSelector((state) => state.userData.id);
+  const emailConfirmed = useAppSelector((state) => state.userData.emailConfirm);
   const isOwn = artwork.artistId == userId;
   const postTime = artwork.postTime;
   const [tagList, setTagList] = useState<TagType[]>(artwork.tags);
@@ -178,7 +180,7 @@ function ArtworkContainer(props: {
           )}
           <div className={style["operate"]}>
             <div className={style["box"]}>
-              {isOwn ? (
+              {isOwn && emailConfirmed && (
                 <div>
                   <Link
                     className={style["link"]}
@@ -187,7 +189,8 @@ function ArtworkContainer(props: {
                     編輯作品
                   </Link>
                 </div>
-              ) : (
+              )}
+              {!isOwn && (
                 <div className={style["like"]}>
                   <LikeBtn artworkId={artwork.id} likeOrigin={artwork.isLike} />
                 </div>
@@ -206,13 +209,15 @@ function ArtworkContainer(props: {
             </div>
             <div className={style["tag-container"]}>
               {tagLinkArr}
-              <button
-                type="button"
-                className={style["tag-add"]}
-                onClick={() => setAddTag(true)}
-              >
-                +
-              </button>
+              {isLogin && emailConfirmed && (
+                <button
+                  type="button"
+                  className={style["tag-add"]}
+                  onClick={() => setAddTag(true)}
+                >
+                  +
+                </button>
+              )}
               {addTag && (
                 <EditTag
                   artworkId={artwork.id}

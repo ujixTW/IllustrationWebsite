@@ -13,6 +13,7 @@ import { CommandPostData } from "../../../data/postData/artwork";
 function CommandList() {
   const { artworkId } = useParams();
   const headshot = useAppSelector((state) => state.userData.headshot);
+  const emailConfirmed = useAppSelector((state) => state.userData.emailConfirm);
   const [commandArr, setCommandArr] = useState<MessageType[]>([]);
   const [hasMore, setHasMore] = useState(false);
   const [inputCommand, setInputCommand] = useState("");
@@ -91,7 +92,10 @@ function CommandList() {
               <SureBtn
                 text="發送"
                 onClick={handleSubmit}
-                disabled={!(inputCommand.replace(htmlReg, "").trim() != "")}
+                disabled={
+                  !(inputCommand.replace(htmlReg, "").trim() != "") ||
+                  !emailConfirmed
+                }
               />
             </div>
           </div>

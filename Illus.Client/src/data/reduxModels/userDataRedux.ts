@@ -11,6 +11,7 @@ const initState: userDataType = {
   cover: "",
   headshot: "/defaultImg/defaultHeadshot.svg",
   isFollow: false,
+  emailConfirm: false,
   followerCount: 0,
   followingCount: 0,
   language: { id: 0, content: "" },

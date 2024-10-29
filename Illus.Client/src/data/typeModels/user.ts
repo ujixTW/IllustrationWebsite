@@ -7,6 +7,7 @@ type userDataType = {
   cover: string;
   headshot: string;
   isFollow: boolean;
+  emailConfirm: boolean;
   followerCount: number;
   followingCount: number;
   language: languageType;
@@ -16,7 +17,7 @@ type languageType = { id: number; content: string };
 type contryType = { id: number; content: string };
 const languageTypeDef = { id: 0, content: "繁體中文" };
 const contryTypeDef = { id: 0, content: "台灣" };
-const userDataTypeDef = {
+const userDataTypeDef: userDataType = {
   id: -1,
   account: "",
   email: "",
@@ -25,6 +26,7 @@ const userDataTypeDef = {
   cover: "",
   headshot: "/defaultImg/defaultHeadshot.svg",
   isFollow: false,
+  emailConfirm: false,
   followerCount: 0,
   followingCount: 0,
   language: languageTypeDef,

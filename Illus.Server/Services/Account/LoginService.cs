@@ -113,6 +113,7 @@ namespace Illus.Server.Sservices.Account
                             NickName = user.Nickname,
                             Profile = user.Profile,
                             Language = user.Language,
+                            EmailConfirm = user.EmailConfirmed,
                             Country = user.Country,
                             CoverContent = user.CoverContent,
                             HeadshotContent = user.HeadshotContent,
