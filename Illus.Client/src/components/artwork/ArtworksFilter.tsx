@@ -14,6 +14,8 @@ import { artworkOrderType } from "../../data/postData/artwork";
 
 export default function ArtworksFilter(props: {
   hasOrder?: boolean;
+  orderTime?: boolean;
+  orderHot?: boolean;
   switchAI?: boolean;
   switchR18?: boolean;
 }) {
@@ -97,8 +99,8 @@ export default function ArtworksFilter(props: {
 
   return (
     <nav className={style["filter"]}>
-      {props.hasOrder && (
-        <div className={style["side-start"] + " " + style["option-bar"]}>
+      <div className={style["side-start"] + " " + style["option-bar"]}>
+        {(props.hasOrder || props.orderTime) && (
           <div>
             <CheckBtn
               name="order"
@@ -110,6 +112,8 @@ export default function ArtworksFilter(props: {
               hasBackground={false}
             />
           </div>
+        )}
+        {(props.hasOrder || props.orderHot) && (
           <div>
             <CheckBtn
               name="order"
@@ -121,8 +125,8 @@ export default function ArtworksFilter(props: {
               hasBackground={false}
             />
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       <div className={style["side-end"] + " " + style["option-bar"]}>
         {props.switchAI && (

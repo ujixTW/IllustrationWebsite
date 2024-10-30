@@ -94,13 +94,13 @@ function ArtworkList(props: { isFollowing?: boolean }) {
         .get("/api/Work/GetList/Following", {
           params: {
             page: pageStr && /^\d+$/.test(pageStr) ? parseInt(pageStr) : 0,
-            isR18: isR18 && r18Reg.test(isR18),
+            isR18: isR18 !== null && r18Reg.test(isR18),
             workCount: pageCount,
           },
         })
         .then((res) => {
           const data = res.data as ArtworkListType;
-          
+
           setList(data.artworkList);
           setMaxCount(data.maxCount);
 

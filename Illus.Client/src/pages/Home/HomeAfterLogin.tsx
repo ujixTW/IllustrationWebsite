@@ -18,12 +18,11 @@ enum ActionType {
 
 interface ArtworkListAction {
   type: ActionType;
-  isAdd: boolean;
-  list: ArtworkType[];
+  payload: ArtworkType[];
 }
 interface pageMaxAction {
   type: ActionType;
-  state: boolean;
+  payload: boolean;
 }
 interface ArtworkListState {
   hot: ArtworkType[];
@@ -38,20 +37,17 @@ const artworkListReducer = function (
   state: ArtworkListState,
   action: ArtworkListAction
 ) {
-  const { type, isAdd, list } = action;
+  const { type, payload } = action;
   const stateCopy = Object.assign({}, state);
   switch (type) {
     case ActionType.FOLLOW:
-      if (isAdd) stateCopy.follow = stateCopy.follow.concat(list);
-      else stateCopy.follow = [...list];
+      stateCopy.follow = [...payload];
       return stateCopy;
     case ActionType.DAILY:
-      if (isAdd) stateCopy.daily = stateCopy.daily.concat(list);
-      else stateCopy.daily = [...list];
+      stateCopy.daily = [...payload];
       return stateCopy;
     case ActionType.HOT:
-      if (isAdd) stateCopy.hot = stateCopy.hot.concat(list);
-      else stateCopy.hot = [...list];
+      stateCopy.hot = [...payload];
       return stateCopy;
     default:
       return state;
@@ -61,10 +57,10 @@ const pageMaxReducer = function (state: pageMaxState, action: pageMaxAction) {
   const copyState = Object.assign({}, state);
   switch (action.type) {
     case ActionType.FOLLOW:
-      copyState.follow = action.state;
+      copyState.follow = action.payload;
       return copyState;
     case ActionType.HOT:
-      copyState.hot = action.state;
+      copyState.hot = action.payload;
       return copyState;
     default:
       return state;
@@ -114,18 +110,15 @@ function HomeAfterLogin() {
           ] as ArtworkListType[];
           artworkListDispatch({
             type: ActionType.FOLLOW,
-            isAdd: false,
-            list: fData.artworkList,
+            payload: fData.artworkList,
           });
           artworkListDispatch({
             type: ActionType.DAILY,
-            isAdd: false,
-            list: dData.artworkList,
+            payload: dData.artworkList,
           });
           artworkListDispatch({
             type: ActionType.HOT,
-            isAdd: false,
-            list: hData.artworkList,
+            payload: hData.artworkList,
           });
           if (dData.artworkList.length > 0) setDailyTheme(dData.dailyTheme);
 
@@ -146,13 +139,26 @@ function HomeAfterLogin() {
       .get(url)
       .then((res) => {
         const data = res.data as ArtworkListType;
+        const originArr: ArtworkType[] = [];
+        switch (actType) {
+          case ActionType.DAILY:
+            originArr.push(...artworkList.daily);
+            break;
+          case ActionType.FOLLOW:
+            originArr.push(...artworkList.follow);
+            break;
+          case ActionType.HOT:
+            originArr.push(...artworkList.hot);
+            break;
+          default:
+            break;
+        }
         artworkListDispatch({
           type: actType,
-          isAdd: true,
-          list: data.artworkList,
+          payload: originArr.concat(data.artworkList),
         });
         if (data.maxCount <= oldList.length + data.artworkList.length)
-          pageMaxDispatch({ state: true, type: actType });
+          pageMaxDispatch({ payload: true, type: actType });
       })
       .catch((err) => console.log(err));
   };
