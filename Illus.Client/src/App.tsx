@@ -22,6 +22,7 @@ import ArtworlEditSuccess from "./pages/artwork/Edit/ArtworkEditSuccess";
 import User from "./pages/User/User";
 import Settings from "./pages/User/Settings";
 import Histories from "./pages/User/Histories";
+import Likes from "./pages/User/Likes";
 
 function App() {
   const router = createBrowserRouter(
@@ -43,7 +44,7 @@ function App() {
             <Route path="artworks" element={<Home />} />
             <Route path="following" element={<Home />} />
             <Route path="follower" element={<Home />} />
-            <Route path="likes" element={<Home />} />
+            <Route path="likes" element={<Likes />} />
             <Route path="histories" element={<Histories />} />
           </Route>
           <Route path="*" element={<NoMatch />} />
