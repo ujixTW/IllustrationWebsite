@@ -4,7 +4,7 @@ function IsDefaultImg(path: string) {
   return /^\/defaultImg\/\w+/.test(path);
 }
 function ImagePathHelper(path: string) {
-  return path.slice(path.indexOf("/Work/"));
+  return IsDefaultImg(path) ? path : path.slice(path.indexOf("/Work/"));
 }
 function ImagePathListHelper(pathList: string[]) {
   return pathList.map((path: string) => ImagePathHelper(path));
