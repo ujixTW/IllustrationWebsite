@@ -13,7 +13,6 @@ namespace Illus.Server.Sservices.Account
         public FollowService(IllusContext context)
         {
             _context = context;
-            _userCount = 24;
         }
         public UserViewModel GetUser(int id, int userId)
         {
@@ -97,7 +96,7 @@ namespace Illus.Server.Sservices.Account
             }
             return result;
         }
-        public async Task<FollowViewListModel> GetFollowingList(int id, int page)
+        public async Task<FollowViewListModel> GetFollowingList(int id, int page, int pageCount)
         {
             var result = new FollowViewListModel();
             try
@@ -115,8 +114,8 @@ namespace Illus.Server.Sservices.Account
                     .ThenInclude(p => p.Likes.Where(l => l.UserId == id && l.Status == true).FirstOrDefault())
                     .Where(p => p.FollowerId == id)
                     .OrderByDescending(p => p.FollowTime)
-                    .Skip(page * _userCount)
-                    .Take(_userCount)
+                    .Skip(page * pageCount)
+                    .Take(pageCount)
                     .ToListAsync();
 
                 var count = _context.Follow.AsNoTracking().Where(p => p.FollowerId == id).Count();
@@ -142,7 +141,8 @@ namespace Illus.Server.Sservices.Account
                             NickName = following.Nickname,
                             Profile = following.Profile,
                             CoverContent = following.CoverContent,
-                            ArtworkList = workCoverList
+                            HeadshotContent = following.HeadshotContent,
+                            ArtworkList = workCoverList,
                         });
                     }
 
@@ -155,7 +155,7 @@ namespace Illus.Server.Sservices.Account
             }
             return result;
         }
-        public FollowViewListModel GetFollowerList(int id, int page)
+        public FollowViewListModel GetFollowerList(int id, int page, int pageCount)
         {
             var result = new FollowViewListModel();
             try
@@ -166,8 +166,8 @@ namespace Illus.Server.Sservices.Account
                     .Where(p => p.FollowingId == id)
                     .OrderByDescending(p => p.FollowTime)
                     .ThenBy(p => p.FollowerId)
-                    .Skip(page * _userCount)
-                    .Take(_userCount)
+                    .Skip(page * pageCount)
+                    .Take(pageCount)
                     .ToList();
 
                 var count = _context.Follow.AsNoTracking().Where(p => p.FollowingId == id).Count();
@@ -180,6 +180,7 @@ namespace Illus.Server.Sservices.Account
                             Id = f.Follower.Id,
                             NickName = f.Follower.Nickname,
                             CoverContent = f.Follower.CoverContent,
+                            HeadshotContent = f.Follower.HeadshotContent,
                         });
                     }
                     result.Count = count;
