@@ -26,9 +26,11 @@ function CoverEditor(props: { imgUrl: string; isOwn?: boolean }) {
 
     const url = ImagePathHelper(props.imgUrl);
     setCoverUrl(url);
-    ImagePathUrlToFile(url, "cover").then((res) => {
-      if (res) setCoverFile(res);
-    });
+    if (url.trim() !== "") {
+      ImagePathUrlToFile(url, "cover").then((res) => {
+        if (res) setCoverFile(res);
+      });
+    }
   }, [props.imgUrl]);
   useEffect(() => {
     setHasCover(coverUrl.trim() !== "");

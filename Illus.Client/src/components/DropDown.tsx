@@ -11,7 +11,7 @@ enum dirEnum {
 
 function DropDown(props: {
   children: JSX.Element;
-  closeFnc: (...args: any[]) => any;
+  closeFnc?: (...args: any[]) => any;
   up?: boolean;
   down?: boolean;
   left?: boolean;
@@ -19,6 +19,7 @@ function DropDown(props: {
 }) {
   const [translate, setTranslate] = useState("");
   const [dirClass, setDirClass] = useState("");
+  const [opacity, setOpacity] = useState<number | undefined>(0);
   const dropDownRef = useRef<HTMLDivElement>(null);
   const direction = props.up
     ? dirEnum.up
@@ -27,7 +28,7 @@ function DropDown(props: {
     : props.right
     ? dirEnum.right
     : dirEnum.down;
-  useClickOutside(dropDownRef, props.closeFnc);
+  if (props.closeFnc) useClickOutside(dropDownRef, props.closeFnc);
 
   const handleOutSideOffset = (dir: dirEnum): string => {
     let offset = "";
@@ -35,18 +36,25 @@ function DropDown(props: {
 
     if (dropDown) {
       const rect = dropDown.getBoundingClientRect();
-      if (dir == dirEnum.down || dir == dirEnum.up) {
-        if (rect.left < 0) {
-          offset = ` translateX(${-rect.left}px)`;
-        } else if (rect.right < 0) {
-          offset = ` translateX(${rect.right}px)`;
-        }
-      } else if (dir == dirEnum.left || dir == dirEnum.right) {
-        if (rect.top < 0) {
-          offset = ` translateY(${rect.top}px)`;
-        } else if (rect.bottom < 0) {
-          offset = ` translateY(${-rect.bottom}px)`;
-        }
+
+      switch (dir) {
+        case dirEnum.left:
+        case dirEnum.right:
+          if (rect.top < 0) {
+            offset = ` translateY(calc(-50% + ${rect.top - 10}px))`;
+          } else if (rect.bottom < 0) {
+            offset = ` translateY(calc(-50% + ${-rect.bottom + 10}px))`;
+          }
+          break;
+        case dirEnum.up:
+        case dirEnum.down:
+        default:
+          if (rect.left < 0) {
+            offset = ` translateX(calc(-50% + ${-rect.left + 10}px))`;
+          } else if (rect.right < 0) {
+            offset = ` translateX(calc(-50% + ${rect.right - 10}px))`;
+          }
+          break;
       }
     }
     return offset;
@@ -54,38 +62,34 @@ function DropDown(props: {
   useEffect(() => {
     switch (direction) {
       case dirEnum.left:
-        setTranslate("translateY(-50%)");
         setDirClass("left");
-
         break;
       case dirEnum.right:
-        setTranslate("translateY(-50%)");
         setDirClass("right");
-
         break;
       case dirEnum.up:
-        setTranslate("translateX(-50%)");
         setDirClass("up");
-
         break;
+      case dirEnum.down:
       default:
-        setTranslate("translateX(-50%)");
         setDirClass("down");
         break;
     }
   }, []);
+
   useEffect(() => {
     if (dirClass != "") {
       const offset = handleOutSideOffset(direction);
 
-      setTranslate(translate + offset);
+      setTranslate(offset);
+      setOpacity(undefined);
     }
   }, [dirClass]);
 
   return (
     <div
       className={style["drop-down"] + " " + style[dirClass]}
-      style={{ transform: translate }}
+      style={{ transform: translate, opacity: opacity }}
       ref={dropDownRef}
     >
       {props.children}

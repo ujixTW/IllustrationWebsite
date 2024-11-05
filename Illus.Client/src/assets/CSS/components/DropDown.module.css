@@ -7,17 +7,21 @@
   &.up {
     bottom: 100%;
     left: 50%;
+    transform: translateX(-50%);
   }
   &.down {
     top: 100%;
     left: 50%;
+    transform: translateX(-50%);
   }
   &.left {
     top: 50%;
     right: 100%;
+    transform: translateY(-50%);
   }
   &.right {
     top: 50%;
     left: 100%;
+    transform: translateY(-50%);
   }
 }
