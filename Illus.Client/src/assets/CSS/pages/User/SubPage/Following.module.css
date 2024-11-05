@@ -1,0 +1,58 @@
+.body {
+  padding: 0 1rem;
+}
+.page-title {
+  display: flex;
+  font-weight: bold;
+  align-items: center;
+  .tip {
+    margin-left: 0.5rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 50%;
+    background-color: var(--blackMask);
+    color: white;
+    font-size: small;
+  }
+}
+.user-container {
+  .user {
+    padding: 0.5rem 0.5rem;
+  }
+}
+.card {
+  display: flex;
+  border-bottom: 1px solid var(--grayMask);
+}
+.artist {
+  display: flex;
+  width: 24.5rem;
+  .headshot {
+    margin-right: 1rem;
+    .link {
+      --r: 5rem;
+      width: var(--r);
+      height: var(--r);
+      border-radius: 50%;
+      overflow: hidden;
+    }
+  }
+  .data {
+    .name {
+      font-size: large;
+      font-weight: bold;
+      .link {
+        text-decoration: none;
+        color: var(--fontC);
+      }
+    }
+    .profile {
+      margin: 1rem 0;
+      font-size: small;
+      word-break: break-all;
+    }
+  }
+}
+.artwork {
+  width: calc(100% - 25.5rem);
+  margin-left: 1rem;
+}

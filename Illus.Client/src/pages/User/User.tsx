@@ -85,8 +85,7 @@ function User() {
         changeWebTitle(`${_userData.nickName} - `);
       })
       .catch(() => navigate("*"));
-      
-  }, []);
+  }, [id]);
   useEffect(() => {
     const intReg = /^[0-9]+$/;
     if (searchParams.has(artworkParmas.page)) {

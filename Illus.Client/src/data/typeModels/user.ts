@@ -1,3 +1,5 @@
+import { ArtworkType } from "./artwork";
+
 type userDataType = {
   id: number;
   account: string;
@@ -12,9 +14,14 @@ type userDataType = {
   followingCount: number;
   language: languageType;
   contry: contryType;
+  artworkList?: ArtworkType[];
 };
 type languageType = { id: number; content: string };
 type contryType = { id: number; content: string };
+type followListType = {
+  users: userDataType[];
+  count: number;
+};
 const languageTypeDef = { id: 0, content: "繁體中文" };
 const contryTypeDef = { id: 0, content: "台灣" };
 const userDataTypeDef: userDataType = {
@@ -34,4 +41,4 @@ const userDataTypeDef: userDataType = {
 };
 
 export { userDataTypeDef, languageTypeDef, contryTypeDef };
-export type { userDataType, languageType, contryType };
+export type { userDataType, languageType, contryType, followListType };

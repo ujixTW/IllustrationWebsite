@@ -23,6 +23,9 @@ import User from "./pages/User/User";
 import Settings from "./pages/User/Settings";
 import Histories from "./pages/User/Histories";
 import Likes from "./pages/User/Likes";
+import Follower from "./pages/User/SubPage/Follower";
+import UserSubLayout from "./layouts/UserSubLayout";
+import Following from "./pages/User/SubPage/Following";
 
 function App() {
   const router = createBrowserRouter(
@@ -42,8 +45,11 @@ function App() {
             <Route index element={<User />} />
             <Route path="settings" element={<Settings />} />
             <Route path="artworks" element={<Home />} />
-            <Route path="following" element={<Home />} />
-            <Route path="follower" element={<Home />} />
+            <Route element={<UserSubLayout />}>
+              <Route path="following" element={<Following />} />
+              <Route path="follower" element={<Follower />} />
+            </Route>
+
             <Route path="likes" element={<Likes />} />
             <Route path="histories" element={<Histories />} />
           </Route>

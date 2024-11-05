@@ -1,0 +1,58 @@
+.body {
+}
+.header {
+  .cover {
+    margin-top: 1rem;
+  }
+  .option {
+    padding: 1rem;
+  }
+}
+.main {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1000px;
+  margin: auto;
+  padding: 1rem 1rem 2rem;
+}
+.user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: large;
+  font-weight: bold;
+  .back {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    .svg {
+      --r: 1.5rem;
+      width: var(--r);
+      height: var(--r);
+      fill: var(--fontC);
+      stroke: none;
+      transform: rotate(-90deg);
+    }
+    .headshot {
+      --r: 3rem;
+      width: var(--r);
+      height: var(--r);
+      border-radius: 50%;
+    }
+  }
+}
+.nav {
+  display: flex;
+  margin: 2rem 0;
+  .btn {
+    padding: 0.5rem 1rem;
+    border-top: 4px solid var(--bkC);
+    background-color: var(--bkC);
+    font-weight: bold;
+    opacity: 0.8;
+    &.active {
+      border-color: var(--mainBlue);
+      opacity: 1;
+    }
+  }
+}
