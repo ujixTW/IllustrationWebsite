@@ -51,7 +51,7 @@ namespace Illus.Server.Helper
                "<p>若無法點擊按鈕，請複製下方網址並貼到瀏覽器的網址列上：</p>" +
                $"<a href=\"https://localhost:5173/signUp/confirm/{user.Gotcha.CAPTCHA}\">https://localhost:5173/signUp/confirm/{user.Gotcha.CAPTCHA}</a>" +
                "<p>此連結將於48小時候失效，若逾期，請" +
-               $"<a href\"https://localhost:5173/signUp/confirm-again/{user.Gotcha.CAPTCHA}\">點此重新寄送驗證信</a>" +
+               $"<a href=\"https://localhost:5173/signUp/confirm-again/{user.Gotcha.CAPTCHA}\">點此重新寄送驗證信</a>" +
                "。</p>";
 
             SendMail(mail);

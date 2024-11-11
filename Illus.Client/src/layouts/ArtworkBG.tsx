@@ -12,7 +12,7 @@ export default function BeforeLoginLayOut(props: { children: JSX.Element }) {
 
   useEffect(() => {
     axios
-      .get("/api/GetList/Background")
+      .get("/api/Work/GetList/Background")
       .then((res) => {
         const resData = res.data as ArtworkType[];
         setBkDataList(resData as ArtworkType[]);

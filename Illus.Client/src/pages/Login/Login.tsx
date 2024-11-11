@@ -46,7 +46,7 @@ function Login() {
       .post("/api/Login", data)
       .then((res) => {
         if (res.data) {
-          dispatch(loginActions.login(res.data));
+          dispatch(loginActions.login());
           navigate(path.home);
         } else {
           setLoginFail(true);

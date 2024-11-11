@@ -44,7 +44,7 @@ function SignUpPage(props: { setFnc: (...args: any[]) => any }) {
         accountReg.test(account) ? signUpError.none : signUpError.format
       );
       setEmailErr(emailReg.test(email) ? signUpError.none : signUpError.format);
-      setPwdErr(passwordReg.test(password));
+      setPwdErr(!passwordReg.test(password));
       return;
     }
     const data: loginPostData = {

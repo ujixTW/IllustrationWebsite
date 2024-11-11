@@ -39,7 +39,7 @@ namespace Illus.Server.Sservices.Account
 
                 if (user != null)
                 {
-                    var salt = Encoding.UTF8.GetBytes(user.PasswordSalt);
+                    var salt = Convert.FromBase64String(user.PasswordSalt);
                     var inputPwd = PWDHelper.GetHashPassword(user.Account, command.Password, salt);
                     if (user.Password == Convert.ToBase64String(inputPwd))
                     {
@@ -80,15 +80,15 @@ namespace Illus.Server.Sservices.Account
 
             return result;
         }
-        public UserViewModel? LoginCheck(LoginTokenModel input)
+        public async Task<UserViewModel?> LoginCheck(LoginTokenModel input)
         {
             UserViewModel? result = null;
             var today = DateTime.Now;
             try
             {
-                var hasData = _illusContext.LoginToken
+                var hasData = await _illusContext.LoginToken
                     .AsNoTracking()
-                    .SingleOrDefault(p =>
+                    .SingleOrDefaultAsync(p =>
                     p.LoginToken == input.LoginToken &&
                     p.UserId == input.UserId &&
                     p.User.IsActivation == true &&
@@ -97,11 +97,11 @@ namespace Illus.Server.Sservices.Account
 
                 if (hasData != null)
                 {
-                    var user = _illusContext.User
+                    var user = await _illusContext.User
                         .AsNoTracking()
                         .Include(p => p.Language)
                         .Include(p => p.Country)
-                        .SingleOrDefault(p => p.Id == input.UserId);
+                        .SingleOrDefaultAsync(p => p.Id == input.UserId);
 
                     result = user == null ?
                         null :

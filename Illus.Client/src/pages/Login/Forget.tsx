@@ -8,6 +8,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import path from "../../data/JSON/path.json";
 import changeWebTitle from "../../utils/changeWebTitle";
+import InputGuid from "../../components/Account/InputGuid";
+import Loading from "../../components/Loading";
 
 enum stepEnum {
   email = 0,
@@ -20,6 +22,7 @@ function Forget() {
   const [step, setStep] = useState<stepEnum>(stepEnum.email);
   const navigate = useNavigate();
   const [captcha, setCaptcha] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => changeWebTitle("忘記密碼 | "), []);
 
@@ -36,9 +39,9 @@ function Forget() {
     }
   }, [step]);
 
-  const submitCaptcha = () => {
+  const submitCaptcha = async () => {
     if (guidReg.test(captcha)) {
-      axios
+      await axios
         .get(`/api/EditAccount/EmailConfirm/${email}`, {
           params: { CAPTCHA: captcha },
         })
@@ -49,11 +52,12 @@ function Forget() {
     } else {
       setError(true);
     }
+    setIsLoading(false);
   };
 
-  const submitEmail = () => {
+  const submitEmail = async () => {
     if (emailReg.test(email)) {
-      axios
+      await axios
         .get(`/api/EditAccount/ForgetPassword/${email}`)
         .then((res) => {
           const data: boolean = res.data;
@@ -67,13 +71,15 @@ function Forget() {
     } else {
       setError(true);
     }
+    setIsLoading(false);
   };
-  const handleClick = () => {
+  const handleClick = async () => {
+    setIsLoading(true);
     switch (step) {
       case stepEnum.email:
-        return submitEmail;
+        return await submitEmail();
       case stepEnum.captcha:
-        return submitCaptcha;
+        return await submitCaptcha();
       default:
         return () => {};
     }
@@ -97,7 +103,8 @@ function Forget() {
             onChange={(e: ChangeEvent) => setEmail(e.target.value)}
           />
         ) : step == stepEnum.captcha ? (
-          <InputEmail
+          <InputGuid
+            placeholder="驗證碼"
             value={captcha}
             onChange={(e: ChangeEvent) => setCaptcha(e.target.value)}
           />
@@ -109,6 +116,7 @@ function Forget() {
       <div className={style["btn"]}>
         <SureBtn text="發送" onClick={handleClick} />
       </div>
+      {isLoading && <Loading />}
     </div>
   );
 }
