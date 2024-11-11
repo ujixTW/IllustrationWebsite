@@ -14,9 +14,9 @@
     "follower": "/follower",
     "likes": "/likes",
     "histories": "/histories",
-    "settings": "/settings",
-    "artworks": "/artworks"
+    "settings": "/settings"
   },
+  "dashboard": { "artworks": "/dashboard/artworks" },
   "account": {
     "emailComfirm": "/account/email/confirm"
   },
