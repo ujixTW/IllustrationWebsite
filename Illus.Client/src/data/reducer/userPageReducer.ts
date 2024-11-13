@@ -15,7 +15,8 @@ type userPageActType =
   | { type: "setUserPostData"; payload: editUserDataPostData }
   | { type: "setUserPostDataFromUserData"; payload: userDataType }
   | { type: "setIsEditNicknameErr"; payload: boolean }
-  | { type: "setPage"; payload: number };
+  | { type: "setPage"; payload: number }
+  | { type: "setHasNickName"; payload: boolean };
 
 type userPageStateType = {
   userData?: userDataType;
@@ -27,6 +28,7 @@ type userPageStateType = {
   userPostData: editUserDataPostData;
   isEditNicknameErr: boolean;
   page: number;
+  hasNickName: boolean;
 };
 const userPageStateDef: userPageStateType = {
   isOwn: false,
@@ -37,6 +39,7 @@ const userPageStateDef: userPageStateType = {
   userPostData: editUserDataPostDataDef,
   isEditNicknameErr: false,
   page: 0,
+  hasNickName: false,
 };
 const userPageReducer = function (
   state: userPageStateType,
@@ -72,7 +75,7 @@ const userPageReducer = function (
         nickName: payload.nickName,
         profile: payload.profile,
         languageID: payload.language.id,
-        countryID: payload.contry.id,
+        countryID: payload.country.id,
       };
       copyState.userPostData = postDataFromUserData;
       return copyState;
@@ -81,6 +84,9 @@ const userPageReducer = function (
       return copyState;
     case "setPage":
       copyState.page = payload;
+      return copyState;
+    case "setHasNickName":
+      copyState.hasNickName = payload;
       return copyState;
     default:
       throw new Error("Wrong action type!");

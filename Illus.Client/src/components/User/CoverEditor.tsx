@@ -11,6 +11,7 @@ import axios from "axios";
 import Loading from "../Loading";
 import { SureBtn } from "../Button/BasicButton";
 import { ChangeEvent } from "../../utils/tsTypesHelper";
+import { getFormFileHelper } from "../../utils/formDataHelper";
 
 function CoverEditor(props: { imgUrl: string; isOwn?: boolean }) {
   const [isEdit, setIsEdit] = useState(false);
@@ -49,9 +50,10 @@ function CoverEditor(props: { imgUrl: string; isOwn?: boolean }) {
 
   const handleEdit = useCallback(async (_img?: File) => {
     setIsLoading(true);
+    const _formData = getFormFileHelper(_img);
 
     await axios
-      .post("/api/EditAccount/UserCover", _img)
+      .post("/api/EditAccount/UserCover", _formData)
       .then(() => {
         setCoverFile(_img);
         setIsEdit(false);
@@ -75,7 +77,6 @@ function CoverEditor(props: { imgUrl: string; isOwn?: boolean }) {
       }
       style={{ backgroundImage: `url("${coverUrl}")` }}
     >
-      {isLoading && <Loading />}
       {props.isOwn && (
         <div className={style["option"]}>
           {!hasCover && (
@@ -157,6 +158,7 @@ function CoverEditor(props: { imgUrl: string; isOwn?: boolean }) {
           </div>
         </ImgCutter>
       )}
+      {isLoading && <Loading />}
     </div>
   );
 }

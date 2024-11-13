@@ -1,8 +1,8 @@
 import { userDataType } from "../data/typeModels/user";
 import { ImagePathHelper } from "./ImagePathHelper";
 
-function userHeadshotHelper(headshot: string | undefined) {
-  return headshot === undefined || headshot.trim() === ""
+function userHeadshotHelper(headshot: string | null) {
+  return headshot === null || headshot.trim() === ""
     ? "/defaultImg/defaultHeadshot.svg"
     : ImagePathHelper(headshot);
 }
@@ -12,12 +12,12 @@ function userDataHelper(data: userDataType) {
   dataCopy.headshot = userHeadshotHelper(dataCopy.headshot);
 
   dataCopy.cover =
-    dataCopy.cover === undefined || dataCopy.cover.trim() === ""
+    dataCopy.cover === null || dataCopy.cover.trim() === ""
       ? ""
       : ImagePathHelper(dataCopy.cover);
 
   if (dataCopy.nickName.trim() == "") dataCopy.nickName = dataCopy.account;
-
+  if (dataCopy.profile === null) dataCopy.profile = "";
   return dataCopy;
 }
 

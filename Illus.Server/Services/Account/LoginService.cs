@@ -115,8 +115,8 @@ namespace Illus.Server.Sservices.Account
                             Language = user.Language,
                             EmailConfirm = user.EmailConfirmed,
                             Country = user.Country,
-                            CoverContent = user.CoverContent,
-                            HeadshotContent = user.HeadshotContent,
+                            Cover = user.CoverContent,
+                            Headshot = user.HeadshotContent,
                         };
                 }
             }

@@ -34,9 +34,10 @@ namespace Illus.Server.Sservices.Account
                     {
                         Id = id,
                         NickName = user.Nickname,
+                        Account = user.Account,
                         Profile = user.Profile,
-                        CoverContent = user.CoverContent,
-                        HeadshotContent = user.HeadshotContent,
+                        Cover = user.CoverContent,
+                        Headshot = user.HeadshotContent,
                         Language = user.Language,
                         Country = user.Country,
                         FollowerCount = followerCount,
@@ -140,8 +141,8 @@ namespace Illus.Server.Sservices.Account
                             Id = following.Id,
                             NickName = following.Nickname,
                             Profile = following.Profile,
-                            CoverContent = following.CoverContent,
-                            HeadshotContent = following.HeadshotContent,
+                            Cover = following.CoverContent,
+                            Headshot = following.HeadshotContent,
                             ArtworkList = workCoverList,
                         });
                     }
@@ -179,8 +180,8 @@ namespace Illus.Server.Sservices.Account
                         {
                             Id = f.Follower.Id,
                             NickName = f.Follower.Nickname,
-                            CoverContent = f.Follower.CoverContent,
-                            HeadshotContent = f.Follower.HeadshotContent,
+                            Cover = f.Follower.CoverContent,
+                            Headshot = f.Follower.HeadshotContent,
                         });
                     }
                     result.Count = count;

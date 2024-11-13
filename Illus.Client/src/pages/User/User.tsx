@@ -7,7 +7,7 @@ import { userDataType } from "../../data/typeModels/user";
 import axios from "axios";
 import { ArtworkListType } from "../../data/typeModels/artwork";
 import CoverEditor from "../../components/User/CoverEditor";
-import userDataHelper, { userHeadshotHelper } from "../../utils/userDataHelper";
+import userDataHelper from "../../utils/userDataHelper";
 import { NormalBtn, SureBtn } from "../../components/Button/BasicButton";
 import useFollowUser from "../../hooks/useFollowUser";
 import ArtworkListContainer from "../../components/artwork/ArtworkListContainer";
@@ -26,6 +26,7 @@ import { htmlReg } from "../../utils/regexHelper";
 import PageNav from "../../components/PageNav";
 import { artworkParmas } from "../../utils/parmasHelper";
 import { userDataActions } from "../../data/reduxModels/userDataRedux";
+import getFormDataHelper from "../../utils/formDataHelper";
 
 enum displayArtworkEnum {
   illustration,
@@ -69,16 +70,21 @@ function User() {
         const data = res.data as userDataType;
 
         const _userData = userDataHelper(data);
-        _userData.headshot = userHeadshotHelper(_userData.headshot);
+        const hasNickName =
+          data.nickName !== null && data.nickName.trim() !== "";
 
         reducerDispatch({ type: "setUserData", payload: _userData });
+        reducerDispatch({ type: "setHasNickName", payload: hasNickName });
         setIsFollow(_userData.isFollow);
 
         if (id && loginData.id === parseInt(id)) {
           reducerDispatch({ type: "setIsOwn", payload: true });
+
+          const postData = Object.assign({}, _userData);
+          postData.nickName = hasNickName ? postData.nickName : "";
           reducerDispatch({
             type: "setUserPostDataFromUserData",
-            payload: _userData,
+            payload: postData,
           });
         }
 
@@ -139,8 +145,10 @@ function User() {
 
     reducerDispatch({ type: "setIsLoading", payload: true });
 
+    const _formData = getFormDataHelper(copyPostData);
+
     await axios
-      .post("/api/EditAccount/UserData", reducer.userPostData)
+      .post("/api/EditAccount/UserData", _formData)
       .then((res) => {
         const data: boolean = res.data;
         if (!data) return errFnc();
@@ -160,11 +168,15 @@ function User() {
   };
   const handleEditUserDataCnacel = () => {
     checkUnsaved(() => {
-      if (reducer.userData)
+      if (reducer.userData) {
+        const copyData = Object.assign({}, reducer.userData);
+        if (!reducer.hasNickName) copyData.nickName = "";
+        reducerDispatch({ type: "setIsEditNicknameErr", payload: false });
         reducerDispatch({
           type: "setUserPostDataFromUserData",
-          payload: reducer.userData,
+          payload: copyData,
         });
+      }
       reducerDispatch({ type: "setIsEdit", payload: false });
     });
   };
@@ -327,7 +339,10 @@ function User() {
           }
         >
           <>
-            <div className={style["detail-data"] + " " + style["header"]}>
+            <div
+              className={style["detail-data"] + " " + style["header"]}
+              style={{ backgroundImage: `url("${reducer.userData?.cover}")` }}
+            >
               <div className={style["user"]}>
                 <div className={style["headshot"]}>
                   <img src={reducer.userData?.headshot} alt="headshot" />

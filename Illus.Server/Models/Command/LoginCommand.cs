@@ -34,7 +34,7 @@
     {
         public int Id { get; set; }
         public string NickName { get; set; } = string.Empty;
-        public string Profile { get; set; } = string.Empty;
+        public string? Profile { get; set; } = string.Empty;
         public IFormFile? cover { get; set; }
         public IFormFile? headshot { get; set; }
         public int LanguageiD { get; set; }

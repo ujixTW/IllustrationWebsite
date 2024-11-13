@@ -12,6 +12,7 @@ import {
   IsDefaultImg,
 } from "../../utils/ImagePathHelper";
 import { userHeadshotHelper } from "../../utils/userDataHelper";
+import { getFormFileHelper } from "../../utils/formDataHelper";
 
 function HeadshotEditor(props: {
   headshotUrl: string;
@@ -55,8 +56,10 @@ function HeadshotEditor(props: {
 
   const handleEdit = useCallback(async (_img?: File) => {
     setIsLoading(true);
+    const _formData = getFormFileHelper(_img);
+
     await axios
-      .post("/api/EditAccount/UserHeadshot", _img)
+      .post("/api/EditAccount/UserHeadshot", _formData)
       .then(() => {
         setHeadshotFile(_img);
         setIsEdit(false);

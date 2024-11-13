@@ -15,7 +15,7 @@ const initState: userDataType = {
   followerCount: 0,
   followingCount: 0,
   language: { id: 0, content: "" },
-  contry: { id: 0, content: "" },
+  country: { id: 0, content: "" },
 };
 
 const userDataSlice = createSlice({

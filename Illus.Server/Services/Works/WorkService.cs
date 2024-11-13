@@ -712,7 +712,7 @@ namespace Illus.Server.Sservices.Works
                         {
                             Id = like.UserId,
                             NickName = like.User.Nickname,
-                            HeadshotContent = like.User.HeadshotContent,
+                            Headshot = like.User.HeadshotContent,
                         });
                     }
                 }

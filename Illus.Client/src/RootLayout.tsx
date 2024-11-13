@@ -3,7 +3,7 @@ import path from "./data/JSON/path.json";
 import IconLong from "./assets/SVG/IconLong.svg?react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import SearchBox from "./components/searchbox/SearchBox";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { userDataType } from "./data/typeModels/user";
 import axios from "axios";
 import UserMenu from "./components/UserMenu";
@@ -63,6 +63,7 @@ function MainNav() {
 }
 function RootLayout() {
   const dispatch = useAppDispatch();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let ignoreResult = false;
@@ -75,9 +76,13 @@ function RootLayout() {
             const data: userDataType = res.data;
             dispatch(loginActions.login());
             dispatch(userDataActions.setUserData(data));
+            setIsLoading(false);
           }
         })
-        .catch(() => dispatch(loginActions.logout()));
+        .catch(() => {
+          dispatch(loginActions.logout());
+          setIsLoading(false);
+        });
     };
     loginCheck();
     return () => {
@@ -85,7 +90,7 @@ function RootLayout() {
     };
   }, []);
 
-  return (
+  return !isLoading ? (
     <>
       <MainNav />
       <main>
@@ -112,6 +117,8 @@ function RootLayout() {
         <Outlet />
       </main>
     </>
+  ) : (
+    <></>
   );
 }
 

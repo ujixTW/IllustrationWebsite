@@ -4,7 +4,12 @@ function IsDefaultImg(path: string) {
   return /^\/defaultImg\/\w+/.test(path);
 }
 function ImagePathHelper(path: string) {
-  return IsDefaultImg(path) ? path : path.slice(path.indexOf("/Work/"));
+  const newPath = path.replace(/\\/g, "/");
+  let sliceIndex = newPath.search(/(?<=\/public)/);
+
+  if (sliceIndex === -1) sliceIndex = 0;
+
+  return newPath.slice(sliceIndex);
 }
 function ImagePathListHelper(pathList: string[]) {
   return pathList.map((path: string) => ImagePathHelper(path));

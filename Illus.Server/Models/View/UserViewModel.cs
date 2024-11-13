@@ -7,8 +7,8 @@
         public string Email { get; set; } = string.Empty;
         public string NickName { get; set; } = string.Empty;
         public string? Profile { get; set; }
-        public string? CoverContent { get; set; }
-        public string? HeadshotContent { get; set; }
+        public string? Cover { get; set; }
+        public string? Headshot { get; set; }
         public bool IsFollow { get; set; }
         public bool EmailConfirm { get; set; }
         public int FollowerCount { get; set; }
