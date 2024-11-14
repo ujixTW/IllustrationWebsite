@@ -21,6 +21,7 @@
     display: flex;
     padding: 1rem 0;
     gap: 10%;
+    line-height: 2rem;
 
     border-bottom: 1px solid var(--fontC);
 
@@ -30,22 +31,31 @@
 
     .opt-title {
       width: 30%;
-      line-height: 2rem;
       font-weight: bold;
     }
     .opt-content {
       width: 60%;
       .show {
         display: flex;
-        height: 2rem;
         width: 100%;
+        .content {
+          width: calc(100% - 8rem);
+          margin: 0;
+          overflow: hidden;
+          word-break: break-all;
+        }
         .btn {
           margin-left: auto;
           width: 4rem;
+          height: 2rem;
         }
         .tip {
           margin-left: auto;
-          font-weight: bo;
+          width: 3rem;
+          font-weight: bold;
+          > p {
+            margin: 0;
+          }
           .success {
             color: var(--mainBlue);
           }

@@ -70,6 +70,7 @@ function Login() {
           <InputAccount
             value={account}
             placeholder="請輸入帳號或信箱"
+            autoComplete="userName"
             onChange={(e: ChangeEvent) => setAccount(e.currentTarget.value)}
           />
           {accFail && (

@@ -1,15 +1,18 @@
 import style from "../assets/CSS/components/Logout.module.css";
 import { useState } from "react";
 import axios from "axios";
+import path from "../data/JSON/path.json";
 import { useAppDispatch } from "../hooks/redux";
 import { loginActions } from "../data/reduxModels/loginRedux";
 import JumpWindow from "./JumpWindow";
 import { userDataActions } from "../data/reduxModels/userDataRedux";
+import { useNavigate } from "react-router-dom";
 
 export default function LogOut(props: { itemClass: string }) {
   const dispatch = useAppDispatch();
   const [showWindow, setShowWindow] = useState(false);
   const logoutHandler = () => dispatch(loginActions.logout());
+  const navigate = useNavigate();
 
   const logout = async () => {
     await axios
@@ -17,6 +20,7 @@ export default function LogOut(props: { itemClass: string }) {
       .then(() => {
         logoutHandler();
         dispatch(userDataActions.logout());
+        navigate(path.home);
       })
       .catch((err) => console.log(err));
   };

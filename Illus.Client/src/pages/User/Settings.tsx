@@ -31,15 +31,41 @@ function AccountInfo(props: {
   const [value, setValue] = useState("");
   const [valueOld, setValueOld] = useState("");
   const [valueCheck, setValueCheck] = useState("");
+  const [errText, setErrText] = useState("");
   const [error, setError] = useState<signUpError>(signUpError.none);
   const [isEdit, setIsEdit] = useState(false);
-  const [errText, setErrText] = useState("");
+  const [isDisable, setIsDisable] = useState(false);
 
   useEffect(() => {
+    if (isEdit) {
+      setValue("");
+      setValueOld("");
+      setValueCheck("");
+      setErrText("");
+      setError(signUpError.none);
+    }
+  }, [isEdit]);
+  useEffect(() => {
+    const [valueTrim, valueOldTrim, valueCheckTrim] = [
+      value.trim(),
+      valueOld.trim(),
+      valueCheck.trim(),
+    ];
     const isDirty =
-      value.trim() !== "" || valueOld.trim() !== "" || valueCheck.trim() !== "";
-
+      valueTrim !== "" || valueOldTrim !== "" || valueCheckTrim !== "";
     props.setIsDirty(isDirty);
+
+    switch (props.type) {
+      case inputType.account:
+      case inputType.email:
+        setIsDisable(props.infoValue === valueTrim || valueTrim === "");
+        break;
+      case inputType.password:
+        setIsDisable(
+          valueTrim === "" || valueOldTrim === "" || valueCheckTrim === ""
+        );
+        break;
+    }
   }, [value, valueOld, valueCheck]);
 
   const handleEdit = async () => {
@@ -61,14 +87,15 @@ function AccountInfo(props: {
     const _val = value.trim();
     if ((isEmail && emailReg.test(_val)) || accountReg.test(_val)) {
       await axios
-        .post(`/api/EditAccount/${isEmail ? "Email" : "Account"}`, value)
+        .post(
+          `/api/EditAccount/${isEmail ? "Email" : "Account"}?${
+            isEmail ? "email" : "account"
+          }Commend=${value}`
+        )
         .then((res) => {
           const data = res.data as boolean;
           if (data) {
-            setErrText("");
-            setError(signUpError.none);
             if (props.setUserData) props.setUserData(_val);
-            setValue("");
             setIsEdit(false);
           } else {
             setError(signUpError.duplicate);
@@ -105,11 +132,6 @@ function AccountInfo(props: {
       await axios
         .post("/api/EditAccount/Password", postData)
         .then(() => {
-          setErrText("");
-          setError(signUpError.none);
-          setValue("");
-          setValueOld("");
-          setValueCheck("");
           setIsEdit(false);
         })
         .catch(() => {
@@ -235,13 +257,13 @@ function AccountInfo(props: {
               />
             </div>
             <div className={style["btn"]}>
-              <SureBtn text="確定" onClick={handleEdit} />
+              <SureBtn text="確定" onClick={handleEdit} disabled={isDisable} />
             </div>
           </div>
         </div>
       ) : (
         <div className={style["show"]}>
-          <p>{props.infoValue}123</p>
+          <p className={style["content"]}>{props.infoValue}</p>
           <div className={style["tip"]}>
             {props.type === inputType.email && (
               <p
@@ -323,6 +345,7 @@ function Settings() {
                 copyObj.emailConfirm = false;
                 dispatch(userDataActions.setUserData(copyObj));
               }}
+              isConfirmed={userData.emailConfirm}
             />
           </div>
           <div className={style["option"]}>

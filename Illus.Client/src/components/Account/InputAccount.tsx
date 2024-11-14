@@ -4,6 +4,7 @@ export default function InputAccount(props: {
   value: string;
   placeholder: string;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
+  autoComplete?: React.HTMLInputAutoCompleteAttribute;
 }) {
   return (
     <input
@@ -12,7 +13,7 @@ export default function InputAccount(props: {
       id={props.id}
       name="account"
       className={style["input-text"]}
-      autoComplete="username"
+      autoComplete={props.autoComplete}
       autoCapitalize="off"
       value={props.value}
       onChange={props.onChange}
