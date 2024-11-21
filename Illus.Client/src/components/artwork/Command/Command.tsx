@@ -3,7 +3,7 @@ import style from "../../../assets/CSS/components/artwork/Command/Command.module
 import ThreeDot from "../../../assets/SVG/threeDot.svg?react";
 import path from "../../../data/JSON/path.json";
 import { MessageType } from "../../../data/typeModels/message";
-import { userHeadshotHelper } from "../../../utils/userDataHelper";
+import { userHeadshotHelper } from "../../../utils/fromBackEndDataHelper";
 import DropDown from "../../DropDown";
 import { useAppSelector } from "../../../hooks/redux";
 import { Link } from "react-router-dom";

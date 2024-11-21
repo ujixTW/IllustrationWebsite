@@ -384,7 +384,7 @@ function ArtworkEditContainer(props: {
   useEffect(() => {
     if (oldCoverBase != postData.imgs[0] && postData.imgs.length > 0) {
       setOldCoverBase(postData.imgs[0]);
-      if (mounted.current === false) {
+      if (mounted.current === false && isCreate !== true) {
         mounted.current = true;
         return;
       }

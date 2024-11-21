@@ -24,7 +24,7 @@ const testArtwork: ArtworkType = {
   imgs: [
     {
       id: 0,
-      content:
+      artworkContent:
         "D:/My Works/2024/code/IllustrationWebsite/IllustrationWebsite/Illus.Client/public/Work/img-costdown/0 cover.png",
     },
   ],
@@ -43,7 +43,7 @@ const testUser: userDataType = {
   followerCount: 0,
   followingCount: 0,
   language: { id: 0, content: "chinese" },
-  contry: { id: 0, content: "Taiwan" },
+  country: { id: 0, content: "Taiwan" },
 };
 
 export { testArtwork, testUser };

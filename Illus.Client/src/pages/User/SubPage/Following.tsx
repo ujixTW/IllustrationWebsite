@@ -4,7 +4,7 @@ import path from "../../../data/JSON/path.json";
 import { followListType, userDataType } from "../../../data/typeModels/user";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import PageNav from "../../../components/PageNav";
-import userDataHelper from "../../../utils/userDataHelper";
+import { userDataHelper } from "../../../utils/fromBackEndDataHelper";
 import { pageParma } from "../../../utils/parmasHelper";
 import axios from "axios";
 import ArtworkBarListContainer from "../../../components/artwork/ArtworkBarListContainer";

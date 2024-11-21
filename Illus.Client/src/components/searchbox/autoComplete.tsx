@@ -15,14 +15,16 @@ import { ClickLinkEvent } from "../../utils/tsTypesHelper";
 
 function RecommandLink(props: {
   recommand: string;
+  setInputText: React.Dispatch<React.SetStateAction<string>>;
   textArr: string[];
   target: RefObject<HTMLInputElement>;
+  changeAll?: boolean;
   isLink?: boolean;
   onBlur: FocusEventHandler;
 }) {
   const tempArr = [...props.textArr];
   tempArr.push(props.recommand);
-  const tempStr: string = tempArr.join(" ");
+  const tempStr = tempArr.join(" ");
   return (
     <Link
       to={{
@@ -32,9 +34,11 @@ function RecommandLink(props: {
       className={style["recommand"]}
       onClick={(e: ClickLinkEvent) => {
         if (props.isLink != true) e.preventDefault();
-        props.target.current != null
-          ? (props.target.current.value = tempStr)
-          : console.log("No target!");
+        props.setInputText(tempStr);
+        if (props.target.current != null) props.target.current.focus();
+        setTimeout(() => {
+          if (props.target.current != null) props.target.current.blur();
+        }, 0);
       }}
       onBlur={props.onBlur}
     >
@@ -45,18 +49,18 @@ function RecommandLink(props: {
 
 function Content(props: {
   inputText: string;
+  setInputText: React.Dispatch<React.SetStateAction<string>>;
   target: RefObject<HTMLInputElement>;
   changeAll?: boolean;
   tagArr: TagType[];
-  setTagArr: React.Dispatch<React.SetStateAction<TagType[]>>;
   isLink?: boolean;
   setIsFocus: (...args: any[]) => any;
 }) {
   const textArr: string[] = props.changeAll
     ? [props.inputText.replace(" ", "")]
     : props.inputText.trim().split(" ");
-  const searchText: string | undefined = textArr.pop();
-  const { tagArr, setTagArr } = props;
+  textArr.pop();
+  const { tagArr } = props;
   const acRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -100,20 +104,6 @@ function Content(props: {
     };
   }, []);
 
-  useEffect(
-    asyncDebounce(async () => {
-      if (searchText) {
-        await axios
-          .get("/api/Work/GetSearchRecommand", {
-            params: { st: encodeURI(searchText) },
-          })
-          .then((res) => setTagArr(res.data as TagType[]))
-          .catch((err) => console.log("Get Recommand Fail." + err));
-      }
-    }),
-    [props.inputText]
-  );
-
   const handleBlur = async () => {
     await setTimeout(() => {
       if (acRef.current) {
@@ -140,9 +130,11 @@ function Content(props: {
   const list = tagArr.map((val: TagType) => (
     <RecommandLink
       key={val.id}
+      setInputText={props.setInputText}
       recommand={val.content}
       textArr={textArr}
       target={props.target}
+      changeAll={props.changeAll}
       isLink={props.isLink}
       onBlur={handleBlur}
     />
@@ -153,6 +145,7 @@ function Content(props: {
 
 function AutoComplete(props: {
   inputText: string;
+  setInputText: React.Dispatch<React.SetStateAction<string>>;
   target: RefObject<HTMLInputElement>;
   changeAll?: boolean;
   isLink?: boolean;
@@ -161,6 +154,9 @@ function AutoComplete(props: {
   const [isFocus, setIsFocus] = useState(false);
   const acRef = useRef<HTMLDivElement>(null);
   const [tagArr, setTagArr] = useState<TagType[]>([]);
+  const textArr: string[] = props.changeAll
+    ? [props.inputText.replace(" ", "")]
+    : props.inputText.trim().split(" ");
 
   useEffect(() => {
     const handleTargetFocus = () => setIsFocus(true);
@@ -193,9 +189,26 @@ function AutoComplete(props: {
     };
   }, []);
 
-  return isFocus &&
-    props.target.current?.value.trim() != "" &&
-    tagArr.length > 0 ? (
+  useEffect(
+    asyncDebounce(() => {
+      if (props.inputText.trim().length < 0) return setTagArr([]);
+      const searchText: string | undefined = textArr.pop();
+
+      if (searchText) {
+        axios
+          .get("/api/Work/GetSearchRecommand", {
+            params: { st: encodeURI(searchText) },
+          })
+          .then((res) => {
+            setTagArr(res.data as TagType[]);
+          })
+          .catch((err) => console.log("Get Recommand Fail." + err));
+      }
+    }),
+    [props.inputText]
+  );
+
+  return isFocus && props.inputText.trim() != "" && tagArr.length > 0 ? (
     <div
       className={
         style["auto-complete"] +
@@ -206,10 +219,10 @@ function AutoComplete(props: {
     >
       <Content
         inputText={props.inputText}
+        setInputText={props.setInputText}
         target={props.target}
         changeAll={props.changeAll}
         tagArr={tagArr}
-        setTagArr={setTagArr}
         isLink={props.isLink}
         setIsFocus={setIsFocus}
       />

@@ -124,6 +124,7 @@ function EditTag(props: {
 
                   <AutoComplete
                     inputText={newTag}
+                    setInputText={setNewTag}
                     target={inputRef}
                     changeAll
                     onTargetTop

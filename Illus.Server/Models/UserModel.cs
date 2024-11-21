@@ -1,4 +1,6 @@
-﻿namespace Illus.Server.Models
+﻿using Newtonsoft.Json;
+
+namespace Illus.Server.Models
 {
     public class UserModel
     {
@@ -18,8 +20,11 @@
         public bool IsActivation { get; set; } = false;
         public virtual LanguageModel Language { get; set; } = new LanguageModel();
         public virtual CountryModel Country { get; set; } = new CountryModel();
+        [JsonIgnore]
         public virtual List<LoginTokenModel>? LoginTokens { get; set; }
+        [JsonIgnore]
         public virtual GotchaModel? Gotcha { get; set; }
+        [JsonIgnore]
         public virtual List<ArtworkModel> Artwork { get; set; } = [];
     }
     public class LoginTokenModel
@@ -28,6 +33,7 @@
         public Guid LoginToken { get; set; }
         public int UserId { get; set; }
         public DateTime ExpiryDate { get; set; }
+        [JsonIgnore]
         public virtual UserModel User { get; set; } = new UserModel();
     }
     public class GotchaModel
@@ -36,6 +42,7 @@
         public DateTime ExpiryDate { get; set; }
         public int UserId { get; set; }
         public bool IsUsed { get; set; } = false;
+        [JsonIgnore]
         public virtual UserModel User { get; set; } = new UserModel();
     }
 }

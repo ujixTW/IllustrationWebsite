@@ -14,7 +14,7 @@ import { userDataType, userDataTypeDef } from "../data/typeModels/user";
 import LinkBtn from "../components/Button/LinkBtn";
 import axios from "axios";
 import { useAppSelector } from "../hooks/redux";
-import userDataHelper from "../utils/userDataHelper";
+import { userDataHelper } from "../utils/fromBackEndDataHelper";
 
 enum pageEnum {
   following,

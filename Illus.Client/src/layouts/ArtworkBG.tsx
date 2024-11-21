@@ -42,7 +42,7 @@ export default function BeforeLoginLayOut(props: { children: JSX.Element }) {
     <>
       <div
         className={`${style["bk"]} ${style["bk-img"]}`}
-        style={{ backgroundImage: `url("${bkData?.imgs[0].content}")` }}
+        style={{ backgroundImage: `url("${bkData?.imgs[0].artworkContent}")` }}
       >
         <div className={style["artist"]}>
           <div>

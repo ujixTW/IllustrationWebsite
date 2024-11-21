@@ -4,6 +4,7 @@ using Illus.Server.Models.Command;
 using Illus.Server.Models.View;
 using Illus.Server.Sservices.Works;
 using Microsoft.AspNetCore.Mvc;
+using System.Web;
 
 namespace Illus.Server.Controllers.Works
 {
@@ -164,7 +165,11 @@ namespace Illus.Server.Controllers.Works
             var userIdStr = Request.Cookies[_userIdKey];
             var success = false;
 
-            var tempImgs = command.Imgs;
+            var tempImgs = new List<IFormFile>();
+            foreach (var img in command.Imgs)
+            {
+                tempImgs.Add(img);
+            }
             tempImgs.Add(command.Cover);
 
             if (int.TryParse(userIdStr, out int userId) && FileHelper.IsImage(tempImgs))
@@ -263,7 +268,7 @@ namespace Illus.Server.Controllers.Works
             var recommandList = new List<TagModel>();
             if (!string.IsNullOrWhiteSpace(st))
             {
-                recommandList = await _workServices.GetSearchRecommand(st);
+                recommandList = await _workServices.GetSearchRecommand(HttpUtility.UrlDecode(st));
             }
             return Ok(recommandList);
         }

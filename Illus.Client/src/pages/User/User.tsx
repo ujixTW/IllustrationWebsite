@@ -7,7 +7,7 @@ import { userDataType } from "../../data/typeModels/user";
 import axios from "axios";
 import { ArtworkListType } from "../../data/typeModels/artwork";
 import CoverEditor from "../../components/User/CoverEditor";
-import userDataHelper from "../../utils/userDataHelper";
+import { userDataHelper } from "../../utils/fromBackEndDataHelper";
 import { NormalBtn, SureBtn } from "../../components/Button/BasicButton";
 import useFollowUser from "../../hooks/useFollowUser";
 import ArtworkListContainer from "../../components/artwork/ArtworkListContainer";

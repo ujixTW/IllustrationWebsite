@@ -15,6 +15,7 @@ import changeWebTitle from "../../utils/changeWebTitle";
 import ArtworkImgCard from "../../components/artwork/ArtworkImgCard";
 import { ChangeEvent } from "../../utils/tsTypesHelper";
 import { artworkOrderType } from "../../data/postData/artwork";
+import { fromBackEndArtworkListDataHelper } from "../../utils/fromBackEndDataHelper";
 
 function ArtworkBar(props: { artwork: ArtworkType }) {
   const { artwork } = props;
@@ -89,7 +90,10 @@ function MyArtworks() {
         },
       })
       .then((res) => {
-        const data = res.data as ArtworkListType;
+        const data = fromBackEndArtworkListDataHelper(
+          res.data as ArtworkListType
+        );
+
         setArtworkArr(data);
       })
       .catch((err) => console.log(err));

@@ -119,7 +119,7 @@ function ArtworkContainer(props: {
       }
     >
       <img
-        src={img.content}
+        src={img.artworkContent}
         alt={artworkAlt}
         className={
           style["artwork"] +

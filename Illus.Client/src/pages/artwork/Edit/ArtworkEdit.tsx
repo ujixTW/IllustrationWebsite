@@ -29,6 +29,8 @@ import {
   ImagePathUrlToFile,
 } from "../../../utils/ImagePathHelper";
 import useUnSavedChange from "../../../hooks/useUnsavedChange";
+import getFormDataHelper from "../../../utils/formDataHelper";
+import Loading from "../../../components/Loading";
 
 function RequiredTag(props: { filled: boolean }) {
   return (
@@ -69,10 +71,13 @@ function ArtworkEdit(props: { isCreate?: boolean }) {
   const [isR18, setIsR18] = useState<boolean | undefined>();
   const [isAI, setIsAI] = useState<boolean | undefined>();
   const [scheduledPost, setScheduledPost] = useState(false);
-  const [tagHistoryArr, setTagHistoryArr] = useState<TagType[]>([]);
+  const [tagHistoryArr, setTagHistoryArr] = useState<string[]>([]);
   const [isDeleteCheck, setIsDeleteCheck] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [sendSuccess, setSendSuccess] = useState(false);
 
   const tagInputRef = useRef<HTMLInputElement>(null);
+  const tagInputFieldRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { artworkId } = useParams();
 
@@ -87,7 +92,8 @@ function ArtworkEdit(props: { isCreate?: boolean }) {
         .get("/api/Work/Tag/GetUserHistory")
         .then((res) => {
           const data: TagType[] = res.data;
-          setTagHistoryArr(data);
+          const contentList = data.map((item) => item.content);
+          setTagHistoryArr(contentList);
         })
         .catch((err) => console.log(err));
     } else {
@@ -98,7 +104,7 @@ function ArtworkEdit(props: { isCreate?: boolean }) {
           if (data.artistId !== userId) return navigate(path.home);
 
           const cover = await ImagePathUrlToFile(data.coverImg, "cover");
-          const imgUrlArr = data.imgs.map((item) => item.content);
+          const imgUrlArr = data.imgs.map((item) => item.artworkContent);
           const imgArr = await ImagePathUrlListToFile(imgUrlArr, "artwork");
 
           postDataDispatch({ type: "setId", payload: data.id });
@@ -118,9 +124,17 @@ function ArtworkEdit(props: { isCreate?: boolean }) {
             payload: data.description,
           });
           postDataDispatch({ type: "editIsAI", payload: data.isAI });
+          setIsAI(data.isAI);
           postDataDispatch({ type: "editIsR18", payload: data.isR18 });
-          postDataDispatch({ type: "editPostTime", payload: data.postTime });
-          postDataDispatch({ type: "editTag", payload: data.tags });
+          setIsR18(data.isR18);
+          postDataDispatch({
+            type: "editPostTime",
+            payload: new Date(data.postTime),
+          });
+          postDataDispatch({
+            type: "editTag",
+            payload: data.tags.map((item) => item.content),
+          });
           postDataDispatch({ type: "editTitle", payload: data.title });
         })
         .catch(() => navigate("*"));
@@ -146,14 +160,6 @@ function ArtworkEdit(props: { isCreate?: boolean }) {
       isAI !== undefined &&
       isR18 !== undefined
     ) {
-      postDataDispatch({
-        type: "editTitle",
-        payload: postData.title.replace(htmlReg, "").trim(),
-      });
-      postDataDispatch({
-        type: "editDescription",
-        payload: postData.description.replace(htmlReg, "").trimEnd(),
-      });
       setComplete(true);
     } else {
       setComplete(false);
@@ -164,7 +170,26 @@ function ArtworkEdit(props: { isCreate?: boolean }) {
     if (!scheduledPost)
       postDataDispatch({ type: "editPostTime", payload: new Date() });
   }, [scheduledPost]);
+  useEffect(() => {
+    if (sendSuccess)
+      navigate(path.artworks.editSuccess, {
+        state: { artworkData: postData, isCreate: props.isCreate === true },
+      });
+  }, [sendSuccess]);
 
+  const handleTagInputBlur = async () => {
+    await setTimeout(() => {
+      const field = tagInputFieldRef.current;
+      if (field) {
+        const linkArr = field.children[1].children[0];
+
+        if (
+          [...linkArr.children].every((item) => item !== document.activeElement)
+        )
+          handleEditTag();
+      }
+    }, 0);
+  };
   const handleTaginputKeyDown = (e: KeyInputEvent) => {
     if (e.key === "Enter") {
       handleEditTag();
@@ -178,9 +203,9 @@ function ArtworkEdit(props: { isCreate?: boolean }) {
       if (
         tagInput.replace(htmlReg, "").trim() !== "" &&
         postData.tags.length < 10 &&
-        !postData.tags.some((item) => item.content == tagInput)
+        !postData.tags.some((item) => item == tagInput)
       ) {
-        listCopy.push({ id: -1, content: tagInput });
+        listCopy.push(tagInput);
       }
       setTagInput("");
     }
@@ -188,38 +213,55 @@ function ArtworkEdit(props: { isCreate?: boolean }) {
   };
 
   const handleSend = async () => {
+    const copyData = Object.assign({}, postData);
+
+    setIsLoading(true);
+
+    copyData.title = copyData.title.replace(htmlReg, "").trim();
+    copyData.description = copyData.description.replace(htmlReg, "").trimEnd();
+    postDataDispatch({ type: "editTitle", payload: copyData.title });
+    postDataDispatch({
+      type: "editDescription",
+      payload: copyData.description,
+    });
+    const formData = getFormDataHelper(copyData);
+
     await axios
-      .post(`/api/Work/${props.isCreate ? "Add" : "Edit"}`, postData)
+      .post(`/api/Work/${props.isCreate ? "Add" : "Edit"}`, formData)
       .then(() => {
         setIsDirty(false);
-        navigate(path.artworks.editSuccess, {
-          state: { artworkData: postData, isCreate: props.isCreate === true },
-        });
+        setIsLoading(false);
+        setSendSuccess(true);
       })
-      .catch(() =>
-        alert(`${props.isCreate ? "投稿" : "編輯"}失敗，請稍後再試`)
-      );
+      .catch(() => {
+        alert(`${props.isCreate ? "投稿" : "編輯"}失敗，請稍後再試`);
+        setIsLoading(false);
+      });
   };
-
   const handleDelete = async () => {
     await axios
       .post(`/api/Work/Delete?workId=${artworkId}&workArtistId=${userId}`)
-      .then(() => navigate(path.home))
+      .then(() => {
+        setIsDirty(false);
+        setTimeout(() => {
+          navigate(path.home);
+        }, 0);
+      })
       .catch(() => alert("刪除失敗，請稍後再試"));
   };
 
   const tagList = postData.tags.map((_item, _index) => (
     <div
-      key={_item.id == -1 ? _index * -1 : _item.id}
+      key={_index}
       className={style["artwork-tag"]}
       onClick={() => handleEditTag(_index)}
     >
-      {_item.content}
+      {_item}
     </div>
   ));
-  const tagHisList = tagHistoryArr.map((_item) => (
+  const tagHisList = tagHistoryArr.map((_item, _index) => (
     <button
-      key={_item.id}
+      key={_index}
       type="button"
       className={style["history-tag"]}
       onClick={() => {
@@ -228,7 +270,7 @@ function ArtworkEdit(props: { isCreate?: boolean }) {
         postDataDispatch({ type: "editTag", payload: [...listCopy] });
       }}
     >
-      {_item.content}
+      {_item}
     </button>
   ));
 
@@ -288,7 +330,7 @@ function ArtworkEdit(props: { isCreate?: boolean }) {
                 <RequiredTag filled={postData.tags.length > 0} />
                 {tagList}
                 {postData.tags.length < 10 && (
-                  <div className={style["input-box"]}>
+                  <div className={style["input-box"]} ref={tagInputFieldRef}>
                     <input
                       type="text"
                       ref={tagInputRef}
@@ -299,12 +341,14 @@ function ArtworkEdit(props: { isCreate?: boolean }) {
                         if (text.length <= 30) setTagInput(text);
                       }}
                       onKeyDown={handleTaginputKeyDown}
-                      onBlur={() => handleEditTag()}
+                      onBlur={handleTagInputBlur}
                       className={style["tag-input"]}
                       placeholder="標籤"
+                      autoComplete="off"
                     />
                     <AutoComplete
                       inputText={tagInput}
+                      setInputText={setTagInput}
                       target={tagInputRef}
                       changeAll
                     />
@@ -469,6 +513,7 @@ function ArtworkEdit(props: { isCreate?: boolean }) {
           </div>
         </div>
       </div>
+      {isLoading && <Loading />}
     </div>
   );
 }

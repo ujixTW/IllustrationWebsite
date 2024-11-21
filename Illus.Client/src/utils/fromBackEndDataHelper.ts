@@ -1,6 +1,8 @@
+import { ArtworkListType, ArtworkType } from "../data/typeModels/artwork";
 import { userDataType } from "../data/typeModels/user";
 import { ImagePathHelper } from "./ImagePathHelper";
 
+// userData
 function userHeadshotHelper(headshot: string | null) {
   return headshot === null || headshot.trim() === ""
     ? "/defaultImg/defaultHeadshot.svg"
@@ -20,6 +22,19 @@ function userDataHelper(data: userDataType) {
   if (dataCopy.profile === null) dataCopy.profile = "";
   return dataCopy;
 }
+export { userDataHelper, userHeadshotHelper };
 
-export { userHeadshotHelper };
-export default userDataHelper;
+//artwork data
+function fromBackEndArtworkDataHelper(beData: ArtworkType) {
+  const dataCopy = Object.assign({}, beData);
+  dataCopy.postTime = new Date(beData.postTime);
+  return dataCopy;
+}
+function fromBackEndArtworkListDataHelper(beData: ArtworkListType) {
+  const dataCopy = Object.assign({}, beData);
+  dataCopy.artworkList = dataCopy.artworkList.map((item) =>
+    fromBackEndArtworkDataHelper(item)
+  );
+  return dataCopy;
+}
+export { fromBackEndArtworkDataHelper, fromBackEndArtworkListDataHelper };

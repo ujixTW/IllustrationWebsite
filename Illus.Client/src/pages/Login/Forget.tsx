@@ -8,8 +8,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import path from "../../data/JSON/path.json";
 import changeWebTitle from "../../utils/changeWebTitle";
-import InputGuid from "../../components/Account/InputGuid";
 import Loading from "../../components/Loading";
+import InputAccount from "../../components/Account/InputAccount";
 
 enum stepEnum {
   email = 0,
@@ -103,9 +103,10 @@ function Forget() {
             onChange={(e: ChangeEvent) => setEmail(e.target.value)}
           />
         ) : step == stepEnum.captcha ? (
-          <InputGuid
+          <InputAccount
             placeholder="驗證碼"
             value={captcha}
+            autoComplete="off"
             onChange={(e: ChangeEvent) => setCaptcha(e.target.value)}
           />
         ) : (

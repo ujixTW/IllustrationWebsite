@@ -27,7 +27,7 @@ function ArtworkOrigin(props: {
           <ArtworkSwitchIndex index={originId + 1} max={artwork.imgs.length} />
         )}
         <img
-          src={artwork.imgs[originId].content}
+          src={artwork.imgs[originId].artworkContent}
           alt={artworkAlt}
           className={style["artwork"]}
           onClick={() => {

@@ -17,7 +17,7 @@ function ImagePathListHelper(pathList: string[]) {
 function ArtworkImgListHelper(imgArr: ArtworkImgType[]) {
   const imgArrCopy = imgArr.map((img) => Object.assign({}, img));
   return imgArrCopy.map((img): ArtworkImgType => {
-    return { id: img.id, content: ImagePathHelper(img.content) };
+    return { id: img.id, artworkContent: ImagePathHelper(img.artworkContent) };
   });
 }
 async function ImagePathUrlToFile(_url: string, _name: string) {

@@ -1,5 +1,5 @@
 type TagType = { id: number; content: string };
-type ArtworkImgType = { id: number; content: string };
+type ArtworkImgType = { id: number; artworkContent: string };
 type ArtworkType = {
   id: number;
   artistId: number;

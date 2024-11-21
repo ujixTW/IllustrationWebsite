@@ -5,7 +5,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import path from "../../data/JSON/path.json";
 import useFollowUser from "../../hooks/useFollowUser";
-import userDataHelper from "../../utils/userDataHelper";
+import { userDataHelper } from "../../utils/fromBackEndDataHelper";
 import DropDown from "../DropDown";
 
 function ArtistCard(props: { artistId: number }) {

@@ -71,7 +71,12 @@ function SearchBox() {
             <SearchMark className={style["mark"]} />
           </button>
         </div>
-        <AutoComplete inputText={searchText} target={searchRef} isLink />
+        <AutoComplete
+          inputText={searchText}
+          setInputText={setSearchText}
+          target={searchRef}
+          isLink
+        />
       </form>
     </search>
   );

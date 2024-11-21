@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { userDataType } from "../typeModels/user";
-import userDataHelper from "../../utils/userDataHelper";
+import { userDataHelper } from "../../utils/fromBackEndDataHelper";
 
 const initState: userDataType = {
   id: -1,

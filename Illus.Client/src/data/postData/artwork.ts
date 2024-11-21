@@ -1,5 +1,3 @@
-import { TagType } from "../typeModels/artwork";
-
 enum artworkOrderType {
   postTime = 0,
   hot = 1,
@@ -16,9 +14,10 @@ type ArtworkPostData = {
   isR18: boolean;
   isAI: boolean;
   postTime: Date;
+  isOpen: boolean;
   imgs: File[];
   cover?: File;
-  tags: TagType[];
+  tags: string[];
 };
 
 const ArtworkPostDataDef: ArtworkPostData = {
@@ -28,6 +27,7 @@ const ArtworkPostDataDef: ArtworkPostData = {
   isR18: false,
   isAI: false,
   postTime: new Date(),
+  isOpen: true,
   imgs: [],
   cover: undefined,
   tags: [],

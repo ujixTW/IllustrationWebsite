@@ -5,7 +5,7 @@ import { ArtworkType } from "../../data/typeModels/artwork";
 import { Link } from "react-router-dom";
 import ArtworkImgCard from "./ArtworkImgCard";
 import ArtistNametabe from "../ArtistCard/ArtistNametabe";
-import { userHeadshotHelper } from "../../utils/userDataHelper";
+import { userHeadshotHelper } from "../../utils/fromBackEndDataHelper";
 
 function ArtworkCard(props: {
   artwork: ArtworkType;

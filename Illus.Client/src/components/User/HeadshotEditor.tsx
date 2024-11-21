@@ -11,7 +11,7 @@ import {
   ImagePathUrlToFile,
   IsDefaultImg,
 } from "../../utils/ImagePathHelper";
-import { userHeadshotHelper } from "../../utils/userDataHelper";
+import { userHeadshotHelper } from "../../utils/fromBackEndDataHelper";
 import { getFormFileHelper } from "../../utils/formDataHelper";
 
 function HeadshotEditor(props: {
@@ -83,7 +83,6 @@ function HeadshotEditor(props: {
         style={{ transform: `translateY(${props.offsetY})` }}
       >
         <img src={imgUrl} alt="headshot" className={style["img"]} />
-        {isLoading && <Loading />}
         {props.isOwn && (
           <button
             type="button"
@@ -135,6 +134,7 @@ function HeadshotEditor(props: {
           </div>
         </ImgCutter>
       )}
+      {isLoading && <Loading />}
     </>
   );
 }

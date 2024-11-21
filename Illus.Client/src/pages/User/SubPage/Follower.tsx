@@ -12,7 +12,7 @@ import axios from "axios";
 import { followListType, userDataType } from "../../../data/typeModels/user";
 import { pageParma } from "../../../utils/parmasHelper";
 import PageNav from "../../../components/PageNav";
-import userDataHelper from "../../../utils/userDataHelper";
+import { userDataHelper } from "../../../utils/fromBackEndDataHelper";
 import CheckBtn from "../../../components/Button/CheckBtn";
 import ArtistCard from "../../../components/ArtistCard/ArtistCard";
 

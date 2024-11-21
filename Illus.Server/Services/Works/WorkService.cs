@@ -32,10 +32,10 @@ namespace Illus.Server.Sservices.Works
                     .Include(p => p.Tags)
                     .Where(p =>
                         p.IsOpen == true &&
-                        (!command.IsAI) ? p.IsAI == false : true &&
-                        (!command.IsR18) ? p.IsR18 == false : true &&
-                        keywordList.Any() ?
-                            keywordList.All(w => p.Tags.Any(t => t.Content.Equals(w)) || p.Title.Contains(w)) : true)
+                        ((!command.IsAI) ? p.IsAI == false : true) &&
+                        ((!command.IsR18) ? p.IsR18 == false : true) &&
+                        (keywordList.Any() ?
+                            keywordList.All(w => p.Tags.Any(t => t.Content.Equals(w)) || p.Title.Contains(w)) : true))
                     .Include(p => p.Artist)
                     .Include(p => p.Likes.Where(l => l.UserId == command.UserId && l.Status == true).FirstOrDefault())
                     .AsNoTracking();
@@ -126,8 +126,8 @@ namespace Illus.Server.Sservices.Works
                 var list = _context.Artwork
                     .AsNoTracking()
                     .Where(p =>
-                        (!command.IsR18) ? p.IsR18 == false : true &&
-                        (isOwn) ? p.IsDelete == false : p.IsOpen == true &&
+                        ((!command.IsR18) ? p.IsR18 == false : true) &&
+                        ((isOwn) ? p.IsDelete == false : p.IsOpen == true) &&
                         idList.Any(id => id == p.ArtistId))
                     .Include(p => p.Likes
                         .Where(l => l.UserId == command.UserId && l.Status == true))
@@ -171,7 +171,7 @@ namespace Illus.Server.Sservices.Works
                         IsAI = work.IsAI,
                         LikeCounts = work.LikeCounts,
                         ReadCounts = work.ReadCounts,
-                        PostTime = work.PostTime,
+                        PostTime = work.PostTime.ToString("u"),
                         IsLike = work.Likes.Any(),
                         ArtistName = work.Artist.Nickname,
                         ArtistHeadshotContent =
@@ -269,11 +269,15 @@ namespace Illus.Server.Sservices.Works
                     .Include(p => p.Images)
                     .Include(p => p.Artist)
                     .Include(p => p.Tags)
-                    .Include(p => p.Likes.Where(l => l.UserId == userId && l.Status == true).FirstOrDefault())
-                    .SingleOrDefault(
-                        p => p.Id == id &&
-                        (p.ArtistId == userId) ? p.IsDelete == false : p.IsOpen == true &&
-                        (p.ArtistId != userId) ? p.PostTime <= today : true);
+                    .Where(p => p.Id == id &&
+                        ((userId != null && p.ArtistId == userId) ? p.IsDelete == false : p.IsOpen == true) &&
+                        ((userId != null && p.ArtistId != userId) ? p.PostTime <= today : true))
+                    .SingleOrDefault();
+                var isLike = userId != null ?
+                    _context.Like
+                    .AsNoTracking()
+                    .FirstOrDefault(p => p.ArtworkId == id && p.UserId == userId)
+                    : null;
                 var history = _context.History.Where(p => p.ArtworkId == id).ToList();
 
                 if (work != null)
@@ -313,13 +317,14 @@ namespace Illus.Server.Sservices.Works
                         Id = work.Id,
                         ArtistId = work.ArtistId,
                         Title = work.Title,
+                        CoverImg = work.CoverImg,
                         Description = work.Description,
                         LikeCounts = work.LikeCounts,
                         ReadCounts = work.ReadCounts,
                         IsR18 = work.IsR18,
                         IsAI = work.IsAI,
-                        IsLike = work.Likes.Any(),
-                        PostTime = work.PostTime,
+                        IsLike = isLike != null ? isLike.Status : false,
+                        PostTime = work.PostTime.ToString("u"),
                         ArtistName = work.Artist.Nickname,
                         ArtistHeadshotContent = (string.IsNullOrWhiteSpace(work.Artist.HeadshotContent)) ? string.Empty : work.Artist.HeadshotContent,
                         Tags = work.Tags,
@@ -369,7 +374,7 @@ namespace Illus.Server.Sservices.Works
                         ArtistId = artist.Id,
                         Title = work.Title,
                         CoverImg = work.CoverImg,
-                        PostTime = history.BrowseTime,
+                        PostTime = history.BrowseTime.ToString("u"),
                         ArtistName = artist.Nickname,
                         ArtistHeadshotContent = string.IsNullOrEmpty(artist.HeadshotContent) ? string.Empty : artist.HeadshotContent
                     });
@@ -432,42 +437,50 @@ namespace Illus.Server.Sservices.Works
             try
             {
                 var today = DateTime.Now;
-                #region 創建新作品至資料庫
 
-                var newWork = new ArtworkModel
+
+                var user = await _context.User.Where(p => p.Id == userId).SingleOrDefaultAsync();
+
+                if (user != null)
                 {
-                    ArtistId = userId,
-                    Title = HttpUtility.HtmlEncode(command.Title),
-                    Description = HttpUtility.HtmlEncode(command.Description),
-                    IsR18 = command.IsR18,
-                    IsAI = command.IsAI,
-                    PostTime = (command.PostTime >= today) ? command.PostTime : today,
-                    IsOpen = command.IsOpen,
-                    Tags = await _checkTagExisting(command.Tags),
-                };
+                    #region 創建新作品至資料庫
+                    var tags = await _checkTagExisting(command.Tags);
 
-                _context.Artwork.Add(newWork);
-                _context.SaveChanges();
+                    var newWork = new ArtworkModel
+                    {
+                        ArtistId = userId,
+                        Title = HttpUtility.HtmlEncode(command.Title),
+                        Description = (string.IsNullOrWhiteSpace(command.Description)) ? "" : HttpUtility.HtmlEncode(command.Description),
+                        IsR18 = command.IsR18,
+                        IsAI = command.IsAI,
+                        PostTime = (command.PostTime >= today) ? command.PostTime : today,
+                        IsOpen = command.IsOpen,
+                        Tags = tags,
+                    };
+                    user.Artwork.Add(newWork);
+                    _context.SaveChanges();
 
-                #endregion
-                #region 將作品圖片存入伺服器
-                var workId = newWork.Id;
-                var workPaths = await FileHelper.SaveImageAsync(command.Imgs, workId, (int)FileHelper.imgType.Work);
-                var coverPath = await FileHelper.SaveImageAsync(command.Cover, workId, (int)FileHelper.imgType.WorkCover);
-                #endregion
-                #region 將路徑資料寫入資料庫
+                    #endregion
+                    #region 將作品圖片存入伺服器
+                    var workId = newWork.Id;
+                    var workPaths = await FileHelper.SaveImageAsync(command.Imgs, workId, (int)FileHelper.imgType.Work);
+                    var coverPath = await FileHelper.SaveImageAsync(command.Cover, workId, (int)FileHelper.imgType.WorkCover);
+                    #endregion
+                    #region 將路徑資料寫入資料庫
 
-                newWork.CoverImg = coverPath;
-                newWork.Images = new List<ImgModel>();
-                foreach (var path in workPaths)
-                {
-                    newWork.Images.Add(new ImgModel { ArtworkContent = path });
+                    newWork.CoverImg = coverPath;
+                    newWork.Images = new List<ImgModel>();
+                    foreach (var path in workPaths)
+                    {
+                        newWork.Images.Add(new ImgModel { ArtworkContent = path });
+                    }
+                    _context.SaveChanges();
+
+                    #endregion
+
+                    success = true;
                 }
-                _context.SaveChanges();
 
-                #endregion
-
-                success = true;
             }
             catch (Exception ex)
             {
@@ -492,7 +505,9 @@ namespace Illus.Server.Sservices.Works
                     {
                         imgPathList.Add(img.ArtworkContent);
                     }
+                    if (work.CoverImg != null) imgPathList.Add(work.CoverImg);
                     FileHelper.DeleteImage(imgPathList);
+
 
                     work.IsDelete = true;
                     _context.SaveChanges();
@@ -518,7 +533,7 @@ namespace Illus.Server.Sservices.Works
                 {
                     work.Title = HttpUtility.HtmlEncode(command.Title);
                     work.CoverImg = await FileHelper.SaveImageAsync(command.Cover, command.Id, (int)FileHelper.imgType.WorkCover);
-                    work.Description = HttpUtility.HtmlEncode(command.Description);
+                    work.Description = (string.IsNullOrWhiteSpace(command.Description)) ? "" : HttpUtility.HtmlEncode(command.Description);
                     work.IsR18 = command.IsR18;
                     work.IsAI = command.IsAI;
                     if (work.PostTime != command.PostTime)
@@ -621,7 +636,7 @@ namespace Illus.Server.Sservices.Works
                     {
                         if (work.Tags.All(t => t.Id != command.Id) || work.Tags.All(t => t.Content != command.Content))
                         {
-                            var tagList = await _checkTagExisting(new List<EditTagCommand> { command });
+                            var tagList = await _checkTagExisting(new List<string> { command.Content });
                             work.Tags.Add(tagList[0]);
                         }
                     }
@@ -638,7 +653,7 @@ namespace Illus.Server.Sservices.Works
                         }
                         else
                         {
-                            var tagList = await _checkTagExisting(new List<EditTagCommand> { command });
+                            var tagList = await _checkTagExisting(new List<string> { command.Content });
                             work.Tags.Add(tagList[0]);
                         }
                     }
@@ -754,23 +769,23 @@ namespace Illus.Server.Sservices.Works
             return result;
         }
 
-        private async Task<List<TagModel>> _checkTagExisting(List<EditTagCommand> inputTags)
+        private async Task<List<TagModel>> _checkTagExisting(List<string> inputTags)
         {
             if (inputTags.Any())
             {
                 var dbTags = await _context.Tag
-                .Where(p => inputTags.Any(t => p.Id == t.Id))
-                .Union(_context.Tag.Where(p => inputTags.Any(t => p.Content == t.Content.Trim())))
+                .Where(p => inputTags.Any(t => p.Content == t.Trim()))
                 .ToListAsync();
 
                 foreach (var input in inputTags)
                 {
-                    if (StringHelper.HasHtml(input.Content)) continue;
+                    var inputTrim = input.Trim();
+                    if (StringHelper.HasHtml(inputTrim)) continue;
 
-                    if (dbTags.All(p => p.Id != input.Id) &&
-                        dbTags.All(P => P.Content != input.Content))
+                    if (
+                        dbTags.All(P => P.Content != inputTrim))
                     {
-                        dbTags.Add(new TagModel { Content = input.Content });
+                        dbTags.Add(new TagModel { Content = inputTrim });
                     }
                 }
                 _context.SaveChanges();
@@ -778,12 +793,14 @@ namespace Illus.Server.Sservices.Works
                 var tagList = new List<TagModel>();
                 foreach (var input in inputTags)
                 {
-                    if (StringHelper.HasHtml(input.Content)) continue;
+                    var inputTrim = input.Trim();
+
+                    if (StringHelper.HasHtml(inputTrim)) continue;
 
                     var hasTag = false;
                     foreach (var tag in tagList)
                     {
-                        if (input.Id == tag.Id || input.Content.Trim() == tag.Content)
+                        if (inputTrim == tag.Content)
                         {
                             hasTag = true;
                             break;
@@ -794,7 +811,7 @@ namespace Illus.Server.Sservices.Works
                     {
                         foreach (var tag in dbTags)
                         {
-                            if (tag.Id == input.Id || tag.Content == input.Content.Trim())
+                            if (tag.Content == inputTrim)
                             {
                                 tagList.Add(tag); break;
                             }

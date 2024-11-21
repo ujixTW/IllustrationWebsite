@@ -1,5 +1,4 @@
 import { ArtworkPostData } from "../postData/artwork";
-import { TagType } from "../typeModels/artwork";
 
 type artworkPostReducerAct =
   | { type: "setId"; payload: number }
@@ -11,8 +10,8 @@ type artworkPostReducerAct =
   | { type: "editIsR18"; payload: boolean }
   | { type: "editIsAI"; payload: boolean }
   | { type: "editPostTime"; payload: Date }
-  | { type: "addTag"; payload: TagType }
-  | { type: "editTag"; payload: TagType[] };
+  | { type: "addTag"; payload: string }
+  | { type: "editTag"; payload: string[] };
 
 const artworkPostReducer = function (
   state: ArtworkPostData,
