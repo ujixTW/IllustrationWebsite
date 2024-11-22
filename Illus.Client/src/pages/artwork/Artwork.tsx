@@ -17,6 +17,7 @@ import axios from "axios";
 import { useAppSelector } from "../../hooks/redux";
 import useFollowUser from "../../hooks/useFollowUser";
 import { userDataType } from "../../data/typeModels/user";
+import { fromBackEndArtworkDataHelper } from "../../utils/fromBackEndDataHelper";
 
 function Base(props: { artwork: ArtworkType; children: JSX.Element }) {
   const { artwork } = props;
@@ -106,7 +107,7 @@ function Artwork() {
   const { artworkId } = useParams();
   const [artwork, setArtwork] = useState<ArtworkType | undefined>(undefined);
   const [showMore, setShowMore] = useState(false);
-  const [originId, setOriginId] = useState(-1);
+  const [originIndex, setOriginIndex] = useState(-1);
   const [imgIndex, setImgIndex] = useState(1);
   const navigate = useNavigate();
   const artworkAlt = artwork
@@ -124,10 +125,11 @@ function Artwork() {
         data.artistHeadshotContent = ImagePathHelper(
           data.artistHeadshotContent
         );
-        setArtwork(data);
+
+        setArtwork(fromBackEndArtworkDataHelper(data));
       })
       .catch(() => navigate("notFound"));
-  }, []);
+  }, [artworkId]);
   useEffect(() => {
     if (artwork) {
       const titleStart =
@@ -139,12 +141,12 @@ function Artwork() {
     }
   }, [artwork]);
 
-  return originId > -1 && artwork ? (
+  return originIndex > -1 && artwork ? (
     <ArtworkOrigin
       artwork={artwork}
       artworkAlt={artworkAlt}
-      originId={originId}
-      setOriginId={setOriginId}
+      originIndex={originIndex}
+      setOriginIndex={setOriginIndex}
       setImgIndex={setImgIndex}
     />
   ) : artwork ? (
@@ -152,10 +154,10 @@ function Artwork() {
       <ArtworkContainer
         artwork={artwork}
         artworkAlt={artworkAlt}
-        originId={originId}
+        originIndex={originIndex}
         imgIndex={imgIndex}
         showMore={showMore}
-        setOriginId={setOriginId}
+        setOriginIndex={setOriginIndex}
         setImgIndex={setImgIndex}
         setShowMore={setShowMore}
       />

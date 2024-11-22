@@ -9,6 +9,7 @@
   .cover {
     height: 200px;
     position: relative;
+    background-color: var(--blackMask);
     background-size: cover;
     background-position: center center;
   }

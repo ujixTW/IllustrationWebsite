@@ -17,11 +17,11 @@ import { useAppSelector } from "../../hooks/redux";
 function ArtworkContainer(props: {
   artwork: ArtworkType;
   artworkAlt: string;
-  originId: number;
+  originIndex: number;
   imgIndex: number;
   showMore: boolean;
   setShowMore: React.Dispatch<React.SetStateAction<boolean>>;
-  setOriginId: React.Dispatch<React.SetStateAction<number>>;
+  setOriginIndex: React.Dispatch<React.SetStateAction<number>>;
   setImgIndex: React.Dispatch<React.SetStateAction<number>>;
 }) {
   const {
@@ -30,7 +30,7 @@ function ArtworkContainer(props: {
     imgIndex,
     showMore,
     setShowMore,
-    setOriginId,
+    setOriginIndex,
     setImgIndex,
   } = props;
   const isLogin = useAppSelector((state) => state.login);
@@ -108,14 +108,14 @@ function ArtworkContainer(props: {
     return target.offsetTop + 78;
   };
 
-  const imgArr = artwork.imgs.map((img) => (
+  const imgArr = artwork.imgs.map((img, index) => (
     <div
       key={artwork.title + " " + img.id}
       ref={(el: HTMLDivElement) => {
-        artworkRefArr.current[img.id] = el;
+        artworkRefArr.current[index] = el;
       }}
       className={
-        style["artwork-box"] + (img.id == 0 ? " " + style["first"] : "")
+        style["artwork-box"] + (index == 0 ? " " + style["first"] : "")
       }
     >
       <img
@@ -128,7 +128,7 @@ function ArtworkContainer(props: {
         onClick={() => {
           if (showMore || artwork.imgs.length == 1) {
             if (!showMore) setShowMore(true);
-            setOriginId(img.id);
+            setOriginIndex(index);
           } else setShowMore(true);
         }}
       />
@@ -234,13 +234,13 @@ function ArtworkContainer(props: {
                   <dt>
                     <Like className={style["icon"]} />
                   </dt>
-                  <dd>{artwork.likeCount.toLocaleString()}</dd>
+                  <dd>{artwork.likeCounts}</dd>
                 </dl>
                 <dl>
                   <dt>
                     <Show className={style["icon"]} />
                   </dt>
-                  <dd>{artwork.readCount.toLocaleString()}</dd>
+                  <dd>{artwork.readCounts}</dd>
                 </dl>
               </div>
             </div>

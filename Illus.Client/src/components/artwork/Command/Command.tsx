@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import style from "../../../assets/CSS/components/artwork/Command/Command.module.css";
 import ThreeDot from "../../../assets/SVG/threeDot.svg?react";
 import path from "../../../data/JSON/path.json";
@@ -36,18 +36,19 @@ function Command(props: { command: MessageType; today: Date }) {
   useEffect(() => {
     if (isEdit) setEditText(message);
   }, [isEdit]);
-  const handleDlete = useCallback(async () => {
+  const handleDlete = async () => {
     await axios
       .post(`/api/Message/Delete/${command.id}`)
       .then(() => {
         setMessage("(--- 留言已刪除 ---)");
         setIsOwn(false);
+        setIsdelete(false);
       })
       .catch(() => {
         alert("刪除失敗");
       });
-  }, [command]);
-  const handleEditSure = useCallback(async () => {
+  };
+  const handleEditSure = async () => {
     if (editText.trim() == "") return;
     setIsEdit(false);
     let textCopy = editText.replace(htmlReg, "").trim();
@@ -66,7 +67,7 @@ function Command(props: { command: MessageType; today: Date }) {
           alert("修改失敗!請稍後再試");
         });
     }
-  }, [command]);
+  };
   const handleCancle = () => {
     setIsEdit(false);
   };

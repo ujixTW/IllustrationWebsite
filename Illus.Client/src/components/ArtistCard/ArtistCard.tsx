@@ -7,9 +7,11 @@ import path from "../../data/JSON/path.json";
 import useFollowUser from "../../hooks/useFollowUser";
 import { userDataHelper } from "../../utils/fromBackEndDataHelper";
 import DropDown from "../DropDown";
+import { useAppSelector } from "../../hooks/redux";
 
 function ArtistCard(props: { artistId: number }) {
   const [data, setData] = useState<userDataType | undefined>(undefined);
+  const userId = useAppSelector((state) => state.userData.id);
   const { followBtn, setIsFollow } = useFollowUser(props.artistId);
 
   useEffect(() => {
@@ -26,12 +28,10 @@ function ArtistCard(props: { artistId: number }) {
   return (
     <DropDown up>
       <div className={style["artist-detail"]}>
-        {data?.cover != "" && (
-          <div
-            className={style["cover"]}
-            style={{ backgroundImage: `url("${data?.cover}")` }}
-          ></div>
-        )}
+        <div
+          className={style["cover"]}
+          style={{ backgroundImage: `url("${data?.cover}")` }}
+        ></div>
         <div className={style["content"]}>
           <div className={style["headshot"]}>
             <img
@@ -47,7 +47,9 @@ function ArtistCard(props: { artistId: number }) {
             {data?.profile}
             <Link to={path.user.user + props.artistId}>查看更多</Link>
           </div>
-          <div className={style["follow"]}>{followBtn}</div>
+          <div className={style["follow"]}>
+            {userId !== props.artistId && followBtn}
+          </div>
         </div>
       </div>
     </DropDown>

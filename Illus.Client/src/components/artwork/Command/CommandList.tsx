@@ -10,12 +10,13 @@ import { ChangeTextareaEvent } from "../../../utils/tsTypesHelper";
 import { htmlReg } from "../../../utils/regexHelper";
 import { useAppSelector } from "../../../hooks/redux";
 import { CommandPostData } from "../../../data/postData/artwork";
+import { fromBackEndMessageListDataHelper } from "../../../utils/fromBackEndDataHelper";
 function CommandList() {
   const { artworkId } = useParams();
   const headshot = useAppSelector((state) => state.userData.headshot);
   const emailConfirmed = useAppSelector((state) => state.userData.emailConfirm);
   const [commandArr, setCommandArr] = useState<MessageType[]>([]);
-  const [hasMore, setHasMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [inputCommand, setInputCommand] = useState("");
   const pageCount = 10;
   const today = new Date();
@@ -36,13 +37,14 @@ function CommandList() {
       })
       .then((res) => {
         const data: MessageType[] = res.data;
-        if (data.length < pageCount) setHasMore(true);
+        const mesList = fromBackEndMessageListDataHelper(data);
+        if (mesList.length < pageCount) setHasMore(false);
         if (lastId) {
           const copyList = [...commandArr];
-          copyList.push(...data);
+          copyList.push(...mesList);
           setCommandArr(copyList);
         } else {
-          setCommandArr(data);
+          setCommandArr(mesList);
         }
       })
       .catch((err) => console.log(err));

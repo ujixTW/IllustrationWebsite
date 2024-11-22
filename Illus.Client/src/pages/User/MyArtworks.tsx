@@ -37,9 +37,9 @@ function ArtworkBar(props: { artwork: ArtworkType }) {
         </div>
       </div>
       {/* 讚 */}
-      <div className={style["col"]}>{artwork.likeCount}</div>
+      <div className={style["col"]}>{artwork.likeCounts}</div>
       {/* 瀏覽量 */}
-      <div className={style["col"]}>{artwork.readCount}</div>
+      <div className={style["col"]}>{artwork.readCounts}</div>
       {/* 日期 */}
       <div className={style["col"]}>
         {artwork.postTime.getFullYear()}年{artwork.postTime.getMonth() + 1}月

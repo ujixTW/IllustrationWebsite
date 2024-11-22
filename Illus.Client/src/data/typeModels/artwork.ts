@@ -6,8 +6,8 @@ type ArtworkType = {
   title: string;
   description: string;
   coverImg: string;
-  likeCount: number;
-  readCount: number;
+  likeCounts: number;
+  readCounts: number;
   isLike: boolean;
   isR18: boolean;
   isAI: boolean;
@@ -28,8 +28,8 @@ const ArtworkTypeDef: ArtworkType = {
   title: "",
   description: "",
   coverImg: "",
-  likeCount: 0,
-  readCount: 0,
+  likeCounts: 0,
+  readCounts: 0,
   isLike: false,
   isR18: false,
   isAI: false,

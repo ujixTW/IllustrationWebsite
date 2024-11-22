@@ -9,8 +9,8 @@ const testArtwork: ArtworkType = {
     "對這件作品的簡述 對這件作品的簡述 對這件作品的簡述 對這件作品的簡述 ",
   coverImg:
     "D:/My Works/2024/code/IllustrationWebsite/IllustrationWebsite/Illus.Client/public/Work/img-costdown/0 cover.png",
-  likeCount: 0,
-  readCount: 0,
+  likeCounts: 0,
+  readCounts: 0,
   isLike: false,
   isR18: false,
   isAI: false,

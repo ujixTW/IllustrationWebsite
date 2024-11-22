@@ -1,4 +1,5 @@
 import { ArtworkListType, ArtworkType } from "../data/typeModels/artwork";
+import { MessageType } from "../data/typeModels/message";
 import { userDataType } from "../data/typeModels/user";
 import { ImagePathHelper } from "./ImagePathHelper";
 
@@ -38,3 +39,14 @@ function fromBackEndArtworkListDataHelper(beData: ArtworkListType) {
   return dataCopy;
 }
 export { fromBackEndArtworkDataHelper, fromBackEndArtworkListDataHelper };
+
+//massage data
+function fromBackEndMessageDataHelper(beData: MessageType) {
+  const dataCopy = Object.assign({}, beData);
+  dataCopy.createTime = new Date(beData.createTime);
+  return dataCopy;
+}
+function fromBackEndMessageListDataHelper(beData: MessageType[]) {
+  return beData.map((item) => fromBackEndMessageDataHelper(item));
+}
+export { fromBackEndMessageDataHelper, fromBackEndMessageListDataHelper };

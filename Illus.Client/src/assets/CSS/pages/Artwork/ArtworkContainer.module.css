@@ -89,7 +89,7 @@
   }
   .operate {
     display: flex;
-    padding: 0 1rem;
+    padding: 0.5rem 1rem;
     .box {
       display: flex;
       margin-left: auto;

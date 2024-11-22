@@ -4,7 +4,7 @@
   left: 0;
   height: 100%;
   width: 100%;
- pointer-events: none;
+  pointer-events: none;
 }
 .btn {
   position: sticky;
@@ -34,6 +34,7 @@
 }
 .count {
   position: absolute;
+  box-sizing: border-box;
   top: 0;
   right: 0;
   height: 100%;

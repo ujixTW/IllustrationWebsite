@@ -22,14 +22,14 @@ namespace Illus.Server.Sservices.Works
             {
                 var work = _context.Artwork
                     .AsNoTracking()
-                    .Where(p => p.Id == command.Id && p.IsOpen == true)
+                    .Where(p => p.Id == command.WorkId && p.IsOpen == true)
                     .SingleOrDefault();
 
                 if (work != null)
                 {
                     _context.Massage.Add(new MassageModel
                     {
-                        ArtworkId = command.Id,
+                        ArtworkId = command.WorkId,
                         UserId = userId,
                         content = HttpUtility.HtmlEncode(command.Message),
                         CreateTime = DateTime.Now,
@@ -113,7 +113,7 @@ namespace Illus.Server.Sservices.Works
                             UserNickName = user.Nickname,
                             UserHeadshot = (user.HeadshotContent != null) ? user.HeadshotContent : string.Empty,
                             Message = message.content,
-                            CreateTime = message.CreateTime,
+                            CreateTime = message.CreateTime.ToString("u"),
                             IsEdit = message.IsEdit,
                         });
                 }
