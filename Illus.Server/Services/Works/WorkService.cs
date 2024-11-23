@@ -32,12 +32,12 @@ namespace Illus.Server.Sservices.Works
                     .Include(p => p.Tags)
                     .Where(p =>
                         p.IsOpen == true &&
+                        p.IsDelete == false &&
                         ((!command.IsAI) ? p.IsAI == false : true) &&
                         ((!command.IsR18) ? p.IsR18 == false : true) &&
                         (keywordList.Any() ?
                             keywordList.All(w => p.Tags.Any(t => t.Content.Equals(w)) || p.Title.Contains(w)) : true))
                     .Include(p => p.Artist)
-                    .Include(p => p.Likes.Where(l => l.UserId == command.UserId && l.Status == true).FirstOrDefault())
                     .AsNoTracking();
 
                 switch (command.OrderType)
@@ -74,6 +74,10 @@ namespace Illus.Server.Sservices.Works
                 await list.Skip(command.Page * command.Count)
                     .Take(command.Count)
                     .ToListAsync();
+                var likeList = await _context.Like
+                    .AsNoTracking()
+                    .Where(p => list.Any(a => a.Id == p.ArtworkId) && p.UserId == command.UserId)
+                    .ToListAsync();
 
                 foreach (var item in list)
                 {
@@ -84,7 +88,7 @@ namespace Illus.Server.Sservices.Works
                         Title = item.Title,
                         IsR18 = item.IsR18,
                         IsAI = item.IsAI,
-                        IsLike = item.Likes.Any(),
+                        IsLike = likeList.Any(p => p.ArtworkId == item.Id && p.Status == true),
                         ArtistName = item.Artist.Nickname,
                         ArtistHeadshotContent =
                             (string.IsNullOrEmpty(item.Artist.HeadshotContent)) ?
@@ -127,10 +131,9 @@ namespace Illus.Server.Sservices.Works
                     .AsNoTracking()
                     .Where(p =>
                         ((!command.IsR18) ? p.IsR18 == false : true) &&
-                        ((isOwn) ? p.IsDelete == false : p.IsOpen == true) &&
+                        p.IsDelete == false &&
+                        ((isOwn) ? true : p.IsOpen == true) &&
                         idList.Any(id => id == p.ArtistId))
-                    .Include(p => p.Likes
-                        .Where(l => l.UserId == command.UserId && l.Status == true))
                     .Include(p => p.Artist);
 
 
@@ -158,6 +161,10 @@ namespace Illus.Server.Sservices.Works
                 await list.Skip(command.Page * command.Count)
                     .Take(command.Count)
                     .ToListAsync();
+                var likeList = await _context.Like
+                   .AsNoTracking()
+                   .Where(p => list.Any(a => a.Id == p.ArtworkId) && p.UserId == command.UserId)
+                   .ToListAsync();
 
                 foreach (var work in list)
                 {
@@ -228,6 +235,7 @@ namespace Illus.Server.Sservices.Works
                     .Where(p =>
                         p.IsAI == false &&
                         p.IsR18 == false &&
+                        p.IsDelete == false &&
                         p.IsOpen == true)
                     .OrderByDescending(p => (C != 0 && scoreAvg != 0) ?
                         (C * scoreAvg + p.LikeCounts / p.ReadCounts) / (C + p.ReadCounts) : 0)
@@ -278,37 +286,27 @@ namespace Illus.Server.Sservices.Works
                     .AsNoTracking()
                     .FirstOrDefault(p => p.ArtworkId == id && p.UserId == userId)
                     : null;
-                var history = _context.History.Where(p => p.ArtworkId == id).ToList();
 
                 if (work != null)
                 {
                     #region 紀錄閱讀紀錄
 
-                    var hasData = false;
-                    if (userId != null)
+                    var history = _context.History.Where(p => p.ArtworkId == id && p.UserId == userId).FirstOrDefault();
+                    if (history != null)
                     {
-                        foreach (var h in history)
-                        {
-                            if (h.UserId == userId)
-                            {
-                                h.BrowseTime = today;
-                                hasData = true;
-                                break;
-                            }
-                        }
+                        history.BrowseTime = today;
                     }
-
-                    if (!hasData)
+                    else
                     {
-                        history.Add(new HistoryModel
+                        var newHis = new HistoryModel
                         {
-                            ArtworkId = id,
-                            UserId = userId,
-                            BrowseTime = today
-                        });
+                            Artwork = work,
+                            User = userId != null ? _context.User.FirstOrDefault(p => p.Id == userId) : null,
+                            BrowseTime = today,
+                        };
+                        _context.History.Add(newHis);
                     }
-
-                    work.ReadCounts = history.Count;
+                    work.ReadCounts = _context.History.Where(p => p.ArtworkId == id).Count();
 
                     #endregion
 
@@ -349,8 +347,8 @@ namespace Illus.Server.Sservices.Works
                 var hisList = _context.History
                     .AsNoTracking()
                     .Include(p => p.Artwork)
-                    .ThenInclude(p => p.Artist)
-                    .Where(p => p.UserId == command.UserId && p.Artwork.IsOpen == true);
+                        .ThenInclude(p => p.Artist)
+                    .Where(p => p.UserId == command.UserId && p.Artwork.IsOpen == true && p.Artwork.IsDelete == false);
                 var count = hisList.Count();
 
                 if (command.IsDesc)
@@ -400,7 +398,9 @@ namespace Illus.Server.Sservices.Works
                     .Where(p =>
                         p.UserId == command.UserId &&
                         p.Status == true &&
-                        p.Artwork.IsOpen == true);
+                        p.Artwork.IsOpen == true &&
+                        p.Artwork.IsDelete == false
+                        );
 
                 var count = likeList.Count();
 

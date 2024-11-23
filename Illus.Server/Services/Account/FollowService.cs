@@ -64,15 +64,14 @@ namespace Illus.Server.Sservices.Account
             var result = false;
             try
             {
-                var userCount = _context.User.Where(p => p.Id == id && p.IsActivation == true)
-                    .Union(_context.User.Where(p => p.Id == userId && p.IsActivation == true)).Count();
+                var following = _context.User.FirstOrDefault(p => p.Id == id && p.IsActivation == true);
+                var follower = _context.User.FirstOrDefault(p => p.Id == userId && p.IsActivation == true);
 
-                if (userCount.Equals(2))
+                if (following != null && follower != null)
                 {
                     var follow = _context.Follow
-                    .Where(p => p.FollowerId == userId && p.FollowingId == id)
-                    .SingleOrDefault();
-
+                        .Where(p => p.FollowerId == userId && p.FollowingId == id)
+                        .SingleOrDefault();
                     if (follow != null)
                     {
                         _context.Follow.Remove(follow);
@@ -81,8 +80,8 @@ namespace Illus.Server.Sservices.Account
                     {
                         _context.Follow.Add(new FollowModel
                         {
-                            FollowerId = userId,
-                            FollowingId = id,
+                            Follower = follower,
+                            Following = following,
                             FollowTime = DateTime.Now,
                         });
                     }

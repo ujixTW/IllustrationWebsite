@@ -19,6 +19,7 @@ import PageNav from "../../components/PageNav";
 import ArtworkListContainer from "../../components/artwork/ArtworkListContainer";
 import ArtworksFilter from "../../components/artwork/ArtworksFilter";
 import { useAppSelector } from "../../hooks/redux";
+import { htmlReg } from "../../utils/regexHelper";
 
 function ArtworkList(props: { isFollowing?: boolean }) {
   const isLogin = useAppSelector((state) => state.login);
@@ -74,6 +75,7 @@ function ArtworkList(props: { isFollowing?: boolean }) {
         })
         .then((res) => {
           const data: ArtworkListType = res.data;
+          const _keyword = decodeURI(keyword).replace(htmlReg, "");
 
           setList(data.artworkList);
           setMaxCount(data.maxCount);
@@ -81,8 +83,8 @@ function ArtworkList(props: { isFollowing?: boolean }) {
             data.maxCount > 100000
               ? "投稿超過10萬件"
               : `${data.maxCount}件投稿`;
-          setTitle(keyword);
-          changeWebTitle(`#${keyword}的插畫作品(${titleArtworkCount}) - `);
+          setTitle(_keyword);
+          changeWebTitle(`#${_keyword}的插畫作品(${titleArtworkCount}) - `);
         })
         .catch((err) => console.log(err));
     } else {
@@ -115,7 +117,9 @@ function ArtworkList(props: { isFollowing?: boolean }) {
     <div className={style["body"]}>
       <h1 className={style["title"]}>{title}</h1>
       <ArtworksFilter hasOrder switchR18 switchAI={!props.isFollowing} />
-      <ArtworkListContainer list={list} showArtTitle showArtistData />
+      <div className={style["list"]}>
+        <ArtworkListContainer list={list} showArtTitle showArtistData />
+      </div>
       <PageNav max={maxCount} pageCount={pageCount} />
     </div>
   );

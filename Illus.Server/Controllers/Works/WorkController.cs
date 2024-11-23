@@ -5,6 +5,7 @@ using Illus.Server.Models.View;
 using Illus.Server.Sservices.Works;
 using Microsoft.AspNetCore.Mvc;
 using System.Web;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace Illus.Server.Controllers.Works
 {
@@ -285,7 +286,7 @@ namespace Illus.Server.Controllers.Works
                 Count = (command.Count <= 100) ? command.Count : 0,
                 IsR18 = command.IsR18,
                 IsAI = command.IsAI,
-                Keywords = command.Keywords.Trim(),
+                Keywords = HttpUtility.UrlDecode(command.Keywords).Trim(),
                 IsDesc = command.IsDesc,
                 OrderType = (command.OrderType >= orderTypeArr.Length || command.OrderType < 0) ?
                     (int)WorkListOrder.Hot : command.OrderType,

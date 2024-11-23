@@ -62,6 +62,7 @@
 
     .list {
       display: flex;
+      gap: 1rem;
       overflow: hidden;
       flex-wrap: nowrap;
       scroll-behavior: smooth;
@@ -75,6 +76,7 @@
     .list {
       display: flex;
       flex-wrap: wrap;
+      gap: 1rem;
     }
     .more {
       position: absolute;
@@ -122,7 +124,4 @@
       color: var(--fontC);
     }
   }
-}
-.item {
-  padding: 0 8px;
 }

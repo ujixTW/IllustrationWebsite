@@ -6,3 +6,6 @@
     text-wrap: nowrap;
     overflow: hidden;
 }
+.list{
+    margin: 2rem 0;
+}
