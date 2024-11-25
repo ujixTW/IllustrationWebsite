@@ -1,7 +1,7 @@
 import style from "./assets/CSS/RootLayout.module.css";
 import path from "./data/JSON/path.json";
 import IconLong from "./assets/SVG/IconLong.svg?react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import SearchBox from "./components/searchbox/SearchBox";
 import { useEffect, useState } from "react";
 import { loginCheckType } from "./data/typeModels/user";
@@ -15,7 +15,6 @@ import { userDataActions } from "./data/reduxModels/userDataRedux";
 function MainNav() {
   const isLogin = useAppSelector((state) => state.login);
   const emailConfirmed = useAppSelector((state) => state.userData.emailConfirm);
-  const location = useLocation();
 
   return (
     <nav className={style["nav"] + " " + style["main-nav"]}>
@@ -40,7 +39,7 @@ function MainNav() {
           )}
           <UserMenu />
         </div>
-      ) : location.pathname == path.home ? (
+      ) : (
         <div className={style["item"]}>
           <Link
             to={path.login.login}
@@ -55,8 +54,6 @@ function MainNav() {
             註冊
           </Link>
         </div>
-      ) : (
-        <></>
       )}
     </nav>
   );
