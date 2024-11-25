@@ -9,10 +9,6 @@ import ArtworkContainer from "./ArtworkContainer";
 import ArtworkOrigin from "./ArtworkOrigin";
 import CommandList from "../../components/artwork/Command/CommandList";
 import changeWebTitle from "../../utils/changeWebTitle";
-import {
-  ArtworkImgListHelper,
-  ImagePathHelper,
-} from "../../utils/ImagePathHelper";
 import axios from "axios";
 import { useAppSelector } from "../../hooks/redux";
 import useFollowUser from "../../hooks/useFollowUser";
@@ -74,7 +70,9 @@ function Base(props: { artwork: ArtworkType; children: JSX.Element }) {
                     name={artwork.artistName}
                   />
                 </div>
-                {artwork.artistId != userId && followBtn}
+                {artwork.artistId != userId && (
+                  <div className={style["follow-btn"]}>{followBtn}</div>
+                )}
 
                 <div className={style["more-btn"]}>
                   <Link to={userLink}>查看作品目錄</Link>
@@ -121,10 +119,6 @@ function Artwork() {
       .get(`/api/Work/${artworkId}`)
       .then((res) => {
         const data: ArtworkType = res.data;
-        data.imgs = ArtworkImgListHelper(data.imgs);
-        data.artistHeadshotContent = ImagePathHelper(
-          data.artistHeadshotContent
-        );
 
         setArtwork(fromBackEndArtworkDataHelper(data));
       })

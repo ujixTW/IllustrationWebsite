@@ -4,7 +4,7 @@ import IconLong from "./assets/SVG/IconLong.svg?react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import SearchBox from "./components/searchbox/SearchBox";
 import { useEffect, useState } from "react";
-import { userDataType } from "./data/typeModels/user";
+import { loginCheckType } from "./data/typeModels/user";
 import axios from "axios";
 import UserMenu from "./components/UserMenu";
 import { loginActions } from "./data/reduxModels/loginRedux";
@@ -73,14 +73,18 @@ function RootLayout() {
         .get("/api/LoginCheck")
         .then((res) => {
           if (!ignoreResult) {
-            const data: userDataType = res.data;
-            dispatch(loginActions.login());
-            dispatch(userDataActions.setUserData(data));
+            const data: loginCheckType = res.data;
+
+            dispatch(
+              data.isLogin ? loginActions.login() : loginActions.logout()
+            );
+            if (data.isLogin)
+              dispatch(userDataActions.setUserData(data.userData));
             setIsLoading(false);
           }
         })
-        .catch(() => {
-          dispatch(loginActions.logout());
+        .catch((err) => {
+          console.log(err);
           setIsLoading(false);
         });
     };

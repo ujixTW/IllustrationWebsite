@@ -36,6 +36,9 @@
     .name {
       margin-right: 1rem;
     }
+    .follow-btn{
+      width: 6rem;
+    }
     .more-btn {
       margin-left: auto;
       > a {

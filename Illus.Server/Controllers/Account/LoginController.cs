@@ -53,7 +53,7 @@ namespace Illus.Server.Controllers.Account
             var userIdStr = Request.Cookies[_userIdKey];
             var tokenStr = Request.Cookies[_loginTokenKey];
 
-            UserViewModel? model = null;
+            LoginCheckModel model = new LoginCheckModel();
 
             if (int.TryParse(userIdStr, out var userId) &&
                 Guid.TryParse(tokenStr, out var token))
@@ -64,7 +64,7 @@ namespace Illus.Server.Controllers.Account
                     LoginToken = token,
                 });
             }
-            return (model != null) ? Ok(model) : BadRequest();
+            return Ok(model);
         }
         [HttpGet("/api/Logout")]
         public IActionResult Logout()

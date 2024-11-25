@@ -1,7 +1,7 @@
 import { ArtworkListType, ArtworkType } from "../data/typeModels/artwork";
 import { MessageType } from "../data/typeModels/message";
 import { userDataType } from "../data/typeModels/user";
-import { ImagePathHelper } from "./ImagePathHelper";
+import { ArtworkImgListHelper, ImagePathHelper } from "./ImagePathHelper";
 
 // userData
 function userHeadshotHelper(headshot: string | null) {
@@ -29,6 +29,12 @@ export { userDataHelper, userHeadshotHelper };
 function fromBackEndArtworkDataHelper(beData: ArtworkType) {
   const dataCopy = Object.assign({}, beData);
   dataCopy.postTime = new Date(beData.postTime);
+  dataCopy.artistHeadshotContent = ImagePathHelper(
+    dataCopy.artistHeadshotContent
+  );
+  dataCopy.coverImg = ImagePathHelper(dataCopy.coverImg);
+  if (dataCopy.imgs.length > 0)
+    dataCopy.imgs = ArtworkImgListHelper(dataCopy.imgs);
   return dataCopy;
 }
 function fromBackEndArtworkListDataHelper(beData: ArtworkListType) {

@@ -80,9 +80,9 @@ namespace Illus.Server.Sservices.Account
 
             return result;
         }
-        public async Task<UserViewModel?> LoginCheck(LoginTokenModel input)
+        public async Task<LoginCheckModel> LoginCheck(LoginTokenModel input)
         {
-            UserViewModel? result = null;
+            LoginCheckModel result = new LoginCheckModel();
             var today = DateTime.Now;
             try
             {
@@ -102,8 +102,8 @@ namespace Illus.Server.Sservices.Account
                         .Include(p => p.Language)
                         .Include(p => p.Country)
                         .SingleOrDefaultAsync(p => p.Id == input.UserId);
-
-                    result = user == null ?
+                    result.IsLogIn = true;
+                    result.UserData = user == null ?
                         null :
                         new UserViewModel()
                         {
@@ -118,6 +118,10 @@ namespace Illus.Server.Sservices.Account
                             Cover = user.CoverContent,
                             Headshot = user.HeadshotContent,
                         };
+                }
+                else
+                {
+                    result.IsLogIn = false;
                 }
             }
             catch (Exception ex)

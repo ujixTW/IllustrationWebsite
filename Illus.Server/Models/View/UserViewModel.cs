@@ -17,6 +17,11 @@
         public CountryModel Country { get; set; } = new CountryModel();
         public ArtworkViewListModel ArtworkList { get; set; } = new ArtworkViewListModel();
     }
+    public class LoginCheckModel
+    {
+        public UserViewModel? UserData { get; set; }
+        public bool IsLogIn { get; set; }
+    }
     public class FollowViewListModel
     {
         public List<UserViewModel> Users { get; set; } = [];

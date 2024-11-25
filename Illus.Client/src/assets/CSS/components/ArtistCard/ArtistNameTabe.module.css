@@ -4,6 +4,7 @@
 .artist {
   display: flex;
   position: relative;
+  align-items: center;
   .head {
     width: 24px;
     height: 24px;

@@ -232,6 +232,7 @@ namespace Illus.Server.Sservices.Works
                 var tempList = await _context.Artwork
                     .AsNoTracking()
                     .Include(p => p.Artist)
+                    .Include(p => p.Images)
                     .Where(p =>
                         p.IsAI == false &&
                         p.IsR18 == false &&
@@ -646,7 +647,7 @@ namespace Illus.Server.Sservices.Works
                            (work.Tags.Any(t => t.Id == command.Id) || work.Tags.Any(t => t.Content == command.Content)))
                         {
                             var target = work.Tags.Find(p => p.Id == command.Id);
-                           if (target != null) work.Tags.Remove(target);
+                            if (target != null) work.Tags.Remove(target);
                         }
                         else
                         {
@@ -834,13 +835,13 @@ namespace Illus.Server.Sservices.Works
                     _context.Artwork.Select(p => new
                     {
                         C = _context.Artwork
-                             .Where(p => p.IsOpen == true)
+                             .Where(p => p.IsOpen == true && p.IsDelete == false)
                              .Average(p => p.ReadCounts),
                         scoreAvg = _context.Artwork
-                             .Where(p => p.IsOpen == true)
+                             .Where(p => p.IsOpen == true && p.IsDelete == false)
                              .Average(p => p.LikeCounts / p.ReadCounts)
                     })
-                    .SingleOrDefault();
+                    .FirstOrDefault();
                 if (temp != null)
                 {
                     C = temp.C;

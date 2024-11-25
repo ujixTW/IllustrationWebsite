@@ -22,6 +22,10 @@ type followListType = {
   users: userDataType[];
   count: number;
 };
+type loginCheckType = {
+  userData: userDataType;
+  isLogin: boolean;
+};
 const languageTypeDef = { id: 1, content: "繁體中文" };
 const contryTypeDef = { id: 1, content: "台灣" };
 const userDataTypeDef: userDataType = {
@@ -41,4 +45,10 @@ const userDataTypeDef: userDataType = {
 };
 
 export { userDataTypeDef, languageTypeDef, contryTypeDef };
-export type { userDataType, languageType, countryType, followListType };
+export type {
+  userDataType,
+  languageType,
+  countryType,
+  followListType,
+  loginCheckType,
+};
