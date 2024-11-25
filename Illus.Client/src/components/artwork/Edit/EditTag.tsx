@@ -23,7 +23,7 @@ function EditTag(props: {
 
   const handleDelete = async (tag: TagType) => {
     await axios
-      .post("/api/Tag/Edit", tag, {
+      .post("/api/Work/Tag/Edit", tag, {
         params: { workId: props.artworkId },
       })
       .then((res) => {
@@ -38,7 +38,7 @@ function EditTag(props: {
 
     await axios
       .post(
-        "/api/Tag/Edit",
+        "/api/Work/Tag/Edit",
         { id: null, content: newTag },
         { params: { workId: props.artworkId } }
       )

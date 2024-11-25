@@ -351,6 +351,7 @@ function ArtworkEdit(props: { isCreate?: boolean }) {
                       setInputText={setTagInput}
                       target={tagInputRef}
                       changeAll
+                      autoBlur
                     />
                   </div>
                 )}

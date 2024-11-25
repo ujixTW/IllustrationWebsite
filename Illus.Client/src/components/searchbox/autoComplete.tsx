@@ -20,6 +20,7 @@ function RecommandLink(props: {
   target: RefObject<HTMLInputElement>;
   changeAll?: boolean;
   isLink?: boolean;
+  autoBlur?: boolean;
   onBlur: FocusEventHandler;
 }) {
   const tempArr = [...props.textArr];
@@ -35,10 +36,14 @@ function RecommandLink(props: {
       onClick={(e: ClickLinkEvent) => {
         if (props.isLink != true) e.preventDefault();
         props.setInputText(tempStr);
-        if (props.target.current != null) props.target.current.focus();
-        setTimeout(() => {
-          if (props.target.current != null) props.target.current.blur();
-        }, 0);
+
+        const _target = props.target.current;
+        if (_target != null) _target.focus();
+        if (props.autoBlur) {
+          setTimeout(() => {
+            if (_target != null) _target.blur();
+          }, 0);
+        }
       }}
       onBlur={props.onBlur}
     >
@@ -54,6 +59,7 @@ function Content(props: {
   changeAll?: boolean;
   tagArr: TagType[];
   isLink?: boolean;
+  autoBlur?: boolean;
   setIsFocus: (...args: any[]) => any;
 }) {
   const textArr: string[] = props.changeAll
@@ -136,6 +142,7 @@ function Content(props: {
       target={props.target}
       changeAll={props.changeAll}
       isLink={props.isLink}
+      autoBlur={props.autoBlur}
       onBlur={handleBlur}
     />
   ));
@@ -150,6 +157,7 @@ function AutoComplete(props: {
   changeAll?: boolean;
   isLink?: boolean;
   onTargetTop?: boolean;
+  autoBlur?: boolean;
 }) {
   const [isFocus, setIsFocus] = useState(false);
   const acRef = useRef<HTMLDivElement>(null);
@@ -225,6 +233,7 @@ function AutoComplete(props: {
         tagArr={tagArr}
         isLink={props.isLink}
         setIsFocus={setIsFocus}
+        autoBlur={props.autoBlur}
       />
     </div>
   ) : (

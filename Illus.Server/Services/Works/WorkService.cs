@@ -645,11 +645,8 @@ namespace Illus.Server.Sservices.Works
                         if (command.Id != null &&
                            (work.Tags.Any(t => t.Id == command.Id) || work.Tags.Any(t => t.Content == command.Content)))
                         {
-                            work.Tags.Remove(new TagModel
-                            {
-                                Id = (int)command.Id,
-                                Content = command.Content
-                            });
+                            var target = work.Tags.Find(p => p.Id == command.Id);
+                           if (target != null) work.Tags.Remove(target);
                         }
                         else
                         {
