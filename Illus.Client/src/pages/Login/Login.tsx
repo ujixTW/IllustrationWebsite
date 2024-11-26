@@ -45,7 +45,7 @@ function Login() {
     await axios
       .post("/api/Login", data)
       .then((res) => {
-        if (res.data) {
+        if (res.data as boolean) {
           dispatch(loginActions.login());
           navigate(path.home);
         } else {

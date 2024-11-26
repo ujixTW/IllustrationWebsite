@@ -95,25 +95,6 @@ function RootLayout() {
     <>
       <MainNav />
       <main>
-        <button
-          type="button"
-          onClick={() => dispatch(loginActions.login())}
-          style={{
-            position: "fixed",
-            bottom: "2rem",
-            left: "2rem",
-            border: "0",
-            borderRadius: "1rem",
-            width: "50px",
-            height: "50px",
-            backgroundColor: "var(--mainBlue)",
-            color: "white",
-            zIndex: "2",
-            cursor: "pointer",
-          }}
-        >
-          登入狀態
-        </button>
         <BackToTopBtn />
         <Outlet />
       </main>

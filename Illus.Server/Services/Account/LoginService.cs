@@ -31,7 +31,6 @@ namespace Illus.Server.Sservices.Account
             try
             {
                 var user = _illusContext.User
-                .AsNoTracking()
                 .SingleOrDefault(p =>
                     (p.Account == command.Account || p.Email == command.Email) &&
                     p.IsActivation == true
@@ -46,11 +45,10 @@ namespace Illus.Server.Sservices.Account
                         var tokenData = new LoginTokenModel()
                         {
                             LoginToken = Guid.NewGuid(),
-                            UserId = user.Id,
+                            User = user,
                             ExpiryDate = DateTime.Now.AddYears(50)
                         };
-                        var token = _illusContext
-                            .LoginToken
+                        var token = _illusContext.LoginToken
                             .Where(p => p.UserId == user.Id)
                             .OrderBy(p => p.ExpiryDate)
                             .ToList();
@@ -62,7 +60,7 @@ namespace Illus.Server.Sservices.Account
                         }
                         else
                         {
-                            token.Add(tokenData);
+                            _illusContext.LoginToken.Add(tokenData);
                         }
 
                         _illusContext.SaveChanges();
@@ -102,7 +100,7 @@ namespace Illus.Server.Sservices.Account
                         .Include(p => p.Language)
                         .Include(p => p.Country)
                         .SingleOrDefaultAsync(p => p.Id == input.UserId);
-                    result.IsLogIn = true;
+                    result.IsLogin = true;
                     result.UserData = user == null ?
                         null :
                         new UserViewModel()
@@ -121,7 +119,7 @@ namespace Illus.Server.Sservices.Account
                 }
                 else
                 {
-                    result.IsLogIn = false;
+                    result.IsLogin = false;
                 }
             }
             catch (Exception ex)
@@ -186,7 +184,9 @@ namespace Illus.Server.Sservices.Account
                         {
                             CAPTCHA = capcha,
                             ExpiryDate = DateTime.Now.AddHours(_captchaExpiryTime),
-                        }
+                        },
+                        Country = _illusContext.Country.First(),
+                        Language = _illusContext.Language.First()
                     };
 
                     if (MailHelper.SendSignUpMail(user))

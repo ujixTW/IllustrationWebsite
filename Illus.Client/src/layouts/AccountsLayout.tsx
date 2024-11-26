@@ -63,8 +63,8 @@ export default function AccountsLayout() {
             dispatch(
               data.isLogin ? loginActions.login() : loginActions.logout()
             );
-            dispatch(userDataActions.setUserData(data.userData));
-            navigate(path.home);
+            if (data.isLogin)
+              dispatch(userDataActions.setUserData(data.userData));
           }
         })
         .catch((err) => console.log(err));

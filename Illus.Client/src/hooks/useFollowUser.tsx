@@ -5,6 +5,7 @@ import { useAppSelector } from "./redux";
 
 function useFollowUser(artistId: number) {
   const userId = useAppSelector((state) => state.userData.id);
+  const isLogin = useAppSelector((state) => state.login);
   const [isFollow, setIsFollow] = useState(false);
 
   const handleFollow = useCallback(
@@ -20,7 +21,9 @@ function useFollowUser(artistId: number) {
 
   const followBtn = useMemo(
     () =>
-      isFollow ? (
+      isLogin === false ? (
+        <></>
+      ) : isFollow ? (
         <ConsistentBtn text="關注中" onClick={() => handleFollow(false)} />
       ) : (
         <SureBtn text="關注" onClick={() => handleFollow(true)} />

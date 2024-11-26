@@ -20,7 +20,7 @@
     public class LoginCheckModel
     {
         public UserViewModel? UserData { get; set; }
-        public bool IsLogIn { get; set; }
+        public bool IsLogin { get; set; }
     }
     public class FollowViewListModel
     {
