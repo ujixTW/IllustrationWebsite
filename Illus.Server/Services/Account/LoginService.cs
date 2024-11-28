@@ -64,6 +64,7 @@ namespace Illus.Server.Sservices.Account
                         }
 
                         _illusContext.SaveChanges();
+                        tokenData.UserId = user.Id;
                         result = tokenData;
                         success = true;
                     }
@@ -101,6 +102,10 @@ namespace Illus.Server.Sservices.Account
                         .Include(p => p.Country)
                         .SingleOrDefaultAsync(p => p.Id == input.UserId);
                     result.IsLogin = true;
+
+                    var followerCount = _illusContext.Follow.AsNoTracking().Where(p => p.FollowingId == input.UserId).Count();
+                    var followingCount = _illusContext.Follow.AsNoTracking().Where(p => p.FollowerId == input.UserId).Count();
+
                     result.UserData = user == null ?
                         null :
                         new UserViewModel()
@@ -115,6 +120,8 @@ namespace Illus.Server.Sservices.Account
                             Country = user.Country,
                             Cover = user.CoverContent,
                             Headshot = user.HeadshotContent,
+                            FollowerCount = followerCount,
+                            FollowingCount = followingCount,
                         };
                 }
                 else

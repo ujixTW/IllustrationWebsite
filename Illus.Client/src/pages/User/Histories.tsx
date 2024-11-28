@@ -54,11 +54,13 @@ function Histories() {
     <div className={style["body"]}>
       <h1>瀏覽紀錄</h1>
       <ArtworksFilter orderTime />
-      <ArtworkListContainer
-        showArtistData
-        list={artworkArr.artworkList}
-        showArtTitle
-      />
+      <div className={style["list"]}>
+        <ArtworkListContainer
+          showArtistData
+          list={artworkArr.artworkList}
+          showArtTitle
+        />
+      </div>
       <PageNav max={artworkArr.maxCount} pageCount={pageCount} />
     </div>
   );

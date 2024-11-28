@@ -15,7 +15,7 @@
         public int FollowingCount { get; set; }
         public LanguageModel Language { get; set; } = new LanguageModel();
         public CountryModel Country { get; set; } = new CountryModel();
-        public ArtworkViewListModel ArtworkList { get; set; } = new ArtworkViewListModel();
+        public List<ArtworkViewModel> ArtworkList { get; set; } = new List<ArtworkViewModel>();
     }
     public class LoginCheckModel
     {

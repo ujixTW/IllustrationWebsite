@@ -13,11 +13,7 @@ import { textOverLimitHelper } from "../../../utils/stringHelper";
 
 function FollowingCard(props: { user: userDataType }) {
   const user = userDataHelper(props.user);
-  const [isFollow, setIsFollow] = useState(false);
-
-  useEffect(() => {
-    setIsFollow(props.user.isFollow);
-  }, []);
+  const [isFollow, setIsFollow] = useState(true);
 
   const handleFollow = async () => {
     await axios

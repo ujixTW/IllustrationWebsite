@@ -38,6 +38,7 @@ namespace Illus.Server.Sservices.Works
                         (keywordList.Any() ?
                             keywordList.All(w => p.Tags.Any(t => t.Content.Equals(w)) || p.Title.Contains(w)) : true))
                     .Include(p => p.Artist)
+                    .Include(p => p.Likes.Where(l => l.UserId == command.UserId && l.Status == true))
                     .AsNoTracking();
 
                 switch (command.OrderType)
@@ -74,10 +75,7 @@ namespace Illus.Server.Sservices.Works
                 await list.Skip(command.Page * command.Count)
                     .Take(command.Count)
                     .ToListAsync();
-                var likeList = await _context.Like
-                    .AsNoTracking()
-                    .Where(p => list.Any(a => a.Id == p.ArtworkId) && p.UserId == command.UserId)
-                    .ToListAsync();
+
 
                 foreach (var item in list)
                 {
@@ -88,7 +86,7 @@ namespace Illus.Server.Sservices.Works
                         Title = item.Title,
                         IsR18 = item.IsR18,
                         IsAI = item.IsAI,
-                        IsLike = likeList.Any(p => p.ArtworkId == item.Id && p.Status == true),
+                        IsLike = item.Likes.Any(),
                         ArtistName = item.Artist.Nickname,
                         ArtistHeadshotContent =
                             (string.IsNullOrEmpty(item.Artist.HeadshotContent)) ?
@@ -134,7 +132,8 @@ namespace Illus.Server.Sservices.Works
                         p.IsDelete == false &&
                         ((isOwn) ? true : p.IsOpen == true) &&
                         idList.Any(id => id == p.ArtistId))
-                    .Include(p => p.Artist);
+                    .Include(p => p.Artist)
+                    .Include(p => p.Likes.Where(l => l.UserId == command.UserId && l.Status == true));
 
 
                 switch (command.OrderType)
@@ -161,10 +160,6 @@ namespace Illus.Server.Sservices.Works
                 await list.Skip(command.Page * command.Count)
                     .Take(command.Count)
                     .ToListAsync();
-                var likeList = await _context.Like
-                   .AsNoTracking()
-                   .Where(p => list.Any(a => a.Id == p.ArtworkId) && p.UserId == command.UserId)
-                   .ToListAsync();
 
                 foreach (var work in list)
                 {
@@ -349,6 +344,8 @@ namespace Illus.Server.Sservices.Works
                     .AsNoTracking()
                     .Include(p => p.Artwork)
                         .ThenInclude(p => p.Artist)
+                    .Include(p => p.Artwork)
+                        .ThenInclude(p => p.Likes.Where(l => l.UserId == command.UserId && l.Status == true))
                     .Where(p => p.UserId == command.UserId && p.Artwork.IsOpen == true && p.Artwork.IsDelete == false);
                 var count = hisList.Count();
 
@@ -375,7 +372,8 @@ namespace Illus.Server.Sservices.Works
                         CoverImg = work.CoverImg,
                         PostTime = history.BrowseTime.ToString("u"),
                         ArtistName = artist.Nickname,
-                        ArtistHeadshotContent = string.IsNullOrEmpty(artist.HeadshotContent) ? string.Empty : artist.HeadshotContent
+                        ArtistHeadshotContent = string.IsNullOrEmpty(artist.HeadshotContent) ? string.Empty : artist.HeadshotContent,
+                        IsLike = work.Likes.Any()
                     });
                 }
                 result.MaxCount = count;
@@ -418,8 +416,10 @@ namespace Illus.Server.Sservices.Works
                         Id = work.Id,
                         ArtistId = work.ArtistId,
                         CoverImg = work.CoverImg,
+                        Title = work.Title,
                         ArtistName = work.Artist.Nickname,
                         ArtistHeadshotContent = string.IsNullOrEmpty(work.Artist.HeadshotContent) ? string.Empty : work.Artist.HeadshotContent,
+                        IsLike = true
                     });
                 }
                 result.MaxCount = count;
@@ -667,10 +667,9 @@ namespace Illus.Server.Sservices.Works
             return result;
         }
         #endregion
-        public bool LikeWork(int workId, int userId, out int likeCount)
+        public bool LikeWork(int workId, int userId)
         {
             var result = false;
-            likeCount = 0;
             try
             {
                 var work = _context.Artwork
@@ -688,17 +687,20 @@ namespace Illus.Server.Sservices.Works
                     }
                     else
                     {
-                        work.Likes.Add(new LikeModel
+                        var user = _context.User.FirstOrDefault(p => p.Id == userId);
+                        if (user != null)
                         {
-                            UserId = userId,
-                            Status = true,
-                            CreateTime = DateTime.Now
-                        });
+                            work.Likes.Add(new LikeModel
+                            {
+                                User = user,
+                                Status = true,
+                                CreateTime = DateTime.Now
+                            });
+                        }
                     }
-                    work.LikeCounts = work.Likes.FindAll(p => p.Status == true).Count;
-                    likeCount = work.LikeCounts;
+                    work.LikeCounts = work.Likes.Count();
                     _context.SaveChanges();
-                    result = true;
+                    result = like != null ? like.Status : true;
                 }
             }
             catch (Exception ex)

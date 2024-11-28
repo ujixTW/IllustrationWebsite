@@ -249,13 +249,12 @@ namespace Illus.Server.Controllers.Works
         {
             var userIdStr = Request.Cookies[_userIdKey];
             var success = false;
-            var likes = 0;
             if (int.TryParse(userIdStr, out int userId))
             {
-                success = _workServices.LikeWork(wid, userId, out likes);
+                success = _workServices.LikeWork(wid, userId);
             }
 
-            return success ? Ok(likes) : BadRequest();
+            return Ok(success);
         }
         [HttpGet("Like/{workId}")]
         public async Task<IActionResult> GetLikeList(int workId)

@@ -131,7 +131,7 @@ function User() {
       default:
         return;
     }
-  }, [listType, reducer.page]);
+  }, [listType, reducer.page, id]);
 
   const handleEditUserData = async () => {
     const copyPostData = Object.assign({}, reducer.userPostData);
@@ -386,26 +386,29 @@ function User() {
             />
             插畫
           </label>
-          <label
-            className={
-              style["btn"] +
-              (listType === displayArtworkEnum.collection
-                ? " " + style["active"]
-                : "")
-            }
-          >
-            <input
-              type="radio"
-              name="disListType"
-              className={style["radio"]}
-              onChange={(e: ChangeEvent) => {
-                e.preventDefault();
-                setListType(parseInt(e.target.value));
-              }}
-              value={displayArtworkEnum.collection}
-            />
-            收藏
-          </label>
+          {reducer.isOwn && (
+            <label
+              className={
+                style["btn"] +
+                (listType === displayArtworkEnum.collection
+                  ? " " + style["active"]
+                  : "")
+              }
+            >
+              <input
+                type="radio"
+                name="disListType"
+                className={style["radio"]}
+                onChange={(e: ChangeEvent) => {
+                  e.preventDefault();
+                  setListType(parseInt(e.target.value));
+                }}
+                value={displayArtworkEnum.collection}
+              />
+              收藏
+            </label>
+          )}
+
           <span className={style["artwork-count"]}>
             {reducer.artworkList.maxCount}
           </span>

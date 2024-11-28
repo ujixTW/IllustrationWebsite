@@ -85,6 +85,7 @@ namespace Illus.Server.Sservices.Account
                             FollowTime = DateTime.Now,
                         });
                     }
+
                     _context.SaveChanges();
                     result = true;
                 }
@@ -104,14 +105,13 @@ namespace Illus.Server.Sservices.Account
                 var followingList = await _context.Follow
                     .AsNoTracking()
                     .Include(p => p.Following)
-                    .ThenInclude(p =>
-                        p.Artwork
-                        .Where(a => a.IsOpen == true)
-                        .OrderByDescending(a => a.PostTime)
-                        .Take(4)
-                        .ToList()
-                        )
-                    .ThenInclude(p => p.Likes.Where(l => l.UserId == id && l.Status == true).FirstOrDefault())
+                        .ThenInclude(p =>
+                            p.Artwork
+                            .Where(a => a.IsOpen == true && a.IsDelete == false)
+                            .OrderByDescending(a => a.PostTime)
+                            .Take(4)
+                            )
+                            .ThenInclude(p => p.Likes.Where(l => l.UserId == id && l.Status == true))
                     .Where(p => p.FollowerId == id)
                     .OrderByDescending(p => p.FollowTime)
                     .Skip(page * pageCount)
@@ -125,10 +125,10 @@ namespace Illus.Server.Sservices.Account
                     foreach (var f in followingList)
                     {
                         var following = f.Following;
-                        var workCoverList = new ArtworkViewListModel();
+                        var workCoverList = new List<ArtworkViewModel>();
                         foreach (var work in following.Artwork)
                         {
-                            workCoverList.ArtworkList.Add(new ArtworkViewModel
+                            workCoverList.Add(new ArtworkViewModel
                             {
                                 Id = work.Id,
                                 CoverImg = work.CoverImg,
