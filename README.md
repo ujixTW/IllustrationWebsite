@@ -57,12 +57,12 @@
 
 #### 資料
 
-1. 下載附屬資料(https://drive.google.com/file/d/11ProxtBvGl-LmAu5t7QgTGkhjvb6htxl/view?usp=sharing)
+1. [下載附屬資料](https://drive.google.com/file/d/11ProxtBvGl-LmAu5t7QgTGkhjvb6htxl/view?usp=sharing)
 2. 將解壓縮後的資料中，UserData、Work 資料夾放至 IllustrationWebsite\Illus.Client\public
 
 #### 資料庫
 
-1. 於 MSSQL 開啟於 附屬資料(https://drive.google.com/file/d/11ProxtBvGl-LmAu5t7QgTGkhjvb6htxl/view?usp=sharing) 中的 IllusWebMsSql.sql 檔案
+1. 於 MSSQL 開啟於 [附屬資料](https://drive.google.com/file/d/11ProxtBvGl-LmAu5t7QgTGkhjvb6htxl/view?usp=sharing) 中的 IllusWebMsSql.sql 檔案
 2. 執行
 
 ## 五、運行步驟
