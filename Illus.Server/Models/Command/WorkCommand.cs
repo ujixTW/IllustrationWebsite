@@ -20,14 +20,14 @@
     {
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; } = string.Empty;
         public bool IsR18 { get; set; }
         public bool IsAI { get; set; }
         public DateTime PostTime { get; set; }
         public bool IsOpen { get; set; }
         public List<IFormFile> Imgs { get; set; } = new List<IFormFile>();
         public required IFormFile Cover { get; set; }
-        public List<EditTagCommand> Tags { get; set; } = new List<EditTagCommand>();
+        public List<string> Tags { get; set; } = new List<string>();
     }
     public class EditTagCommand
     {

@@ -1,0 +1,39 @@
+.body {
+  box-sizing: border-box;
+  display: flex;
+  min-height: calc(100vh - 4rem);
+  text-align: center;
+  background-color: var(--blackMask);
+  margin: 0;
+  padding: 1rem;
+  align-items: start;
+  justify-content: center;
+}
+.content {
+  max-width: 100%;
+  margin: 1rem auto;
+  border-radius: 1rem;
+  background-color: var(--bkC);
+  box-shadow: 0 0 5px 1px var(--blackMask);
+}
+.artwork-container {
+  width: 100%;
+  .artwork {
+    box-sizing: border-box;
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 0.5rem 0.5rem 0 0;
+  }
+}
+.data-container {
+  padding: 0 1rem;
+}
+
+.success-message {
+  color: var(--mainBlue);
+}
+.sure-btn {
+  width: 10rem;
+  height: 3rem;
+  margin: 2rem auto;
+}

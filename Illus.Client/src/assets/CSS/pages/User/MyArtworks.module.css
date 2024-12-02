@@ -1,0 +1,116 @@
+.body {
+  padding: 1rem 1rem 3rem;
+  margin-left: 3rem;
+  overflow-x: visible;
+}
+.navbar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  .start {
+    display: flex;
+    .title {
+      display: flex;
+      --fs: 1.8rem;
+      font-size: var(--fs);
+      align-items: center;
+      .tip {
+        margin-left: 0.5rem;
+        font-size: small;
+        background-color: var(--blackMask);
+        color: white;
+        padding: 0.2rem 0.5rem;
+        border-radius: 1rem;
+      }
+    }
+  }
+  .end {
+    display: flex;
+    margin-left: auto;
+  }
+}
+.switch {
+  --r: 1rem;
+  .svg {
+    width: var(--r);
+    height: var(--r);
+    margin-right: 0.2rem;
+    fill: var(--fontC);
+  }
+  .input {
+    display: none;
+    & + .btn {
+      display: flex;
+      color: var(--fontC);
+      background: none;
+      border: 0;
+      border-radius: 2rem;
+      padding: 0.8rem 1.2rem;
+      font-size: var(--r);
+      font-weight: bold;
+      line-height: var(--r);
+      cursor: pointer;
+    }
+    &:checked + .btn {
+      background-color: var(--blackMask);
+    }
+  }
+}
+.artwork-bar-container {
+  width: 100%;
+  overflow-x: auto;
+}
+.row {
+  --r: 80px;
+  display: grid;
+  position: relative;
+  min-width: 100%;
+  grid-template-columns: repeat(5, min-content) 1fr min-content;
+  z-index: 0;
+  .col-start {
+    width: calc(var(--r) + 10px);
+    position: sticky;
+    left: 0;
+    background-color: var(--bkC);
+    .cover {
+      width: var(--r);
+      height: var(--r);
+    }
+  }
+  .col {
+    padding-left: 1.5rem;
+    min-width: 10rem;
+    min-height: 3rem;
+    line-height: 3rem;
+    .end {
+      margin-left: auto;
+    }
+    .svg {
+      --r: 1.2rem;
+      width: var(--r);
+      height: var(--r);
+      fill: var(--fontC);
+    }
+    &.flex {
+      display: flex;
+      flex-wrap: nowrap;
+    }
+  }
+  &.artwork {
+    .col-start {
+      padding: 1rem 0;
+      border-top: 1px solid var(--fontC);
+    }
+    .col {
+      height: var(--r);
+      padding: 1rem 1.5rem;
+      padding-right: 0;
+      line-height: var(--r);
+      border-top: 1px solid var(--fontC);
+    }
+  }
+  &.title {
+    position: sticky;
+    top: 0;
+  }
+}

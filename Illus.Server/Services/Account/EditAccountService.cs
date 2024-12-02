@@ -277,47 +277,100 @@ namespace Illus.Server.Sservices.Account
 
             return result;
         }
-        public async Task<bool> EditUserData(EditUserDataCommand command)
+        public async Task<bool?> EditUserData(EditUserDataCommand command)
         {
-            var result = false;
+            bool? result = null;
             command.NickName = HttpUtility.HtmlEncode(command.NickName.Trim());
             command.Profile = HttpUtility.HtmlEncode(command.Profile);
             try
             {
-                var userName = _context.User
+                var userName = await _context.User
                     .AsNoTracking()
                     .Select(p => new { p.Nickname, p.Id })
-                    .SingleOrDefault(p => p.Nickname == command.NickName && p.Id != command.Id);
+                    .SingleOrDefaultAsync(p => p.Nickname == command.NickName && p.Id != command.Id);
 
-                if (userName != null)
+                if (userName == null)
                 {
                     var user = _context.User.SingleOrDefault(p => p.Id.Equals(command.Id));
                     if (user != null)
                     {
                         if (!string.IsNullOrWhiteSpace(command.NickName)) user.Nickname = command.NickName;
                         user.Profile = command.Profile;
-                        user.LanguageId = command.LanguageiD;
-                        user.CountryID = command.CountryiD;
-
-                        if (command.cover != null && FileHelper.IsImage(command.cover))
-                        {
-                            user.CoverContent = await FileHelper.SaveImageAsync(command.cover, command.Id, (int)FileHelper.imgType.userCover);
-                        }
-
-                        if (command.headshot != null && FileHelper.IsImage(command.headshot))
-                        {
-                            user.HeadshotContent = await FileHelper.SaveImageAsync(command.headshot, command.Id, (int)FileHelper.imgType.userCover);
-                        }
 
                         _context.SaveChanges();
                         result = true;
                     }
+                }
+                else
+                {
+                    result = false;
                 }
 
             }
             catch (Exception ex)
             {
                 Logger.WriteLog("EditUserData", ex);
+            }
+
+            return result;
+        }
+
+        public async Task<bool> EditUserCover(EditUserDataCommand command)
+        {
+            var result = false;
+
+            try
+            {
+                var user = await _context.User.Where(p => p.Id == command.Id).FirstOrDefaultAsync();
+                if (user != null)
+                {
+                    if (command.cover != null && FileHelper.IsImage(command.cover))
+                    {
+                        user.CoverContent = await FileHelper.SaveImageAsync(command.cover, command.Id, (int)FileHelper.imgType.userCover);
+                    }
+                    else if (command.cover == null)
+                    {
+                        user.CoverContent = null;
+                    }
+                    result = true;
+                    _context.SaveChanges();
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("EditUserCover", ex);
+            }
+
+            return result;
+        }
+        public async Task<bool> EditUserHeadshot(EditUserDataCommand command)
+        {
+            var result = false;
+
+            try
+            {
+                var user = await _context.User.Where(p => p.Id == command.Id).FirstOrDefaultAsync();
+                if (user != null)
+                {
+                    if (command.headshot != null && FileHelper.IsImage(command.headshot))
+                    {
+                        user.HeadshotContent = await FileHelper.SaveImageAsync(command.headshot, command.Id, (int)FileHelper.imgType.UserHeadshot);
+                    }
+                    else if (command.cover == null)
+                    {
+                        user.HeadshotContent = null;
+                    }
+                    result = true;
+                    _context.SaveChanges();
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Logger.WriteLog("EditUserHeadshot", ex);
             }
 
             return result;

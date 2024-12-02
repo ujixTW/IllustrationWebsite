@@ -4,7 +4,7 @@ import InputAccount from "../../components/Account/InputAccount";
 import { ChangeEvent } from "../../utils/tsTypesHelper";
 import InputEmail from "../../components/Account/InputEmail";
 import InputPassword from "../../components/Account/InputPassword";
-import { SureBtn } from "../../components/Account/Button";
+import { SureBtn } from "../../components/Button/BasicButton";
 import { accountReg, emailReg, passwordReg } from "../../utils/regexHelper";
 import axios from "axios";
 import { loginPostData } from "../../data/postData/account";
@@ -44,7 +44,7 @@ function SignUpPage(props: { setFnc: (...args: any[]) => any }) {
         accountReg.test(account) ? signUpError.none : signUpError.format
       );
       setEmailErr(emailReg.test(email) ? signUpError.none : signUpError.format);
-      setPwdErr(passwordReg.test(password));
+      setPwdErr(!passwordReg.test(password));
       return;
     }
     const data: loginPostData = {

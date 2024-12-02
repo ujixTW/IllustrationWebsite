@@ -21,5 +21,9 @@ export default function HomeBeforeLogin() {
       </div>
     </div>
   );
-  return <BeforeLoginLayOut context={<Context />} />;
+  return (
+    <BeforeLoginLayOut>
+      <Context />
+    </BeforeLoginLayOut>
+  );
 }

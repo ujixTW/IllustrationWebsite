@@ -1,0 +1,39 @@
+.container{
+  display: flex;
+}
+.artist {
+  display: flex;
+  position: relative;
+  align-items: center;
+  .head {
+    width: 24px;
+    height: 24px;
+    margin-right: 0.5rem;
+    border-radius: 50%;
+  }
+  .head-link {
+    width: 100%;
+    height: 100%;
+  }
+}
+.head-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+.link {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  &:visited,
+  &:link,
+  &:active,
+  &:hover {
+    color: var(--fontC);
+  }
+  &.title {
+    font-weight: bold;
+    margin: 0.5rem 0;
+  }
+}

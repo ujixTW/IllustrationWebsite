@@ -10,7 +10,7 @@ import { loginPostData } from "../../data/postData/account";
 import { accountReg, emailReg, passwordReg } from "../../utils/regexHelper";
 import { useAppDispatch } from "../../hooks/redux";
 import { loginActions } from "../../data/reduxModels/loginRedux";
-import { SureBtn } from "../../components/Account/Button";
+import { SureBtn } from "../../components/Button/BasicButton";
 import changeWebTitle from "../../utils/changeWebTitle";
 
 function Login() {
@@ -45,7 +45,7 @@ function Login() {
     await axios
       .post("/api/Login", data)
       .then((res) => {
-        if (res.data) {
+        if (res.data as boolean) {
           dispatch(loginActions.login());
           navigate(path.home);
         } else {
@@ -70,6 +70,7 @@ function Login() {
           <InputAccount
             value={account}
             placeholder="請輸入帳號或信箱"
+            autoComplete="userName"
             onChange={(e: ChangeEvent) => setAccount(e.currentTarget.value)}
           />
           {accFail && (
@@ -79,6 +80,7 @@ function Login() {
             isNew={false}
             value={password}
             onChange={(e: ChangeEvent) => setPassword(e.currentTarget.value)}
+            autoInput
           />
           {pwdFail && <p className={style["error"]}>密碼規格錯誤。</p>}
         </div>

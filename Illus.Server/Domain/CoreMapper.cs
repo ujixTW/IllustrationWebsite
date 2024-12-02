@@ -72,6 +72,7 @@ namespace Illus.Server.Domain
         {
             entity.ToTable("Tag");
             entity.HasKey(p => p.Id);
+            entity.HasMany(p => p.Artworks).WithMany(p => p.Tags);
         }
         public void Map(EntityTypeBuilder<UserModel> entity)
         {
@@ -79,6 +80,7 @@ namespace Illus.Server.Domain
             entity.HasKey(p => p.Id);
             entity.HasOne(p => p.Language).WithMany().OnDelete(DeleteBehavior.NoAction);
             entity.HasOne(p => p.Country).WithMany().OnDelete(DeleteBehavior.NoAction);
+            entity.HasMany(p => p.Artwork).WithOne(p => p.Artist);
         }
         public void Map(EntityTypeBuilder<LoginTokenModel> entity)
         {

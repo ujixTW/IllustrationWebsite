@@ -22,12 +22,12 @@ namespace Illus.Server.Helper
         }
         public static bool IsValidAccount(string account)
         {
-            var reg = @"^[a-zA-Z0-9]${6,16}";
+            var reg = @"^[a-zA-Z0-9]{6,16}$";
             return _isValidString(account, reg, false);
         }
         public static bool IsValidPassword(string password)
         {
-            var reg = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[0-9a-zA-Z!@#$.\%\^\&\*\(\)]${6,32}";
+            var reg = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[0-9a-zA-Z!@#$.\%\^\&\*\(\)]{6,32}$";
             return _isValidString(password, reg, false);
         }
         private static bool _isValidString(string input, string reg, bool IgnoreCase)

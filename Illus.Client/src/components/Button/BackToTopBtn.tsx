@@ -1,17 +1,18 @@
 import { RefObject, useEffect, useState } from "react";
 import style from "../../assets/CSS/components/Button/BackToTopBtn.module.css";
+import { debounce } from "../../utils/debounce";
 
 function BackToTopBtn(props: { scope?: RefObject<HTMLDivElement> }) {
   const [show, setShow] = useState<boolean>(false);
   useEffect(() => {
-    const onTop = () => {
+    const onTop = debounce(() => {
       const scope = props.scope?.current;
       if ((scope != null && scope.scrollTop > 100) || window.scrollY > 100) {
         setShow(true);
       } else {
         setShow(false);
       }
-    };
+    });
     window.addEventListener("scroll", onTop, true);
     return () => window.removeEventListener("scroll", onTop);
   }, []);

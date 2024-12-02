@@ -10,7 +10,7 @@
 .bk-img {
   background-size: cover;
   background-position: center center;
-  background-color: black;
+  background-color: var(--blackMask);
 }
 .content {
   width: 40vh;

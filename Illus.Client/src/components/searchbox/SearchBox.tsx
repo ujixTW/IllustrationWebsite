@@ -1,6 +1,6 @@
 import style from "../../assets/CSS/components/SearchBox.module.css";
 import path from "../../data/JSON/path.json";
-import SearchMark from "../../assets/searchMark.svg?react";
+import SearchMark from "../../assets/SVG/searchMark.svg?react";
 import { ChangeEvent, FormEvent } from "../../utils/tsTypesHelper";
 import AutoComplete from "./autoComplete";
 import { useEffect, useRef, useState } from "react";
@@ -13,7 +13,6 @@ import { keywordParma } from "../../utils/parmasHelper";
 
 function SearchBox() {
   const [searchText, setSearchText] = useState<string>("");
-  const [isFocus, setIsFocus] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const [searchParmas] = useSearchParams();
   const navigate = useNavigate();
@@ -35,14 +34,6 @@ function SearchBox() {
   };
 
   useEffect(() => {
-    document.addEventListener("click", (e) => {
-      if (
-        e.target != document.querySelector(".auto-complete") &&
-        e.target != searchRef.current
-      )
-        setIsFocus(false);
-      else setIsFocus(true);
-    });
     if (searchParmas.has(keywordParma)) {
       const keyword = searchParmas.get(keywordParma);
       if (keyword != undefined && keyword != "") setSearchText(keyword);
@@ -63,11 +54,10 @@ function SearchBox() {
           name="search"
           onChange={editSearchInput}
           ref={searchRef}
-          onFocus={() => setIsFocus(true)}
           autoComplete="off"
         />
         <div className={style["box-end"]}>
-          {searchText.trim() !== "" && isFocus && (
+          {searchText.trim() !== "" && (
             <button
               type="button"
               className={style["cancel"]}
@@ -76,14 +66,18 @@ function SearchBox() {
               x
             </button>
           )}
+
           <button className={style["submit"]} type="submit">
             <SearchMark className={style["mark"]} />
           </button>
         </div>
+        <AutoComplete
+          inputText={searchText}
+          setInputText={setSearchText}
+          target={searchRef}
+          isLink
+        />
       </form>
-      {searchText.trim() !== "" && isFocus && (
-        <AutoComplete inputText={searchText} target={searchRef} />
-      )}
     </search>
   );
 }

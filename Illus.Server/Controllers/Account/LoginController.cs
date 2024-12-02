@@ -25,8 +25,8 @@ namespace Illus.Server.Controllers.Account
         {
             var result = false;
 
-            if (StringHelper.IsValidAccount(command.Account) ||
-                StringHelper.IsValidEmail(command.Email) &&
+            if ((StringHelper.IsValidAccount(command.Account) ||
+                StringHelper.IsValidEmail(command.Email)) &&
                 StringHelper.IsValidPassword(command.Password)
               )
             {
@@ -48,23 +48,23 @@ namespace Illus.Server.Controllers.Account
             return Ok(result);
         }
         [HttpGet("/api/LoginCheck")]
-        public IActionResult LoginCheck()
+        public async Task<IActionResult> LoginCheck()
         {
             var userIdStr = Request.Cookies[_userIdKey];
             var tokenStr = Request.Cookies[_loginTokenKey];
 
-            UserViewModel? model = null;
+            LoginCheckModel model = new LoginCheckModel();
 
             if (int.TryParse(userIdStr, out var userId) &&
                 Guid.TryParse(tokenStr, out var token))
             {
-                model = _loginService.LoginCheck(new Models.LoginTokenModel()
+                model = await _loginService.LoginCheck(new Models.LoginTokenModel()
                 {
                     UserId = userId,
                     LoginToken = token,
                 });
             }
-            return (model != null) ? Ok(model) : BadRequest();
+            return Ok(model);
         }
         [HttpGet("/api/Logout")]
         public IActionResult Logout()

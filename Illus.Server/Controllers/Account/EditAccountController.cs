@@ -5,6 +5,7 @@ using Illus.Server.Models.View;
 using Illus.Server.Sservices.Account;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Illus.Server.Controllers.Account
 {
@@ -116,10 +117,16 @@ namespace Illus.Server.Controllers.Account
 
             return result ? Ok() : BadRequest();
         }
+
+        /// <summary>
+        /// 編輯使用者資料中的暱稱、簡介，若已有相同暱稱則回傳false
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
         [HttpPost("UserData")]
         public async Task<IActionResult> EditUserData(EditUserDataCommand command)
         {
-            var result = false;
+            bool? result = null;
             var tokenStr = Request.Cookies[_loginTokenKey];
             var userIdStr = Request.Cookies[_userIdKey];
             if (int.TryParse(userIdStr, out int userId) &&
@@ -129,7 +136,45 @@ namespace Illus.Server.Controllers.Account
             {
                 result = await _editService.EditUserData(command);
             }
-            return (result) ? Ok() : BadRequest();
+            return (result != null) ? Ok(result) : BadRequest();
+        }
+        [HttpPost("UserCover")]
+        public async Task<IActionResult> EditUserCover(IFormFile? file)
+        {
+            var result = false;
+            var tokenStr = Request.Cookies[_loginTokenKey];
+            var userIdStr = Request.Cookies[_userIdKey];
+            if (int.TryParse(userIdStr, out int userId) &&
+                Guid.TryParse(tokenStr, out Guid token) &&
+                _editService.CheckUserIdentity(token, userId))
+            {
+                result = await _editService.EditUserCover(new EditUserDataCommand
+                {
+                    Id = userId,
+                    cover = file
+                });
+            }
+
+            return result ? Ok() : BadRequest();
+        }
+        [HttpPost("UserHeadshot")]
+        public async Task<IActionResult> EditUserHeadshot(IFormFile? file)
+        {
+            var result = false;
+            var tokenStr = Request.Cookies[_loginTokenKey];
+            var userIdStr = Request.Cookies[_userIdKey];
+            if (int.TryParse(userIdStr, out int userId) &&
+                Guid.TryParse(tokenStr, out Guid token) &&
+                _editService.CheckUserIdentity(token, userId))
+            {
+                result = await _editService.EditUserHeadshot(new EditUserDataCommand
+                {
+                    Id = userId,
+                    headshot = file
+                });
+            }
+
+            return result ? Ok() : BadRequest();
         }
     }
 }

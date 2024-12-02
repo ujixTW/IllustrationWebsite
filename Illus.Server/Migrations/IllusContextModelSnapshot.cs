@@ -17,7 +17,7 @@ namespace Illus.Server.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -455,7 +455,7 @@ namespace Illus.Server.Migrations
             modelBuilder.Entity("Illus.Server.Models.ArtworkModel", b =>
                 {
                     b.HasOne("Illus.Server.Models.UserModel", "Artist")
-                        .WithMany()
+                        .WithMany("Artwork")
                         .HasForeignKey("ArtistId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -615,6 +615,8 @@ namespace Illus.Server.Migrations
 
             modelBuilder.Entity("Illus.Server.Models.UserModel", b =>
                 {
+                    b.Navigation("Artwork");
+
                     b.Navigation("Gotcha");
 
                     b.Navigation("LoginTokens");

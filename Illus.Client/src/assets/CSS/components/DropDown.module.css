@@ -1,0 +1,27 @@
+.drop-down {
+  position: absolute;
+  background-color: var(--bkC);
+  border-radius: 0.5rem;
+  box-shadow: 0 0 3px var(--blackMask);
+  z-index: 1;
+  &.up {
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  &.down {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  &.left {
+    top: 50%;
+    right: 100%;
+    transform: translateY(-50%);
+  }
+  &.right {
+    top: 50%;
+    left: 100%;
+    transform: translateY(-50%);
+  }
+}

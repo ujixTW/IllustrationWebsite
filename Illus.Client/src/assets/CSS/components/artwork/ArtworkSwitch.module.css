@@ -1,0 +1,53 @@
+.scroll {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  pointer-events: none;
+}
+.btn {
+  position: sticky;
+  left: 0;
+  right: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  outline: none;
+  opacity: 0;
+  pointer-events: auto;
+  &:disabled {
+    visibility: hidden;
+  }
+}
+.back {
+  top: 0;
+  height: 20vh;
+  cursor: url("../../../SVG/pageUp.svg"), pointer;
+}
+.next {
+  top: calc(100% - 40vh);
+  height: 40vh;
+  cursor: url("../../../SVG/pageDown.svg"), pointer;
+}
+.count {
+  position: absolute;
+  box-sizing: border-box;
+  top: 0;
+  right: 0;
+  height: 100%;
+  padding: 0.1rem;
+  font-size: x-small;
+  color: white;
+  > div {
+    position: sticky;
+    top: 0.2rem;
+    margin-right: 0.2rem;
+    margin-bottom: 5rem;
+    padding: 0.2rem 0.5rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 1rem;
+  }
+}

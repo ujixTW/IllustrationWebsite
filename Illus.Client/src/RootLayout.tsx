@@ -1,21 +1,20 @@
 import style from "./assets/CSS/RootLayout.module.css";
 import path from "./data/JSON/path.json";
-import IconLong from "./assets/IconLong.svg?react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import IconLong from "./assets/SVG/IconLong.svg?react";
+import { Link, Outlet } from "react-router-dom";
 import SearchBox from "./components/searchbox/SearchBox";
 import { useEffect, useState } from "react";
-import { userDataType, userDataTypeDef } from "./data/typeModels/user";
+import { loginCheckType } from "./data/typeModels/user";
 import axios from "axios";
-import { UserDataContext } from "./context/LoginContext";
 import UserMenu from "./components/UserMenu";
-import { ImagePathHelper } from "./utils/ImagePathHelper";
 import { loginActions } from "./data/reduxModels/loginRedux";
 import { useAppDispatch, useAppSelector } from "./hooks/redux";
 import BackToTopBtn from "./components/Button/BackToTopBtn";
+import { userDataActions } from "./data/reduxModels/userDataRedux";
 
 function MainNav() {
   const isLogin = useAppSelector((state) => state.login);
-  const location = useLocation();
+  const emailConfirmed = useAppSelector((state) => state.userData.emailConfirm);
 
   return (
     <nav className={style["nav"] + " " + style["main-nav"]}>
@@ -30,12 +29,17 @@ function MainNav() {
 
       {isLogin ? (
         <div className={style["item"]}>
-          <Link to={path.artworks.create} className={style["btn"]}>
-            上傳作品
-          </Link>
+          {emailConfirmed && (
+            <Link
+              to={path.artworks.create}
+              className={style["btn"] + " " + style["post-artwork"]}
+            >
+              上傳作品
+            </Link>
+          )}
           <UserMenu />
         </div>
-      ) : location.pathname == path.home ? (
+      ) : (
         <div className={style["item"]}>
           <Link
             to={path.login.login}
@@ -50,64 +54,53 @@ function MainNav() {
             註冊
           </Link>
         </div>
-      ) : (
-        <></>
       )}
     </nav>
   );
 }
 function RootLayout() {
   const dispatch = useAppDispatch();
-  const [userData, setUserData] = useState<userDataType>(userDataTypeDef);
-  const loginHandler = () => {
-    dispatch(loginActions.login());
-  };
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    axios
-      .get("/api/LoginCheck")
-      .then((res) => {
-        let userData = res.data as userDataType;
-        userData.cover = ImagePathHelper(userData.cover);
-        userData.headshot =
-          userData.headshot != ""
-            ? ImagePathHelper(userData.headshot)
-            : userDataTypeDef.headshot;
-        setUserData(userData);
-        loginHandler();
-      })
-      .catch(() => dispatch(loginActions.logout()));
+    let ignoreResult = false;
+
+    const loginCheck = async () => {
+      await axios
+        .get("/api/LoginCheck")
+        .then((res) => {
+          if (!ignoreResult) {
+            const data: loginCheckType = res.data;
+
+            dispatch(
+              data.isLogin ? loginActions.login() : loginActions.logout()
+            );
+            if (data.isLogin)
+              dispatch(userDataActions.setUserData(data.userData));
+            setIsLoading(false);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          setIsLoading(false);
+        });
+    };
+    loginCheck();
+    return () => {
+      ignoreResult = true;
+    };
   }, []);
 
-  return (
+  return !isLoading ? (
     <>
-      <UserDataContext.Provider
-        value={{ userData: userData, setUserData: setUserData }}
-      >
-        <MainNav />
-      </UserDataContext.Provider>
+      <MainNav />
       <main>
-        <button
-          type="button"
-          onClick={() => dispatch(loginActions.login())}
-          className={style["btn"]}
-          style={{
-            position: "fixed",
-            bottom: "2rem",
-            left: "2rem",
-            border: "0",
-            borderRadius: "1rem",
-            width: "50px",
-            height: "50px",
-            backgroundColor: "var(--mainBlue)",
-            color: "white",
-          }}
-        >
-          登入狀態
-        </button>
         <BackToTopBtn />
         <Outlet />
       </main>
     </>
+  ) : (
+    <></>
   );
 }
 

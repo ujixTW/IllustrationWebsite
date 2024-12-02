@@ -1,3 +1,5 @@
+import { ArtworkType } from "./artwork";
+
 type userDataType = {
   id: number;
   account: string;
@@ -7,16 +9,26 @@ type userDataType = {
   cover: string;
   headshot: string;
   isFollow: boolean;
+  emailConfirm: boolean;
   followerCount: number;
   followingCount: number;
   language: languageType;
-  contry: contryType;
+  country: countryType;
+  artworkList?: ArtworkType[];
 };
 type languageType = { id: number; content: string };
-type contryType = { id: number; content: string };
-const languageTypeDef = { id: 0, content: "繁體中文" };
-const contryTypeDef = { id: 0, content: "台灣" };
-const userDataTypeDef = {
+type countryType = { id: number; content: string };
+type followListType = {
+  users: userDataType[];
+  count: number;
+};
+type loginCheckType = {
+  userData: userDataType;
+  isLogin: boolean;
+};
+const languageTypeDef = { id: 1, content: "繁體中文" };
+const contryTypeDef = { id: 1, content: "台灣" };
+const userDataTypeDef: userDataType = {
   id: -1,
   account: "",
   email: "",
@@ -25,11 +37,18 @@ const userDataTypeDef = {
   cover: "",
   headshot: "/defaultImg/defaultHeadshot.svg",
   isFollow: false,
+  emailConfirm: false,
   followerCount: 0,
   followingCount: 0,
   language: languageTypeDef,
-  contry: contryTypeDef,
+  country: contryTypeDef,
 };
 
 export { userDataTypeDef, languageTypeDef, contryTypeDef };
-export type { userDataType, languageType, contryType };
+export type {
+  userDataType,
+  languageType,
+  countryType,
+  followListType,
+  loginCheckType,
+};

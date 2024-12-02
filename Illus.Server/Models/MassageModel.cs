@@ -1,4 +1,6 @@
-﻿namespace Illus.Server.Models
+﻿using Newtonsoft.Json;
+
+namespace Illus.Server.Models
 {
     public class MassageModel
     {
@@ -9,7 +11,9 @@
         public DateTime CreateTime { get; set; }
         public bool IsEdit { get; set; } = false;
         public bool IsDelete { get; set; } = false;
+        [JsonIgnore]
         public virtual ArtworkModel? Artwork { get; set; }
+        [JsonIgnore]
         public virtual UserModel? User { get; set; }
     }
 }

@@ -25,9 +25,17 @@
 }
 .normal {
   color: var(--fontC);
-  background-color: var(--searchBkC);
+  background-color: var(--blackMask);
+}
+.consistent{
+  color: var(--fontC);
+  background-color: var(--bkC);
 }
 .cancel {
   color: white;
   background-color: var(--heartRed);
+}
+.more {
+  color: white;
+  background-color: rgba(0, 0, 0, 0.8);
 }

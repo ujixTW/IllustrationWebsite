@@ -1,17 +1,21 @@
 import { ArtworkType } from "../../data/typeModels/artwork";
 import style from "../../assets/CSS/components/artwork/ArtworkList.module.css";
-import Arrow from "../../assets/arrow.svg?react";
+import Arrow from "../../assets/SVG/arrow.svg?react";
 import ArtworkCard from "./ArtworkCard";
 import { Link, To } from "react-router-dom";
 import { memo, useEffect, useRef, useState } from "react";
+import { useAppSelector } from "../../hooks/redux";
 
 function ArtworkBarList(props: {
   list: ArtworkType[];
-  title: string;
-  more?: boolean;
+  title?: string;
   link?: To;
   getMoreDataFnc?: (...args: any[]) => any;
+  showArtTitle?: boolean;
+  showArtistData?: boolean;
+  length?: number;
 }) {
+  const userId = useAppSelector((state) => state.userData.id);
   const listRef = useRef<HTMLDivElement>(null);
   const itemRef = useRef<HTMLDivElement>(null);
   const [totalSkip, setTotalSkip] = useState<number>(0);
@@ -35,8 +39,18 @@ function ArtworkBarList(props: {
   }, [totalSkip]);
 
   const list = props.list.map((artwork: ArtworkType) => (
-    <div className={style["item"]} ref={itemRef}>
-      <ArtworkCard artwork={artwork} />
+    <div
+      key={props.title + artwork.id.toString()}
+      className={style["item"]}
+      ref={itemRef}
+    >
+      <ArtworkCard
+        artwork={artwork}
+        showArtTitle={props.showArtTitle}
+        showArtistData={props.showArtistData}
+        length={props.length}
+        isOwn={userId === artwork.artistId}
+      />
     </div>
   ));
 
@@ -67,16 +81,20 @@ function ArtworkBarList(props: {
       setTotalSkip(total < 0 ? 0 : total);
     }
   };
+
   return (
     <div className={style["bar"] + " " + style["base"]}>
-      <div className={style["title-bar"]}>
-        <h2 className={style["title"]}>{props.title}</h2>
-        {props.more && props.link != undefined && (
-          <Link to={props.link} className={style["link"]}>
-            more
-          </Link>
-        )}
-      </div>
+      {props.title != undefined && (
+        <div className={style["title-bar"]}>
+          <h2 className={style["title"]}>{props.title}</h2>
+          {props.link != undefined && (
+            <Link to={props.link} className={style["link"]}>
+              more
+            </Link>
+          )}
+        </div>
+      )}
+
       <div className={style["content"]}>
         <div className={style["list"]} ref={listRef}>
           {list}

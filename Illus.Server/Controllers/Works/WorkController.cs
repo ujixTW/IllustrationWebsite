@@ -4,6 +4,8 @@ using Illus.Server.Models.Command;
 using Illus.Server.Models.View;
 using Illus.Server.Sservices.Works;
 using Microsoft.AspNetCore.Mvc;
+using System.Web;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace Illus.Server.Controllers.Works
 {
@@ -42,7 +44,7 @@ namespace Illus.Server.Controllers.Works
 
             return Ok(list);
         }
-        
+
         [HttpGet("GetList/Daily")]
         public async Task<IActionResult> GetDailyWorkList(
             [FromQuery] int page, [FromQuery] bool isR18, [FromQuery] bool isAI,
@@ -164,7 +166,11 @@ namespace Illus.Server.Controllers.Works
             var userIdStr = Request.Cookies[_userIdKey];
             var success = false;
 
-            var tempImgs = command.Imgs;
+            var tempImgs = new List<IFormFile>();
+            foreach (var img in command.Imgs)
+            {
+                tempImgs.Add(img);
+            }
             tempImgs.Add(command.Cover);
 
             if (int.TryParse(userIdStr, out int userId) && FileHelper.IsImage(tempImgs))
@@ -227,14 +233,15 @@ namespace Illus.Server.Controllers.Works
             return Ok(tagList);
         }
         [HttpPost("Tag/Edit")]
-        public IActionResult EditTag(EditTagCommand command, int workId)
+        public async Task<IActionResult> EditTag(EditTagCommand command, int workId)
         {
             var userIdStr = Request.Cookies[_userIdKey];
+            var result = new List<TagModel>();
             if (int.TryParse(userIdStr, out int userId))
             {
-                _workServices.EditTag(command, workId, userId);
+                result = await _workServices.EditTag(command, workId, userId);
             }
-            return Ok();
+            return Ok(result);
         }
         #endregion
         [HttpPost("Like")]
@@ -242,13 +249,12 @@ namespace Illus.Server.Controllers.Works
         {
             var userIdStr = Request.Cookies[_userIdKey];
             var success = false;
-            var likes = 0;
             if (int.TryParse(userIdStr, out int userId))
             {
-                success = _workServices.LikeWork(wid, userId, out likes);
+                success = _workServices.LikeWork(wid, userId);
             }
 
-            return success ? Ok(likes) : BadRequest();
+            return Ok(success);
         }
         [HttpGet("Like/{workId}")]
         public async Task<IActionResult> GetLikeList(int workId)
@@ -262,7 +268,7 @@ namespace Illus.Server.Controllers.Works
             var recommandList = new List<TagModel>();
             if (!string.IsNullOrWhiteSpace(st))
             {
-                recommandList = await _workServices.GetSearchRecommand(st);
+                recommandList = await _workServices.GetSearchRecommand(HttpUtility.UrlDecode(st));
             }
             return Ok(recommandList);
         }
@@ -279,7 +285,7 @@ namespace Illus.Server.Controllers.Works
                 Count = (command.Count <= 100) ? command.Count : 0,
                 IsR18 = command.IsR18,
                 IsAI = command.IsAI,
-                Keywords = command.Keywords.Trim(),
+                Keywords = HttpUtility.UrlDecode(command.Keywords).Trim(),
                 IsDesc = command.IsDesc,
                 OrderType = (command.OrderType >= orderTypeArr.Length || command.OrderType < 0) ?
                     (int)WorkListOrder.Hot : command.OrderType,

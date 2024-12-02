@@ -1,22 +1,16 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import style from "../assets/CSS/layouts/AccountsLayout.module.css";
 import path from "../data/JSON/path.json";
-import IconLong from "../assets/IconLong.svg?react";
+import IconLong from "../assets/SVG/IconLong.svg?react";
 import BeforeLoginLayOut from "./ArtworkBG";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks/redux";
 import { loginActions } from "../data/reduxModels/loginRedux";
 import axios from "axios";
+import { loginCheckType } from "../data/typeModels/user";
+import { userDataActions } from "../data/reduxModels/userDataRedux";
 
 function MainNav() {
-  const location = useLocation();
-  const isLogin: boolean = useAppSelector((state) => state.login);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (isLogin) navigate(path.home);
-  }, []);
-
   const SignUpBtn = () => {
     return (
       <Link to={path.signUp.signUp} className={style["btn"]}>
@@ -52,17 +46,37 @@ function MainNav() {
   );
 }
 export default function AccountsLayout() {
+  const isLogin = useAppSelector((state) => state.login);
   const dispatch = useAppDispatch();
   const location = useLocation();
   const [hasArtworkBG, setHasArtworkBG] = useState<boolean>(false);
+  const navigate = useNavigate();
+
   useEffect(() => {
-    axios
-      .get("/api/LoginCheck")
-      .then(() => {
-        dispatch(loginActions.login());
-      })
-      .catch(() => dispatch(loginActions.logout()));
+    let ignoreResult = false;
+    const loginCheck = async () => {
+      await axios
+        .get("/api/LoginCheck")
+        .then((res) => {
+          if (!ignoreResult) {
+            const data: loginCheckType = res.data;
+            dispatch(
+              data.isLogin ? loginActions.login() : loginActions.logout()
+            );
+            if (data.isLogin)
+              dispatch(userDataActions.setUserData(data.userData));
+          }
+        })
+        .catch((err) => console.log(err));
+    };
+    loginCheck();
+    return () => {
+      ignoreResult = true;
+    };
   }, []);
+  useEffect(() => {
+    if (isLogin) navigate(path.home);
+  }, [isLogin]);
 
   useEffect(() => {
     const hasBGPath = [path.login.login, path.signUp.signUp];
@@ -82,7 +96,9 @@ export default function AccountsLayout() {
       <MainNav />
       <main>
         {hasArtworkBG ? (
-          <BeforeLoginLayOut context={<Outlet />} />
+          <BeforeLoginLayOut>
+            <Outlet />
+          </BeforeLoginLayOut>
         ) : (
           <div className={style["none-bk-content"]}>
             <div className={style["bg"]}></div>

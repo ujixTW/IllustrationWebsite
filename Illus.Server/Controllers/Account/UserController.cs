@@ -38,21 +38,21 @@ namespace Illus.Server.Controllers.Account
             return success ? Ok() : BadRequest();
         }
         [HttpGet("GetFollowingList/{id}")]
-        public async Task<IActionResult> GetFollowingList(int id, [FromQuery] int p)
+        public async Task<IActionResult> GetFollowingList(int id, [FromQuery] int p, [FromQuery] int count)
         {
 
-            var userList = await _followService.GetFollowingList(id, p);
+            var userList = await _followService.GetFollowingList(id, p, count);
 
             return Ok(userList);
         }
         [HttpGet("GetFollowerList")]
-        public IActionResult GetFollowerList([FromQuery] int p)
+        public IActionResult GetFollowerList([FromQuery] int p, [FromQuery] int count)
         {
             var userList = new FollowViewListModel();
             var userIdStr = Request.Cookies[_userIdKey];
             if (int.TryParse(userIdStr, out int userId))
             {
-                userList = _followService.GetFollowerList(userId, p);
+                userList = _followService.GetFollowerList(userId, p, count);
             }
             return Ok(userList);
         }

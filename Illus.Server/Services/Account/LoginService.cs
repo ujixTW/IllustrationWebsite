@@ -31,7 +31,6 @@ namespace Illus.Server.Sservices.Account
             try
             {
                 var user = _illusContext.User
-                .AsNoTracking()
                 .SingleOrDefault(p =>
                     (p.Account == command.Account || p.Email == command.Email) &&
                     p.IsActivation == true
@@ -39,18 +38,17 @@ namespace Illus.Server.Sservices.Account
 
                 if (user != null)
                 {
-                    var salt = Encoding.UTF8.GetBytes(user.PasswordSalt);
+                    var salt = Convert.FromBase64String(user.PasswordSalt);
                     var inputPwd = PWDHelper.GetHashPassword(user.Account, command.Password, salt);
                     if (user.Password == Convert.ToBase64String(inputPwd))
                     {
                         var tokenData = new LoginTokenModel()
                         {
                             LoginToken = Guid.NewGuid(),
-                            UserId = user.Id,
+                            User = user,
                             ExpiryDate = DateTime.Now.AddYears(50)
                         };
-                        var token = _illusContext
-                            .LoginToken
+                        var token = _illusContext.LoginToken
                             .Where(p => p.UserId == user.Id)
                             .OrderBy(p => p.ExpiryDate)
                             .ToList();
@@ -62,10 +60,11 @@ namespace Illus.Server.Sservices.Account
                         }
                         else
                         {
-                            token.Add(tokenData);
+                            _illusContext.LoginToken.Add(tokenData);
                         }
 
                         _illusContext.SaveChanges();
+                        tokenData.UserId = user.Id;
                         result = tokenData;
                         success = true;
                     }
@@ -80,15 +79,15 @@ namespace Illus.Server.Sservices.Account
 
             return result;
         }
-        public UserViewModel? LoginCheck(LoginTokenModel input)
+        public async Task<LoginCheckModel> LoginCheck(LoginTokenModel input)
         {
-            UserViewModel? result = null;
+            LoginCheckModel result = new LoginCheckModel();
             var today = DateTime.Now;
             try
             {
-                var hasData = _illusContext.LoginToken
+                var hasData = await _illusContext.LoginToken
                     .AsNoTracking()
-                    .SingleOrDefault(p =>
+                    .SingleOrDefaultAsync(p =>
                     p.LoginToken == input.LoginToken &&
                     p.UserId == input.UserId &&
                     p.User.IsActivation == true &&
@@ -97,13 +96,17 @@ namespace Illus.Server.Sservices.Account
 
                 if (hasData != null)
                 {
-                    var user = _illusContext.User
+                    var user = await _illusContext.User
                         .AsNoTracking()
                         .Include(p => p.Language)
                         .Include(p => p.Country)
-                        .SingleOrDefault(p => p.Id == input.UserId);
+                        .SingleOrDefaultAsync(p => p.Id == input.UserId);
+                    result.IsLogin = true;
 
-                    result = user == null ?
+                    var followerCount = _illusContext.Follow.AsNoTracking().Where(p => p.FollowingId == input.UserId).Count();
+                    var followingCount = _illusContext.Follow.AsNoTracking().Where(p => p.FollowerId == input.UserId).Count();
+
+                    result.UserData = user == null ?
                         null :
                         new UserViewModel()
                         {
@@ -113,10 +116,17 @@ namespace Illus.Server.Sservices.Account
                             NickName = user.Nickname,
                             Profile = user.Profile,
                             Language = user.Language,
+                            EmailConfirm = user.EmailConfirmed,
                             Country = user.Country,
-                            CoverContent = user.CoverContent,
-                            HeadshotContent = user.HeadshotContent,
+                            Cover = user.CoverContent,
+                            Headshot = user.HeadshotContent,
+                            FollowerCount = followerCount,
+                            FollowingCount = followingCount,
                         };
+                }
+                else
+                {
+                    result.IsLogin = false;
                 }
             }
             catch (Exception ex)
@@ -181,7 +191,9 @@ namespace Illus.Server.Sservices.Account
                         {
                             CAPTCHA = capcha,
                             ExpiryDate = DateTime.Now.AddHours(_captchaExpiryTime),
-                        }
+                        },
+                        Country = _illusContext.Country.First(),
+                        Language = _illusContext.Language.First()
                     };
 
                     if (MailHelper.SendSignUpMail(user))

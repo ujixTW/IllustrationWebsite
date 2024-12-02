@@ -1,0 +1,39 @@
+.btn {
+  display: flex;
+  text-decoration: none;
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+  font-size: large;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.9;
+
+  &:hover {
+    opacity: 1;
+  }
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.main-blue {
+  color: white;
+  background-color: var(--mainBlue);
+}
+.red {
+  color: white;
+  background-color: var(--heartRed);
+}
+.background {
+  color: var(--fontC);
+  background-color: var(--bkC);
+}
+.font {
+  color: var(--bkC);
+  background-color: var(--fontC);
+}
+.black-translucent {
+  color: white;
+  background-color: var(--blackMask);
+}

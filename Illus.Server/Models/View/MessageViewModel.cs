@@ -8,7 +8,7 @@
         public string UserNickName { get; set; } = string.Empty;
         public string UserHeadshot { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
-        public DateTime CreateTime { get; set; }
+        public string CreateTime { get; set; } = string.Empty;
         public bool IsEdit { get; set; }
     }
 }

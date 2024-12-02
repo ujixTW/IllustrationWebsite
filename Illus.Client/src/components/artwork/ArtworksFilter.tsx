@@ -12,7 +12,13 @@ import {
 } from "../../utils/parmasHelper";
 import { artworkOrderType } from "../../data/postData/artwork";
 
-export default function ArtworksFilter(props: { hasOrder?: boolean }) {
+export default function ArtworksFilter(props: {
+  hasOrder?: boolean;
+  orderTime?: boolean;
+  orderHot?: boolean;
+  switchAI?: boolean;
+  switchR18?: boolean;
+}) {
   const [isAI, setIsAI] = useState(false);
   const [isR18, setIsR18] = useState(false);
   const [order, setOrder] = useState<artworkOrderType>(
@@ -93,8 +99,8 @@ export default function ArtworksFilter(props: { hasOrder?: boolean }) {
 
   return (
     <nav className={style["filter"]}>
-      {props.hasOrder && (
-        <div className={style["side-start"] + " " + style["option-bar"]}>
+      <div className={style["side-start"] + " " + style["option-bar"]}>
+        {(props.hasOrder || props.orderTime) && (
           <div>
             <CheckBtn
               name="order"
@@ -106,6 +112,8 @@ export default function ArtworksFilter(props: { hasOrder?: boolean }) {
               hasBackground={false}
             />
           </div>
+        )}
+        {(props.hasOrder || props.orderHot) && (
           <div>
             <CheckBtn
               name="order"
@@ -117,28 +125,32 @@ export default function ArtworksFilter(props: { hasOrder?: boolean }) {
               hasBackground={false}
             />
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       <div className={style["side-end"] + " " + style["option-bar"]}>
-        <div>
-          <CheckBtn
-            name="isAI"
-            text="AI"
-            onChange={aiHandler}
-            checked={isAI}
-            hasBackground={false}
-          />
-        </div>
-        <div>
-          <CheckBtn
-            name="isR18"
-            text="R-18"
-            onChange={r18Handler}
-            checked={isR18}
-            hasBackground={false}
-          />
-        </div>
+        {props.switchAI && (
+          <div>
+            <CheckBtn
+              name="isAI"
+              text="AI"
+              onChange={aiHandler}
+              checked={isAI}
+              hasBackground={false}
+            />
+          </div>
+        )}
+        {props.switchR18 && (
+          <div>
+            <CheckBtn
+              name="isR18"
+              text="R-18"
+              onChange={r18Handler}
+              checked={isR18}
+              hasBackground={false}
+            />
+          </div>
+        )}
       </div>
     </nav>
   );

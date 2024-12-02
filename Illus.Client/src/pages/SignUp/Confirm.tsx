@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { guidReg } from "../../utils/regexHelper";
 import path from "../../data/JSON/path.json";
-import { SureBtn } from "../../components/Account/Button";
+import { SureBtn } from "../../components/Button/BasicButton";
 import style from "../../assets/CSS/pages/signUp/Confirm.module.css";
 import changeWebTitle from "../../utils/changeWebTitle";
 

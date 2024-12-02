@@ -1,0 +1,27 @@
+.auto-complete {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  padding: 0.5rem 0;
+  margin: 0;
+  background-color: var(--bkC);
+  border-radius: 0.5rem;
+  box-shadow: 0 0 0.1rem;
+  z-index: 5;
+  &.bottom {
+    top: 2.2rem;
+  }
+  &.top {
+    bottom: 2.2rem;
+  }
+  .recommand {
+    display: block;
+    text-align: left;
+    padding: 0.5rem 1rem;
+    color: var(--fontC);
+    &:hover,
+    &:focus {
+      background-color: var(--searchBkC);
+    }
+  }
+}

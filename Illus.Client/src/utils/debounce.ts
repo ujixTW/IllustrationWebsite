@@ -11,11 +11,15 @@ function debounce(fn: (...args: any[]) => any, delay = 500) {
   };
 }
 function asyncDebounce(fn: (...args: any[]) => any, delay = 500) {
-  const tempRef = useRef<(...args: any[]) => void>();
-  if (!tempRef.current) {
-    tempRef.current = debounce(fn, delay);
-  }
-  return tempRef.current;
+  const timerRef = useRef<number>();
+  return (...args: any) => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    timerRef.current = setTimeout(async () => {
+      await fn(...args);
+    }, delay);
+  };
 }
 
 export { debounce, asyncDebounce };

@@ -1,18 +1,15 @@
 .artist-detail {
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  translate: -50% 0;
   width: 250px;
   max-height: 500px;
   background-color: var(--bkC);
-  border-radius: 1rem;
+  border-radius: 0.5rem;
   box-shadow: 0 0 0.2rem rgba(0, 0, 0, 0.5);
   overflow-y: auto;
 
   .cover {
     height: 200px;
     position: relative;
+    background-color: var(--blackMask);
     background-size: cover;
     background-position: center center;
   }
@@ -38,23 +35,25 @@
   }
   .name {
     font-weight: bold;
+    font-size: large;
   }
   .profile {
     word-break: keep-all;
+    white-space: pre-wrap;
     margin: 0.5rem 0;
+    font-size: medium;
+    font-weight: normal;
     > a {
       display: block;
       font-size: small;
       opacity: 0.9;
-      &:visited,
-      &:hover,
-      &:active,
-      &:link {
-        color: var(--fontC);
-      }
+      text-decoration: none;
+      color: var(--fontC);
     }
   }
   .follow {
-    justify-items: center;
+    width: 6rem;
+    height: 2rem;
+    margin: 0 auto;
   }
 }

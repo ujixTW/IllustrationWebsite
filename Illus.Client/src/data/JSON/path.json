@@ -4,7 +4,9 @@
     "list": "/artworks",
     "followingList": "/artworks/following",
     "create": "/artworks/create",
-    "artwork": "/artworks/"
+    "artwork": "/artworks/",
+    "edit": "/edit",
+    "editSuccess": "/artworks/edit/success"
   },
   "user": {
     "user": "/user/",
@@ -14,13 +16,14 @@
     "histories": "/histories",
     "settings": "/settings"
   },
-  "account":{
-    "emailComfirm":"/account/email/confirm"
+  "dashboard": { "artworks": "/dashboard/artworks" },
+  "account": {
+    "emailComfirm": "/account/email/confirm"
   },
   "login": {
     "login": "/login",
     "forget": "/login/forget",
-    "resetPwd":"/login/reset-password/"
+    "resetPwd": "/login/reset-password/"
   },
   "signUp": {
     "signUp": "/signUp",

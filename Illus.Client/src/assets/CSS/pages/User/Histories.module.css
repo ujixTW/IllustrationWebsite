@@ -1,0 +1,9 @@
+.body {
+  width: 100%;
+  max-width: 1000px;
+  margin: auto;
+  padding: 2rem;
+}
+.list{
+  margin: 1rem 0;
+}
