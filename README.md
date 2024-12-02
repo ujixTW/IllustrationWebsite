@@ -38,17 +38,18 @@
 2. 於 VS code 功能列 Source control > Clone repository
 3. 貼上所複製的網址
 4. 選擇要放置專案的資料夾
-5. 新增 Terminal
-6. 輸入 `cd Illus.Client` 至前端的檔案路徑
-7. 輸入 `npm install`
+5. 下方功能列 > 選擇git版本 > master2
+6. 新增 Terminal
+7. 輸入 `cd Illus.Client` 至前端的檔案路徑
+8. 輸入 `npm install`
 
 ### Visual Studio 2022
 
 1. 複製網址 https://github.com/ujixTW/IllustrationWebsite.git
-2. Visual Studio 2022 > 不使用程式碼繼續
-3. Git 變更 > 複製存放庫
+2. Visual Studio 2022 > 複製存放庫
+3. 選擇要放置專案的資料夾
 4. 貼上所複製的網址
-5. 選擇要放置專案的資料夾
+5. 選擇git版本(ctrl alt F3) > 遠端 > master2
 6. 檢視 > 終端機 或 ctrl ` 開啟 PowerShell
 7. 輸入 `cd Illus.Client` 至前端的檔案路徑
 8. 輸入 `npm install`
@@ -99,4 +100,5 @@
 
 ## 六、注意事項
 
-1.本專案的圖片會儲存在電腦硬碟中，資料夾路徑為 Illus.Client/public 下的 Work、UserData 資料夾，會於儲存第一張圖片時自動產生。 2.後端程式 Log 會記錄於 "C:\Logs\IllusWebLog.log" ，若要修改 Log 紀錄位置，請修改於 "Illus.Server\Helper\Logger.cs" 中的 \_savePath 變數值。
+1. 本專案的圖片會儲存在電腦硬碟中，資料夾路徑為 Illus.Client/public 下的 Work、UserData 資料夾，會於儲存第一張圖片時自動產生。
+2. 後端程式 Log 會記錄於 "C:\Logs\IllusWebLog.log" ，若要修改 Log 紀錄位置，請修改於 "Illus.Server\Helper\Logger.cs" 中的 \_savePath 變數值。
