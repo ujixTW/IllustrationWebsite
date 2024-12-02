@@ -99,4 +99,5 @@
 
 ## 六、注意事項
 
-1.本專案的圖片會儲存在電腦硬碟中，資料夾路徑為 Illus.Client/public 下的 Work、UserData 資料夾，會於儲存第一張圖片時自動產生。 2.後端程式 Log 會記錄於 "C:\Logs\IllusWebLog.log" ，若要修改 Log 紀錄位置，請修改於 "Illus.Server\Helper\Logger.cs" 中的 \_savePath 變數值。
+1. 本專案的圖片會儲存在電腦硬碟中，資料夾路徑為 Illus.Client/public 下的 Work、UserData 資料夾，會於儲存第一張圖片時自動產生。
+2. 2.後端程式 Log 會記錄於 "C:\Logs\IllusWebLog.log" ，若要修改 Log 紀錄位置，請修改於 "Illus.Server\Helper\Logger.cs" 中的 \_savePath 變數值。
